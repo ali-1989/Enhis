@@ -326,12 +326,12 @@ class AppMessages {
 
   //============================================================================
 
-  static String get active {
-    return 'فعال';
+  static String get open {
+    return 'باز';
   }
 
-  static String get inActive {
-    return 'غیرفعال';
+  static String get close {
+    return 'بسته';
   }
 
   static String get lastUpdate {

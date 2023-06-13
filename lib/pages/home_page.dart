@@ -1,12 +1,15 @@
+import 'package:app/managers/settingsManager.dart';
 import 'package:app/managers/smsManager.dart';
 import 'package:app/pages/add_place_page.dart';
 import 'package:app/pages/settings_page.dart';
 import 'package:app/services/sms_service.dart';
 import 'package:app/structures/enums/appEvents.dart';
 import 'package:app/structures/enums/deviceStatus.dart';
+import 'package:app/structures/models/countryModel.dart';
 import 'package:app/structures/models/placeModel.dart';
 import 'package:app/structures/models/zoneModel.dart';
 import 'package:app/system/publicAccess.dart';
+import 'package:app/tools/app/appDb.dart';
 import 'package:app/tools/app/appDialogIris.dart';
 import 'package:app/tools/app/appIcons.dart';
 import 'package:app/tools/app/appImages.dart';
@@ -16,6 +19,7 @@ import 'package:app/tools/app/appThemes.dart';
 import 'package:app/tools/routeTools.dart';
 import 'package:app/views/dialogs/reChargeSimCardDialog.dart';
 import 'package:flutter/material.dart';
+import 'package:iris_db/iris_db.dart';
 import 'package:iris_tools/features/overlayDialog.dart';
 
 import 'package:iris_tools/modules/stateManagers/assist.dart';
@@ -44,12 +48,12 @@ class _HomePageState extends StateBase<HomePage> {
     super.initState();
 
     currentPlace = PublicAccess.pickSavedPlace();
-    EventNotifierService.addListener(AppEvents.placeDataChanged, onPlacesDataChanged);
+    EventNotifierService.addListener(AppEvents.placeDataChanged, listenPlacesDataChanged);
   }
 
   @override
   void dispose(){
-    EventNotifierService.removeListener(AppEvents.placeDataChanged, onPlacesDataChanged);
+    EventNotifierService.removeListener(AppEvents.placeDataChanged, listenPlacesDataChanged);
 
     super.dispose();
   }
@@ -72,7 +76,7 @@ class _HomePageState extends StateBase<HomePage> {
 
   Widget buildBody(){
     if(PublicAccess.places.isEmpty) {
-      return buildEmptyState();
+      return buildEmptyPlaces();
     }
 
 
@@ -322,17 +326,20 @@ class _HomePageState extends StateBase<HomePage> {
         Card(
           margin: const EdgeInsets.symmetric(horizontal: 0),
           elevation: 0,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(AppMessages.listening),
+          child: GestureDetector(
+            onTap: onListeningClick,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(AppMessages.listening),
 
-                const SizedBox(height: 6),
+                  const SizedBox(height: 6),
 
-                const Icon(AppIcons.light),
-              ],
+                  const Icon(AppIcons.light),
+                ],
+              ),
             ),
           ),
         ),
@@ -378,7 +385,7 @@ class _HomePageState extends StateBase<HomePage> {
                       visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                    onPressed: onReChargeSimCardClick,
+                    onPressed: onGetSimCardBalance,
                     child: const Text('بروز رسانی')
                 ),
               ],
@@ -403,14 +410,6 @@ class _HomePageState extends StateBase<HomePage> {
                       label: const Text('افزایش شارژ'),
                       onPressed: onReChargeSimCardClick,
                     )
-                    /*TextButton(
-                                            style: TextButton.styleFrom(
-                                                visualDensity: VisualDensity(horizontal: -4, vertical: -4),
-                                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                            ),
-                                            onPressed: onReChargeSimCardClick,
-                                            child: Text('افزایش شارژ')
-                                        )*/
                   ],
                 ),
 
@@ -442,6 +441,15 @@ class _HomePageState extends StateBase<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(AppMessages.zoneStatus),
+
+                TextButton(
+                    style: TextButton.styleFrom(
+                      visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    onPressed: onZoneUpdateClick,
+                    child: const Text('بروز رسانی')
+                ),
               ],
             ),
 
@@ -458,33 +466,59 @@ class _HomePageState extends StateBase<HomePage> {
   }
 
   Widget mapZone(ZoneModel zm){
-    //final idx = currentPlace!.zones.indexOf(zm);
-
     return Column(
       children: [
         Text(zm.name?? 'زون ${zm.number}'),
 
-        //const SizedBox(height: 8),
         Chip(
           elevation: 0,
             padding: EdgeInsets.zero,
             visualDensity: const VisualDensity(vertical: -4),
-            label: Text('${zm.isActive? AppMessages.active : AppMessages.inActive} ')
+            label: Text('${zm.isOpen? AppMessages.open : AppMessages.close} ')
         ),
 
-        Text('${zm.status.getHumanName()} ').color(Colors.blue),
+        const SizedBox(height: 8),
+        GestureDetector(
+          onTap: (){
+            onChangeZoneStatusClick(zm, currentPlace!);
+          },
+            child: Text('${zm.status.getHumanName()} ').color(Colors.blue)
+        ),
       ],
     );
   }
 
-  void onSettingClick() {
-    RouteTools.pushPage(context, const SettingsPage());
-  }
-
-  void onRelayClick() {
-  }
-
   void onUpdateInfoClick() {
+    SmsManager.listenToDeviceMessage();
+    SmsManager.sendSms('90', currentPlace!, context);
+  }
+
+  void onZoneUpdateClick() {
+    SmsManager.listenToDeviceMessage();
+    SmsManager.sendSms('92', currentPlace!, context);
+  }
+
+  void onGetSimCardBalance() {
+    SmsManager.getChargeBalance(currentPlace!, context);
+  }
+
+  void onListeningClick() {
+    SmsManager.sendSms('62', currentPlace!, context);
+  }
+
+  void onReChargeSimCardClick() {
+    void onApply(String txt, ctx){
+      AppNavigator.pop(ctx);
+
+      if(txt.trim().isNotEmpty){
+        SmsManager.sendChargeCode(txt, currentPlace!, context);
+      }
+    }
+
+    AppDialogIris.instance.showIrisDialog(
+        context,
+        descView: RechargeSimCardDialog(onApplyClick: onApply),
+    );
   }
 
   void onDeviceStatusHelpClick() {
@@ -514,21 +548,6 @@ class _HomePageState extends StateBase<HomePage> {
     );
   }
 
-  void onReChargeSimCardClick() {
-    void onApply(String txt, ctx){
-      AppNavigator.pop(ctx);
-
-      if(txt.trim().isNotEmpty){
-        SmsManager.sendChargeCode(txt, currentPlace!, context);
-      }
-    }
-
-    AppDialogIris.instance.showIrisDialog(
-        context,
-        descView: RechargeSimCardDialog(onApplyClick: onApply),
-    );
-  }
-
   Widget buildLocationsSection() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 4),
@@ -549,7 +568,9 @@ class _HomePageState extends StateBase<HomePage> {
                 itemCount: PublicAccess.places.length,
                 itemBuilder: itemBuilderForLocations
             ),
-          )
+          ),
+
+          const SizedBox(height: 5),
         ],
       ),
     );
@@ -571,6 +592,7 @@ class _HomePageState extends StateBase<HomePage> {
           }
 
           currentPlace = itm;
+          PublicAccess.savePickedPlace(currentPlace!.id);
           assistCtr.updateHead();
         },
         child: CustomCard(
@@ -587,7 +609,7 @@ class _HomePageState extends StateBase<HomePage> {
     );
   }
 
-  Widget buildEmptyState() {
+  Widget buildEmptyPlaces() {
     return SizedBox.expand(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -613,11 +635,7 @@ class _HomePageState extends StateBase<HomePage> {
     );
   }
 
-  void onAddNewPlaceClick() {
-    RouteTools.pushPage(context, const AddPlacePage());
-  }
-
-  void onPlacesDataChanged({data}){
+  void listenPlacesDataChanged({data}){
     if(PublicAccess.places.isNotEmpty){
       if(currentPlace == null) {
         currentPlace = PublicAccess.places.first;
@@ -631,7 +649,39 @@ class _HomePageState extends StateBase<HomePage> {
     assistCtr.updateHead();
   }
 
-  void onEditPlaceClick() async {
+  void onAddNewPlaceClick() {
+    RouteTools.pushPage(context, const AddPlacePage());
+  }
 
+  void onEditPlaceClick() async {
+      RouteTools.pushPage(context, SizedBox());
+  }
+
+  void onSettingClick() {
+    RouteTools.pushPage(context, const SettingsPage());
+  }
+
+  void onRelayClick() {
+  }
+
+  void onChangeZoneStatusClick(ZoneModel zm, PlaceModel place) {
+    //SmsManager.sendSms('42*${zm.number}*2', currentPlace!, context);
+    SmsManager.sendSms('31*3*09132163340B', currentPlace!, context);
   }
 }
+
+
+/// cange password
+/*
+SmsManager.sendSms('40*4334', currentPlace!, context);
+    currentPlace!.currentPassword = '4334';
+
+    AppDB.db.update(AppDB.tbPlaces, currentPlace!.toMap(),
+    Conditions().add(Condition()..key = 'id'..value = place.id));
+ */
+
+/// antenna signal
+//SmsManager.sendSms('61', currentPlace!, context);
+
+/// add contact
+//SmsManager.sendSms('31*3*09132163340B', currentPlace!, context);

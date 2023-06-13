@@ -52,6 +52,7 @@ class _RechargeSimCardDialogState extends State<RechargeSimCardDialog> {
 
         TextField(
           controller: txtCtr,
+          keyboardType: TextInputType.number,
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
             enabledBorder: OutlineInputBorder(),

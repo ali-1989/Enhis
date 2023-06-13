@@ -1,10 +1,9 @@
-
 import 'package:app/structures/enums/zoneStatus.dart';
 
 class ZoneModel {
   late int number;
   String? name;
-  bool isActive = false;
+  bool isOpen = false;
   ZoneStatus status = ZoneStatus.normal;
 
   ZoneModel();
@@ -12,7 +11,7 @@ class ZoneModel {
   ZoneModel.fromMap(Map map) {
     number = map['number'];
     name = map['name'];
-    isActive = map['isActive'];
+    isOpen = map['isActive'];
     status = ZoneStatus.from(map['status']);
   }
 
@@ -20,7 +19,7 @@ class ZoneModel {
     final map = <String, dynamic>{};
     map['number'] = number;
     map['name'] = name;
-    map['isActive'] = isActive;
+    map['isActive'] = isOpen;
     map['status'] = status.getNumber();
 
     return map;

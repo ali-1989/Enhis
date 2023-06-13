@@ -1,10 +1,12 @@
 
 import 'package:app/structures/enums/antennaRange.dart';
 import 'package:app/structures/enums/deviceStatus.dart';
+import 'package:app/structures/enums/zoneStatus.dart';
 import 'package:app/structures/models/contactModel.dart';
 import 'package:app/structures/models/zoneModel.dart';
 import 'package:app/tools/app/appMessages.dart';
 import 'package:flutter/material.dart';
+import 'package:iris_tools/api/helpers/mathHelper.dart';
 import 'package:persian_needs/persian_needs.dart';
 import 'package:iris_tools/api/generator.dart';
 import 'package:iris_tools/dateSection/dateHelper.dart';
@@ -176,5 +178,58 @@ class PlaceModel {
     }
 
     return '$batteryCharge %';
+  }
+
+  void parseUpdate(String txt){
+    print('|||||| pars >>>>>> $txt');
+
+    /// zones
+    if(txt.startsWith('*') && txt.endsWith('#')){
+      final splits = txt.split('*');
+      final pat = RegExp(r'.*?Z(\d+)(\w+)', multiLine: false, unicode: false);
+
+      print('zzz:$splits');
+      for(final z in splits){
+        if(!z.startsWith('Z')){
+          continue;
+        }
+
+        final res = pat.firstMatch(z);
+
+        if(res != null){
+          final number = res.group(1);
+          final status = res.group(2);
+          print('---zone: $number-$status');
+
+          for(final zon in zones){
+            if(zon.number == MathHelper.clearToInt(number)){
+              zon.status = ZoneStatus.byShortName(status!);
+            }
+          }
+        }
+      }
+      return;
+    }
+
+    final splits = txt.split(',');
+
+    /// update
+    if (splits.length > 5) {
+      print('>>>>>> $splits');
+      print('>>>>>> ${splits[5]}, ${splits[6]}');
+      simCardAntennaStatus = MathHelper.clearToInt(splits[5]);
+      int contactCount = MathHelper.clearToInt(splits[6]) +1;
+      int remoteCount = MathHelper.clearToInt(splits[4]);
+      return;
+    }
+
+
+    /// charge-sim
+    final pat = RegExp(r'.*?(\d+).*', multiLine: true, unicode: true);
+    final res = pat.firstMatch(txt);
+
+    if(res != null){
+      simCardAmount = res.group(1);
+    }
   }
 }

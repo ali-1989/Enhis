@@ -45,4 +45,36 @@ enum ZoneStatus {
 
     return ZoneStatus.normal;
   }
+
+  static ZoneStatus byShortName(String data){
+    if(data == 'N'){//1
+      return ZoneStatus.normal;
+    }
+
+    if(data == 'D'){//2
+      return ZoneStatus.dingDang;
+    }
+
+    if(data == 'H'){//3
+      return ZoneStatus.fullDay;
+    }
+
+    if(data == 'G'){//4
+      return ZoneStatus.guard;
+    }
+
+    if(data == 'S'){
+      return ZoneStatus.spy;
+    }
+
+    if(data == 'B'){
+      return ZoneStatus.blue;
+    }
+
+    if(data == 'DS'){
+      return ZoneStatus.spyFullDay;
+    }
+
+    return ZoneStatus.normal;
+  }
 }
