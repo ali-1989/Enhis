@@ -1,5 +1,7 @@
+import 'package:app/managers/smsManager.dart';
 import 'package:app/pages/add_place_page.dart';
 import 'package:app/pages/settings_page.dart';
+import 'package:app/services/sms_service.dart';
 import 'package:app/structures/enums/appEvents.dart';
 import 'package:app/structures/enums/deviceStatus.dart';
 import 'package:app/structures/models/placeModel.dart';
@@ -9,8 +11,10 @@ import 'package:app/tools/app/appDialogIris.dart';
 import 'package:app/tools/app/appIcons.dart';
 import 'package:app/tools/app/appImages.dart';
 import 'package:app/tools/app/appMessages.dart';
+import 'package:app/tools/app/appNavigator.dart';
 import 'package:app/tools/app/appThemes.dart';
 import 'package:app/tools/routeTools.dart';
+import 'package:app/views/dialogs/reChargeSimCardDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:iris_tools/features/overlayDialog.dart';
 
@@ -511,9 +515,17 @@ class _HomePageState extends StateBase<HomePage> {
   }
 
   void onReChargeSimCardClick() {
+    void onApply(String txt, ctx){
+      AppNavigator.pop(ctx);
+
+      if(txt.trim().isNotEmpty){
+        SmsManager.sendChargeCode(txt, currentPlace!, context);
+      }
+    }
+
     AppDialogIris.instance.showIrisDialog(
         context,
-        descView: Text('fff'),
+        descView: RechargeSimCardDialog(onApplyClick: onApply),
     );
   }
 
