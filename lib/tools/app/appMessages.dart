@@ -390,4 +390,12 @@ class AppMessages {
     return 'بدون بروز رسانی';
   }
 
+  static String get edit {
+    return 'ویرایش';
+  }
+
+  static String get manage {
+    return 'مدیریت';
+  }
+
 }

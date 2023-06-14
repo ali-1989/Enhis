@@ -4,6 +4,7 @@ import 'package:iris_tools/api/generator.dart';
 
 class ContactModel {
   late String id;
+  int order = 1;
   String name = '';
   String phoneNumber = '';
   ContactLevel level = ContactLevel.levelD;

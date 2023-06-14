@@ -1,12 +1,11 @@
 import 'dart:async';
 
-import 'package:app/system/publicAccess.dart';
+import 'package:app/managers/placeManager.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:app/managers/settingsManager.dart';
 import 'package:app/managers/versionManager.dart';
-import 'package:app/services/session_service.dart';
 import 'package:app/structures/abstract/stateBase.dart';
 import 'package:app/system/applicationInitialize.dart';
 import 'package:app/tools/app/appBroadcast.dart';
@@ -88,7 +87,7 @@ class SplashPageState extends StateBase<SplashPage> {
 
     if (settingsLoad) {
       //await SessionService.fetchLoginUsers();
-      await PublicAccess.fetchPlaces();
+      await PlaceManager.fetchPlaces();
       await VersionManager.checkVersionOnLaunch();
       connectToServer();
 

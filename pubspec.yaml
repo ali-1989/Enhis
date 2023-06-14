@@ -34,12 +34,12 @@ dependencies:
   permission_handler: ^10.3.0            # NoWeb
   flutter_spinkit: ^5.2.0
   http: ^1.0.0
-  dio: ^5.2.0+1
+  dio: ^5.2.1+1
   material_dialogs: ^1.1.4
   popover: ^0.2.8+2
   iris_notifier: ^0.0.4
   connectivity_plus: ^4.0.1
-  simple_animations: ^5.0.1
+  simple_animations: ^5.0.2
   animate_do: ^3.0.2                   # https://animate.style/
   photo_view: ^0.14.0                   # image view gallery
   toggle_switch: ^2.1.0

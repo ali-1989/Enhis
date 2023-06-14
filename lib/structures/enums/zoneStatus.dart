@@ -4,6 +4,7 @@ enum ZoneStatus {
   dingDang(2),
   fullDay(3),
   guard(4),
+  normalClose(5),
   spy(6),
   blue(7),
   spyFullDay(8);
@@ -22,9 +23,10 @@ enum ZoneStatus {
       dingDang => 'دینگ دانگ',
       fullDay => '24 ساعته',
       guard => 'گارد',
+      normalClose => 'معمولی بسته',
       spy => 'جاسوسی',
       blue => 'آبی',
-      spyFullDay => 'جاسوسی 24 ساعته',
+      spyFullDay => 'جاسوسی 24ساعته',
     };
   }
 

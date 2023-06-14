@@ -1,10 +1,10 @@
 
 enum DeviceStatus {
-  unKnow(0),
-  active(11),
-  inActive(10),
-  semiActive(13),
-  silent(12);
+  unKnow(-1),
+  active(4),
+  inActive(0),
+  semiActive(2),
+  silent(3);
 
   final int _number;
 

@@ -109,7 +109,7 @@ class VersionManager {
 
   static void showUpdateDialog(BuildContext context, VersionModel vm) {
     
-    void closeApp(){
+    void closeApp(ctx){
       System.exitApp();
     }
 

@@ -1,15 +1,14 @@
-import 'package:app/managers/settingsManager.dart';
+import 'package:app/managers/placeManager.dart';
 import 'package:app/managers/smsManager.dart';
 import 'package:app/pages/add_place_page.dart';
+import 'package:app/pages/edit_place_page.dart';
 import 'package:app/pages/settings_page.dart';
-import 'package:app/services/sms_service.dart';
 import 'package:app/structures/enums/appEvents.dart';
 import 'package:app/structures/enums/deviceStatus.dart';
-import 'package:app/structures/models/countryModel.dart';
+import 'package:app/structures/enums/zoneStatus.dart';
 import 'package:app/structures/models/placeModel.dart';
 import 'package:app/structures/models/zoneModel.dart';
-import 'package:app/system/publicAccess.dart';
-import 'package:app/tools/app/appDb.dart';
+import 'package:app/tools/app/appColors.dart';
 import 'package:app/tools/app/appDialogIris.dart';
 import 'package:app/tools/app/appIcons.dart';
 import 'package:app/tools/app/appImages.dart';
@@ -17,9 +16,11 @@ import 'package:app/tools/app/appMessages.dart';
 import 'package:app/tools/app/appNavigator.dart';
 import 'package:app/tools/app/appThemes.dart';
 import 'package:app/tools/routeTools.dart';
+import 'package:app/views/dialogs/changeZoneStatusDialog.dart';
 import 'package:app/views/dialogs/reChargeSimCardDialog.dart';
 import 'package:flutter/material.dart';
-import 'package:iris_db/iris_db.dart';
+import 'package:iris_tools/api/helpers/focusHelper.dart';
+import 'package:iris_tools/api/helpers/textHelper.dart';
 import 'package:iris_tools/features/overlayDialog.dart';
 
 import 'package:iris_tools/modules/stateManagers/assist.dart';
@@ -42,12 +43,18 @@ class HomePage extends StatefulWidget {
 ///==================================================================================
 class _HomePageState extends StateBase<HomePage> {
   PlaceModel? currentPlace;
+  Color cColor = AppColors.secondColor;
 
   @override
   void initState(){
     super.initState();
 
-    currentPlace = PublicAccess.pickSavedPlace();
+    currentPlace = PlaceManager.fetchSavedPlace();
+
+    if(currentPlace != null){
+      SmsManager.listenToDeviceMessage();
+    }
+    
     EventNotifierService.addListener(AppEvents.placeDataChanged, listenPlacesDataChanged);
   }
 
@@ -60,7 +67,6 @@ class _HomePageState extends StateBase<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    //AppDB.db.clearTable(AppDB.tbPlaces);
 
     return Assist(
         controller: assistCtr,
@@ -75,7 +81,7 @@ class _HomePageState extends StateBase<HomePage> {
   }
 
   Widget buildBody(){
-    if(PublicAccess.places.isEmpty) {
+    if(PlaceManager.places.isEmpty) {
       return buildEmptyPlaces();
     }
 
@@ -161,7 +167,7 @@ class _HomePageState extends StateBase<HomePage> {
         /// bottom section
         Builder(
             builder: (_){
-              if(PublicAccess.places.length < 2){
+              if(PlaceManager.places.length < 2){
                 return const SizedBox();
               }
 
@@ -206,7 +212,8 @@ class _HomePageState extends StateBase<HomePage> {
             Column(
               children: [
                 Text(AppMessages.lastUpdate),
-                Text(currentPlace!.getLastUpdateDate()).color(currentPlace!.getUpdateColor()),
+                Text(currentPlace!.getLastUpdateDate()).color(currentPlace!.getUpdateColor())
+                .bold().fsR(2),
               ],
             ),
 
@@ -228,6 +235,7 @@ class _HomePageState extends StateBase<HomePage> {
 
   Widget buildDeviceStatusSection() {
     return Card(
+      color: cColor,
       margin: const EdgeInsets.symmetric(horizontal: 0),
       elevation: 0,
       child: Padding(
@@ -242,7 +250,7 @@ class _HomePageState extends StateBase<HomePage> {
 
                 GestureDetector(
                     onTap: onDeviceStatusHelpClick,
-                    child: const Icon(AppIcons.questionMarkCircle, size: 16)
+                    child: const Icon(AppIcons.questionMarkCircle, size: 16, color: Colors.orange)
                 ),
               ],
             ),
@@ -251,36 +259,32 @@ class _HomePageState extends StateBase<HomePage> {
 
             Builder(
               builder: (context) {
-                if(currentPlace!.deviceStatus == DeviceStatus.unKnow){
+                /*if(currentPlace!.deviceStatus == DeviceStatus.unKnow){
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: const Text('نا مشخص').alpha(),
                   );
-                }
+                }*/
 
                 return ToggleSwitch(
                   minHeight: 30.0,
-                  initialLabelIndex: 1,
+                  initialLabelIndex: currentPlace!.getDeviceStatsForSwitchButton(),
                   cornerRadius: 8.0,
+                  minWidth: 73,
+                  totalSwitches: 4,
                   activeFgColor: Colors.white,
                   inactiveBgColor: Colors.grey.shade400,
                   inactiveFgColor: Colors.white,
-                  totalSwitches: 4,
-                  /*icons: [
-                                        AppIcons.calendar,
-                                        AppIcons.infoCircle,
-                                        AppIcons.wallet,
-                                        AppIcons.backupCloud,
-                                      ],*/
+                  iconSize: 14.0,
+                  borderWidth: 1.0,
+                  multiLineText: false,
+                  changeOnTap: false,
                   labels: const [
                     'فعال',
                     'غیرفعال',
                     'نیمه فعال',
                     'بی صدا',
                   ],
-                  iconSize: 14.0,
-                  borderWidth: 1.0,
-                  multiLineText: false,
                   activeBgColors: const [
                     [Colors.green],
                     [Colors.red],
@@ -288,7 +292,7 @@ class _HomePageState extends StateBase<HomePage> {
                     [Colors.blue]
                   ],
                   onToggle: (index) {
-
+                    onChangeDeviceStatusClick(index?? 0);
                   },
                 );
               }
@@ -305,6 +309,7 @@ class _HomePageState extends StateBase<HomePage> {
       children: [
         /// battery state
         Card(
+          color: cColor,
           margin: const EdgeInsets.symmetric(horizontal: 0),
           elevation: 0,
           child: Padding(
@@ -316,7 +321,7 @@ class _HomePageState extends StateBase<HomePage> {
 
                 const SizedBox(height: 6),
 
-                Text(currentPlace!.getBatteryStateText()),
+                Text(currentPlace!.getBatteryStateText()).bold(),
               ],
             ),
           ),
@@ -324,6 +329,7 @@ class _HomePageState extends StateBase<HomePage> {
 
         /// listening
         Card(
+          color: cColor,
           margin: const EdgeInsets.symmetric(horizontal: 0),
           elevation: 0,
           child: GestureDetector(
@@ -346,6 +352,7 @@ class _HomePageState extends StateBase<HomePage> {
 
         /// power state
         Card(
+          color: cColor,
           margin: const EdgeInsets.symmetric(horizontal: 0),
           elevation: 0,
           child: Padding(
@@ -357,7 +364,7 @@ class _HomePageState extends StateBase<HomePage> {
 
                 const SizedBox(height: 6),
 
-                Text(currentPlace!.getPowerState()),
+                Text(currentPlace!.getPowerState()).bold(),
               ],
             ),
           ),
@@ -368,6 +375,7 @@ class _HomePageState extends StateBase<HomePage> {
 
   Widget buildSimCardSection() {
     return Card(
+      color: cColor,
       margin: const EdgeInsets.symmetric(horizontal: 0),
       elevation: 0,
       child: Padding(
@@ -398,9 +406,9 @@ class _HomePageState extends StateBase<HomePage> {
               children: [
                 Column(
                   children: [
-                    const Text('موجودی شارژ'),
+                    const Text('موجودی شارژ').bold(),
                     const SizedBox(height: 4),
-                    Text(currentPlace!.getSimCardCharge()),
+                    Text(currentPlace!.getSimCardCharge()).bold(),
                   ],
                 ),
 
@@ -415,9 +423,9 @@ class _HomePageState extends StateBase<HomePage> {
 
                 Column(
                   children: [
-                    const Text('آنتن دهی'),
+                    const Text('آنتن دهی').bold(),
                     const SizedBox(height: 4),
-                    Text(currentPlace!.getSimCardAntenna()).color(currentPlace!.getSimCardAntennaColor()),
+                    Text(currentPlace!.getSimCardAntenna()).color(currentPlace!.getSimCardAntennaColor()).bold(),
                   ],
                 )
               ],
@@ -430,6 +438,7 @@ class _HomePageState extends StateBase<HomePage> {
 
   Widget buildZonesSection() {
     return Card(
+      color: cColor,
       margin: const EdgeInsets.symmetric(horizontal: 0),
       elevation: 0,
       child: Padding(
@@ -468,33 +477,42 @@ class _HomePageState extends StateBase<HomePage> {
   Widget mapZone(ZoneModel zm){
     return Column(
       children: [
-        Text(zm.name?? 'زون ${zm.number}'),
+        Builder(
+          builder: (context) {
+            if(zm.name != null){
+              return Text(TextHelper.subByCharCountSafe(zm.name, 8)).bold().fsR(1);
+            }
 
-        Chip(
-          elevation: 0,
-            padding: EdgeInsets.zero,
-            visualDensity: const VisualDensity(vertical: -4),
-            label: Text('${zm.isOpen? AppMessages.open : AppMessages.close} ')
+            return Text('زون ${zm.number}').bold().fsR(1);
+          }
         ),
+
+        const SizedBox(height: 8),
+        Text(zm.isOpen? '${AppMessages.open} ∑' : '☻ ${AppMessages.close}')
+        .bold().fsR(2)
+        .color(zm.isOpen? Colors.red : Colors.green),
 
         const SizedBox(height: 8),
         GestureDetector(
           onTap: (){
             onChangeZoneStatusClick(zm, currentPlace!);
           },
-            child: Text('${zm.status.getHumanName()} ').color(Colors.blue)
+            child: Chip(
+                elevation: 0,
+                padding: EdgeInsets.zero,
+                visualDensity: const VisualDensity(vertical: -4),
+                label: Text('${zm.status.getHumanName()} ').color(Colors.white)
+            )
         ),
       ],
     );
   }
 
   void onUpdateInfoClick() {
-    SmsManager.listenToDeviceMessage();
     SmsManager.sendSms('90', currentPlace!, context);
   }
 
   void onZoneUpdateClick() {
-    SmsManager.listenToDeviceMessage();
     SmsManager.sendSms('92', currentPlace!, context);
   }
 
@@ -508,6 +526,7 @@ class _HomePageState extends StateBase<HomePage> {
 
   void onReChargeSimCardClick() {
     void onApply(String txt, ctx){
+      FocusHelper.hideKeyboardByUnFocusRoot();
       AppNavigator.pop(ctx);
 
       if(txt.trim().isNotEmpty){
@@ -565,7 +584,7 @@ class _HomePageState extends StateBase<HomePage> {
             height: 50,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-                itemCount: PublicAccess.places.length,
+                itemCount: PlaceManager.places.length,
                 itemBuilder: itemBuilderForLocations
             ),
           ),
@@ -581,7 +600,7 @@ class _HomePageState extends StateBase<HomePage> {
   }
 
   Widget itemBuilderForLocations(_, idx){
-    final itm = PublicAccess.places[idx];
+    final itm = PlaceManager.places[idx];
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -592,7 +611,7 @@ class _HomePageState extends StateBase<HomePage> {
           }
 
           currentPlace = itm;
-          PublicAccess.savePickedPlace(currentPlace!.id);
+          PlaceManager.savePickedPlace(currentPlace!.id);
           assistCtr.updateHead();
         },
         child: CustomCard(
@@ -601,7 +620,7 @@ class _HomePageState extends StateBase<HomePage> {
           child: Column(
             children: [
               const Icon(AppIcons.home),
-              Text(itm.name),
+              Text(itm.name).bold(),
             ],
           ),
         ),
@@ -636,10 +655,12 @@ class _HomePageState extends StateBase<HomePage> {
   }
 
   void listenPlacesDataChanged({data}){
-    if(PublicAccess.places.isNotEmpty){
+    if(PlaceManager.places.isNotEmpty){
+      SmsManager.listenToDeviceMessage();
+
       if(currentPlace == null) {
-        currentPlace = PublicAccess.places.first;
-        PublicAccess.savePickedPlace(currentPlace!.id);
+        currentPlace = PlaceManager.places.first;
+        PlaceManager.savePickedPlace(currentPlace!.id);
       }
     }
     else {
@@ -654,7 +675,7 @@ class _HomePageState extends StateBase<HomePage> {
   }
 
   void onEditPlaceClick() async {
-      RouteTools.pushPage(context, SizedBox());
+      RouteTools.pushPage(context, EditPlacePage(place: currentPlace!));
   }
 
   void onSettingClick() {
@@ -664,24 +685,56 @@ class _HomePageState extends StateBase<HomePage> {
   void onRelayClick() {
   }
 
-  void onChangeZoneStatusClick(ZoneModel zm, PlaceModel place) {
-    //SmsManager.sendSms('42*${zm.number}*2', currentPlace!, context);
-    SmsManager.sendSms('31*3*09132163340B', currentPlace!, context);
+  void onChangeZoneStatusClick(ZoneModel zm, PlaceModel place) async {
+    ZoneStatus? selectedZone = await AppDialogIris.instance.showIrisDialog(
+        context,
+      descView: ChangeZoneStatusDialog(zone: zm),
+      decoration: AppDialogIris.instance.dialogDecoration.copy()..widthFactor = 0.95,
+    );
+
+    if(selectedZone == null || selectedZone == zm.status){
+      return;
+    }
+
+    if(context.mounted) {
+      final sms = await SmsManager.sendSms('42*${zm.number}*${selectedZone.getNumber()}', currentPlace!, context);
+
+      if(sms){
+        zm.status = selectedZone;
+        PlaceManager.updatePlaceToDb(place);
+        assistCtr.updateHead();
+      }
+    }
+  }
+
+  void onChangeDeviceStatusClick(int index) async {
+    int num = 11;
+    var ds = DeviceStatus.active;
+
+    if(index == 1){
+      num = 10;
+      ds = DeviceStatus.inActive;
+    }
+    else if(index == 2){
+      num = 13;
+      ds = DeviceStatus.semiActive;
+    }
+    else if(index == 3){
+      num = 12;
+      ds = DeviceStatus.silent;
+    }
+
+    final send = await SmsManager.sendSms('$num', currentPlace!, context);
+
+    if(send){
+      currentPlace!.deviceStatus = ds;
+      PlaceManager.updatePlaceToDb(currentPlace!);
+      assistCtr.updateHead();
+    }
   }
 }
 
 
-/// cange password
-/*
-SmsManager.sendSms('40*4334', currentPlace!, context);
-    currentPlace!.currentPassword = '4334';
-
-    AppDB.db.update(AppDB.tbPlaces, currentPlace!.toMap(),
-    Conditions().add(Condition()..key = 'id'..value = place.id));
- */
-
 /// antenna signal
 //SmsManager.sendSms('61', currentPlace!, context);
 
-/// add contact
-//SmsManager.sendSms('31*3*09132163340B', currentPlace!, context);

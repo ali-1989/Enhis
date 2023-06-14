@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:app/managers/placeManager.dart';
+import 'package:app/managers/settingsManager.dart';
 import 'package:app/services/sms_service.dart';
 import 'package:app/structures/enums/appEvents.dart';
 import 'package:app/structures/models/placeModel.dart';
-import 'package:app/system/publicAccess.dart';
+import 'package:app/tools/app/appDialogIris.dart';
 import 'package:app/tools/app/appSnack.dart';
 import 'package:app/tools/app/appToast.dart';
 import 'package:flutter/material.dart';
@@ -11,32 +13,22 @@ import 'package:iris_notifier/iris_notifier.dart';
 import 'package:sms_advanced/sms_advanced.dart';
 
 class SmsManager {
-  static int _listenerCount = 0;
-  static StreamSubscription? _subscription;
+  static StreamSubscription? smsListenerSubscription;
 
   SmsManager._();
 
   static void listenToDeviceMessage(){
-    _listenerCount++;
-
-    if(_listenerCount > 1){
+    if(smsListenerSubscription != null && !smsListenerSubscription!.isPaused){
       return;
     }
-
 
     void parse(SmsMessage msg){
       var n1 = msg.sender?.split('').reversed.take(10).join();
 
-      for(final p in PublicAccess.places){
+      for(final p in PlaceManager.places){
         var n2 = p.simCardNumber.split('').reversed.take(10).join();
 print('>>>  $n1    ,n2:$n2');
         if(n1 == n2){
-          _listenerCount--;
-
-          if(_listenerCount < 1) {
-            _subscription?.cancel();
-          }
-
           p.parseUpdate(msg.body?? '');
           EventNotifierService.notify(AppEvents.placeDataChanged);
           break;
@@ -44,7 +36,7 @@ print('>>>  $n1    ,n2:$n2');
       }
     }
 
-    _subscription = SmsService.receiveSms(parse);
+    smsListenerSubscription = SmsService.receiveSms(parse);
   }
 
   static Future<void> sendChargeCode(String sc, PlaceModel place, BuildContext context) async {
@@ -64,7 +56,7 @@ print('>>>  $n1    ,n2:$n2');
       code = '60*141*$sc';
     }
 
-    sendSms(code, place, context);
+    sendSms(code, place, context, showSmsDialog: false);
   }
 
   static Future<void> getChargeBalance(PlaceModel place, BuildContext context) async {
@@ -84,11 +76,24 @@ print('>>>  $n1    ,n2:$n2');
       code = '60*140';
     }
 
-    listenToDeviceMessage();
     sendSms(code, place, context);
   }
 
-  static Future<void> sendSms(String sc, PlaceModel place, BuildContext context) async {
+  static Future<bool> sendSms(String sc, PlaceModel place, BuildContext context, {bool showSmsDialog = true}) async {
+    if(showSmsDialog && SettingsManager.settingsModel.askSndSmsEveryTime){
+      final can = await AppDialogIris.instance.showYesNoDialog(
+          context,
+        desc: 'آیا پیامک ارسال شود؟',
+        yesFn: (ctx){
+            return true;
+        }
+      );
+
+      if(can == null || !can){
+        return false;
+      }
+    }
+
     final code = '*${place.currentPassword}*$sc#';
     print('@@@@@@@ $code  to   ${place.simCardNumber}');
     final result = SmsService.sendSms(code, [place.simCardNumber]);
@@ -96,26 +101,38 @@ print('>>>  $n1    ,n2:$n2');
     final sms = await result.first;
 
     if(sms == null){
-      return;
+      return false;
     }
 
     late StreamSubscription subscribe;
+    final signal = Completer<bool>();
 
     subscribe = sms.onStateChanged.listen((event) {
       _notifyToUser(place, context, event);
 
-      if(event != SmsMessageState.Sending) {
+      if(event == SmsMessageState.Fail) {
         subscribe.cancel();
+        signal.complete(false);
+      }
+
+      if(event == SmsMessageState.Sent || event == SmsMessageState.Delivered) {
+        subscribe.cancel();
+        signal.complete(true);
       }
     });
+
+    return signal.future;
   }
 
   static void _notifyToUser(PlaceModel place, BuildContext context, SmsMessageState state) {
+    if(state == SmsMessageState.Sending){
+      AppToast.showToast(context, 'در حال ارسال');
+    }
     if(state == SmsMessageState.Sent || state == SmsMessageState.Delivered){
-      AppToast.showToast(context, 'ارسال شد');
+      AppToast.showToast(context, 'تا رسیدن جواب صبور باشید');
     }
     else if(state == SmsMessageState.Fail){
-      AppToast.showToast(context, 'خطا، ارسال نشد');
+      AppToast.showToast(context, 'خطا، پیامک ارسال نشد');
     }
   }
 

@@ -13,7 +13,8 @@ enum AppEvents implements EventImplement {
   appResume(115),
   appPause(116),
   appDeAttach(117),
-  placeDataChanged(150);
+  placeDataChanged(150),
+  contactDataChanged(160);
 
   final int _number;
 

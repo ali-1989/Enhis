@@ -780,8 +780,8 @@ extension TextExtension on Text {
     );
   }
 
-  Text bold({FontWeight? weight = FontWeight.bold}) {
-    var ts = style ?? const TextStyle();//AppThemes.instance.currentTheme.baseTextStyle;
+  Text bold({FontWeight? weight = FontWeight.bold, bool baseStyle = false}) {
+    var ts = style ?? (baseStyle ? AppThemes.instance.currentTheme.baseTextStyle : const TextStyle());
     ts = ts.copyWith(fontWeight: weight);
 
     return Text(
@@ -935,8 +935,8 @@ extension TextExtension on Text {
         .color(AppThemes.instance.currentTheme.underLineDecorationColor);
   }
 
-  Text fs(double size) {
-    var ts = style ?? const TextStyle(); //AppThemes.instance.currentTheme.baseTextStyle;
+  Text fs(double size, {bool baseStyle = false}) {
+    var ts = style ??  (baseStyle ? AppThemes.instance.currentTheme.baseTextStyle : const TextStyle());
     ts = ts.copyWith(fontSize: size);
 
     return Text(

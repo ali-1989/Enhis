@@ -1,8 +1,8 @@
+import 'package:app/managers/placeManager.dart';
 import 'package:app/structures/enums/appEvents.dart';
 import 'package:app/structures/enums/contactLevel.dart';
 import 'package:app/structures/models/contactModel.dart';
 import 'package:app/structures/models/placeModel.dart';
-import 'package:app/system/publicAccess.dart';
 import 'package:app/tools/app/appDb.dart';
 import 'package:app/tools/app/appMessages.dart';
 import 'package:app/tools/app/appSheet.dart';
@@ -12,7 +12,9 @@ import 'package:app/views/states/backBtn.dart';
 import 'package:flutter/material.dart';
 import 'package:iris_notifier/iris_notifier.dart';
 import 'package:iris_tools/api/checker.dart';
+import 'package:iris_tools/api/helpers/focusHelper.dart';
 import 'package:iris_tools/api/helpers/inputFormatter.dart';
+import 'package:iris_tools/api/helpers/textHelper.dart';
 
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 
@@ -105,7 +107,7 @@ class _AddPlacePageState extends StateBase<AddPlacePage> {
 
                 buildCurrentPasswordInput(),
 
-                buildNewPasswordInput(),
+                //buildNewPasswordInput(),
 
                 const SizedBox(height: 14),
 
@@ -215,7 +217,7 @@ class _AddPlacePageState extends StateBase<AddPlacePage> {
             TextField(
               controller: currentPasswordCtr,
               inputFormatters: [
-                InputFormatter.inputFormatterMaxLen(12)
+                InputFormatter.inputFormatterMaxLen(4)
               ],
               keyboardType: TextInputType.text,
               decoration: inputDecor,
@@ -257,11 +259,13 @@ class _AddPlacePageState extends StateBase<AddPlacePage> {
   }
 
   void onRegisterClick() async {
+    FocusHelper.hideKeyboardByUnFocusRoot();
+
     final name = nameCtr.text.trim();
     final simNumber = numberCtr.text.trim();
     final adminNumber = adminNumberCtr.text.trim();
     final curPassword = currentPasswordCtr.text.trim();
-    final newPassword = newPasswordCtr.text.trim();
+    //final newPassword = newPasswordCtr.text.trim();
 
     if(name.length < 2){
       AppSnack.showError(context, AppMessages.nameIsShort);
@@ -278,18 +282,31 @@ class _AddPlacePageState extends StateBase<AddPlacePage> {
       return;
     }
 
+    for(final p in PlaceManager.places){
+      if(p.name == name){
+        AppSnack.showError(context, 'نام تکراری است');
+        return;
+      }
+    }
+
+    for(final p in PlaceManager.places){
+      if(p.simCardNumber == simNumber){
+        AppSnack.showError(context, 'شماره تلفن دستگاه قبلا ثبت شده است');
+        return;
+      }
+    }
     //showLoading();
 
     final p = PlaceModel();
-    p.name = name;
+    p.name = TextHelper.subByCharCountSafe(name, 20);
     p.simCardNumber = simNumber;
 
     if(curPassword.isNotEmpty){
       p.currentPassword = curPassword;
     }
-    else if(newPassword.isNotEmpty){
+    /*else if(newPassword.isNotEmpty){
       p.newPassword = newPassword;
-    }
+    }*/
 
     if(adminNumber.isNotEmpty){
       final cm = ContactModel();
@@ -302,7 +319,7 @@ class _AddPlacePageState extends StateBase<AddPlacePage> {
 
     await AppDB.db.insert(AppDB.tbPlaces, p.toMap());
 
-    await PublicAccess.fetchPlaces();
+    await PlaceManager.fetchPlaces();
 
     EventNotifierService.notify(AppEvents.placeDataChanged);
     //hideLoading();
@@ -311,7 +328,7 @@ class _AddPlacePageState extends StateBase<AddPlacePage> {
       return;
     }
 
-    AppSheet.showSheetOneAction(context, 'دستگاه ثبت شد', (){
+    AppSheet.showSheetOneAction(context, 'دستگاه با موفقیت ثبت شد', (){
       RouteTools.popTopView(context: context);
     });
   }

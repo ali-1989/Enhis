@@ -1,12 +1,8 @@
 import 'dart:async';
 
-import 'package:app/structures/models/placeModel.dart';
-import 'package:app/system/extensions.dart';
-import 'package:app/tools/app/appDb.dart';
 import 'package:flutter/material.dart';
 
 import 'package:dio/dio.dart';
-import 'package:iris_db/iris_db.dart';
 import 'package:iris_tools/api/helpers/jsonHelper.dart';
 import 'package:iris_tools/api/logger/logger.dart';
 import 'package:iris_tools/api/logger/reporter.dart';
@@ -30,34 +26,6 @@ class PublicAccess {
   static late Logger logger;
   static late Reporter reporter;
   static String graphApi = '${SettingsManager.settingsModel.httpAddress}/graph-v1';
-  static List<PlaceModel> places = [];
-
-  static Future fetchPlaces(){
-    final list = AppDB.db.query(AppDB.tbPlaces, Conditions());
-
-    if(list.isNotEmpty) {
-      places.clear();
-
-      for (final row in list) {
-        final itm = PlaceModel.fromMap(row);
-        places.add(itm);
-      }
-    }
-
-    return Future.value();
-  }
-
-  static Future savePickedPlace(String placeId){
-    return AppDB.setReplaceKv(Keys.selectedPlaceId, placeId);
-  }
-
-  static PlaceModel? pickPlace(String? placeId){
-    return places.firstWhereSafe((p) => p.id == placeId);
-  }
-
-  static PlaceModel? pickSavedPlace(){
-    return pickPlace(AppDB.fetchKv(Keys.selectedPlaceId));
-  }
 
   static Map addLanguageIso(Map src, [BuildContext? ctx]) {
     src[Keys.languageIso] = System.getLocalizationsLanguageCode(ctx ?? RouteTools.getTopContext()!);
