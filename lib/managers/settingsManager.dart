@@ -71,7 +71,7 @@ class SettingsManager {
 
 		final res = await AppDB.setReplaceKv(Keys.setting$appSettings, _settingsModel.toMap());
 
-		notify(context: context);
+		notify(context: (context?.mounted?? false)? context : null);
 
 		return res > 0;
 	}

@@ -4,6 +4,7 @@ class ZoneModel {
   late int number;
   String? name;
   bool isOpen = false;
+  bool show = true;
   ZoneStatus status = ZoneStatus.normal;
 
   ZoneModel();
@@ -12,6 +13,7 @@ class ZoneModel {
     number = map['number'];
     name = map['name'];
     isOpen = map['isOpen'];
+    show = map['show'];
     status = ZoneStatus.from(map['status']);
   }
 
@@ -20,6 +22,7 @@ class ZoneModel {
     map['number'] = number;
     map['name'] = name;
     map['isOpen'] = isOpen;
+    map['show'] = show;
     map['status'] = status.getNumber();
 
     return map;

@@ -35,9 +35,12 @@ class PlaceModel {
   int notifyOnDisPower = 0; // 1:active, 0:inActive
   int? batteryCharge;
   bool? isConnectedPower;
+  bool? speakerIsConnected;
+  bool useOfRelays = false;
   int? simCardAntennaStatus;
   int? contactCount;
   int? remoteCount;
+  int? wirelessState;
   String? simCardAmount;
   List<ZoneModel> zones = [];
   List<RelayModel> relays = [];
@@ -77,6 +80,9 @@ class PlaceModel {
     isConnectedPower = map['isConnectedPower'];
     simCardAntennaStatus = map['simCardAntennaStatus'];
     simCardAmount = map['simCardAmount'];
+    speakerIsConnected = map['speakerIsConnected'];
+    useOfRelays = map['useOfRelays'];
+    wirelessState = map['wirelessState'];
     zones = ZoneModel.mapToList(map['zones']);
     relays = RelayModel.mapToList(map['relays']);
     contacts = ContactModel.mapToList(map['contacts']);
@@ -103,6 +109,9 @@ class PlaceModel {
     map['isConnectedPower'] = isConnectedPower;
     map['simCardAntennaStatus'] = simCardAntennaStatus;
     map['simCardAmount'] = simCardAmount;
+    map['speakerIsConnected'] = speakerIsConnected;
+    map['useOfRelays'] = useOfRelays;
+    map['wirelessState'] = wirelessState;
     map['zones'] = zones.map((e) => e.toMap()).toList();
     map['relays'] = relays.map((e) => e.toMap()).toList();
     map['contacts'] = contacts.map((e) => e.toMap()).toList();
