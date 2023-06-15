@@ -7,6 +7,7 @@ import 'package:app/structures/enums/deviceStatus.dart';
 import 'package:app/structures/enums/notifyToContactStatus.dart';
 import 'package:app/structures/enums/zoneStatus.dart';
 import 'package:app/structures/models/contactModel.dart';
+import 'package:app/structures/models/relayModel.dart';
 import 'package:app/structures/models/zoneModel.dart';
 import 'package:app/tools/app/appMessages.dart';
 import 'package:app/tools/currencyTools.dart';
@@ -39,6 +40,7 @@ class PlaceModel {
   int? remoteCount;
   String? simCardAmount;
   List<ZoneModel> zones = [];
+  List<RelayModel> relays = [];
   List<ContactModel> contacts = [];
 
   PlaceModel(): id = Generator.generateKey(15) {
@@ -46,6 +48,11 @@ class PlaceModel {
 
     while(zones.length < 4){
       zones.add(ZoneModel()..number = zIdx);
+      zIdx++;
+    }
+
+    while(relays.length < 4){
+      relays.add(RelayModel()..number = zIdx);
       zIdx++;
     }
   }
@@ -71,6 +78,7 @@ class PlaceModel {
     simCardAntennaStatus = map['simCardAntennaStatus'];
     simCardAmount = map['simCardAmount'];
     zones = ZoneModel.mapToList(map['zones']);
+    relays = RelayModel.mapToList(map['relays']);
     contacts = ContactModel.mapToList(map['contacts']);
   }
 
@@ -96,6 +104,7 @@ class PlaceModel {
     map['simCardAntennaStatus'] = simCardAntennaStatus;
     map['simCardAmount'] = simCardAmount;
     map['zones'] = zones.map((e) => e.toMap()).toList();
+    map['relays'] = relays.map((e) => e.toMap()).toList();
     map['contacts'] = contacts.map((e) => e.toMap()).toList();
 
     return map;

@@ -11,7 +11,7 @@ class ZoneModel {
   ZoneModel.fromMap(Map map) {
     number = map['number'];
     name = map['name'];
-    isOpen = map['isActive'];
+    isOpen = map['isOpen'];
     status = ZoneStatus.from(map['status']);
   }
 
@@ -19,7 +19,7 @@ class ZoneModel {
     final map = <String, dynamic>{};
     map['number'] = number;
     map['name'] = name;
-    map['isActive'] = isOpen;
+    map['isOpen'] = isOpen;
     map['status'] = status.getNumber();
 
     return map;
