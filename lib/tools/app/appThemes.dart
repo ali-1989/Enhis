@@ -80,8 +80,8 @@ class AppThemes {
 
 		{
 			final mainTheme = ColorTheme(
-					AppColors.mainColor, AppColors.secondColor,
-					AppColors.differentColor, Colors.black);
+					AppDecoration.mainColor, AppDecoration.secondColor,
+					AppDecoration.differentColor, Colors.black);
 			//primary: ^1976D2, 1060A0 | dif: (FF006E|d81b60), ^F77F00
 
 			mainTheme.themeName = 'Main';

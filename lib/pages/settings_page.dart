@@ -260,14 +260,14 @@ class _SettingsPageState extends StateBase<SettingsPage> {
                         const SizedBox(width: 14),
 
                         ColoredBox(
-                          color: AppColors.dropDownBackground,
+                          color: AppDecoration.dropDownBackground,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 4.0),
                             child: DropdownButton<SimCard>(
                                 items: simCards.map((e) => DropdownMenuItem<SimCard>(
                                     value: e,
                                     child: ColoredBox(
-                                      color: AppColors.dropDownBackground,
+                                      color: AppDecoration.dropDownBackground,
                                         child: Padding(
                                           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
                                           child: SizedBox(width: 50, child: Text('Sim ${e.slot}')),
@@ -275,7 +275,7 @@ class _SettingsPageState extends StateBase<SettingsPage> {
                                 )
                                 ).toList(),
                                 value: getDefaultSimCard(),
-                                dropdownColor: AppColors.dropDownBackground,
+                                dropdownColor: AppDecoration.dropDownBackground,
                                 underline: const SizedBox(),
                                 padding: EdgeInsets.zero,
                                 isDense: true,

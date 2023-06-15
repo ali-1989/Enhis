@@ -89,14 +89,14 @@ class _AddContactDialogState extends State<AddContactDialog> {
         Align(
           alignment: Alignment.centerRight,
           child: ColoredBox(
-            color: AppColors.dropDownBackground,
+            color: AppDecoration.dropDownBackground,
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 4.0),
               child: DropdownButton<ContactLevel>(
                   items: ContactLevel.values.map((e) => DropdownMenuItem<ContactLevel>(
                       value: e,
                       child: ColoredBox(
-                          color: AppColors.dropDownBackground,
+                          color: AppDecoration.dropDownBackground,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
                             child: SizedBox(width: 40, child: Text('سطح ${e.getChar()}')),
@@ -104,7 +104,7 @@ class _AddContactDialogState extends State<AddContactDialog> {
                   )
                   ).toList(),
                   value: contactLevel,
-                  dropdownColor: AppColors.dropDownBackground,
+                  dropdownColor: AppDecoration.dropDownBackground,
                   underline: const SizedBox(),
                   padding: EdgeInsets.zero,
                   isDense: true,

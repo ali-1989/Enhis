@@ -260,12 +260,17 @@ class _AddPlacePageState extends StateBase<AddPlacePage> {
 
   void onRegisterClick() async {
     FocusHelper.hideKeyboardByUnFocusRoot();
+    await Future.delayed(const Duration(milliseconds: 200));
 
     final name = nameCtr.text.trim();
     final simNumber = numberCtr.text.trim();
     final adminNumber = adminNumberCtr.text.trim();
     final curPassword = currentPasswordCtr.text.trim();
     //final newPassword = newPasswordCtr.text.trim();
+
+    if(!mounted){
+      return;
+    }
 
     if(name.length < 2){
       AppSnack.showError(context, AppMessages.nameIsShort);

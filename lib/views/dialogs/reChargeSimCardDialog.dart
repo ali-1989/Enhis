@@ -1,5 +1,6 @@
 
 import 'package:app/system/extensions.dart';
+import 'package:app/tools/app/appColors.dart';
 import 'package:app/tools/app/appIcons.dart';
 import 'package:app/tools/app/appNavigator.dart';
 import 'package:flutter/material.dart';
@@ -53,12 +54,7 @@ class _RechargeSimCardDialogState extends State<RechargeSimCardDialog> {
         TextField(
           controller: txtCtr,
           keyboardType: TextInputType.number,
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            enabledBorder: OutlineInputBorder(),
-            disabledBorder: OutlineInputBorder(),
-            focusedBorder: OutlineInputBorder(),
-          ),
+          decoration: AppDecoration.inputDecor,
         ),
 
         const SizedBox(height: 15),

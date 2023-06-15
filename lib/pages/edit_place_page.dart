@@ -10,6 +10,7 @@ import 'package:app/tools/app/appMessages.dart';
 import 'package:app/tools/app/appNavigator.dart';
 import 'package:app/tools/app/appSnack.dart';
 import 'package:app/tools/routeTools.dart';
+import 'package:app/views/dialogs/manageZoneDialog.dart';
 import 'package:app/views/states/backBtn.dart';
 import 'package:flutter/material.dart';
 import 'package:iris_notifier/iris_notifier.dart';
@@ -21,6 +22,8 @@ import 'package:iris_tools/modules/stateManagers/assist.dart';
 
 import 'package:app/structures/abstract/stateBase.dart';
 import 'package:app/system/extensions.dart';
+import 'package:iris_tools/widgets/optionsRow/checkRow.dart';
+import 'package:iris_tools/widgets/optionsRow/optionRow.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 
@@ -99,6 +102,10 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
                 buildDeviceNumberSection(),
 
                 buildDevicePasswordSection(),
+
+                buildZoneSection(),
+
+                buildRelaySection(),
 
                 buildContactSection(),
 
@@ -344,14 +351,14 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 ColoredBox(
-                  color: AppColors.dropDownBackground,
+                  color: AppDecoration.dropDownBackground,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4.0),
                     child: DropdownButton<NotifyToContactStatus>(
                         items: NotifyToContactStatus.values.map((e) => DropdownMenuItem<NotifyToContactStatus>(
                             value: e,
                             child: ColoredBox(
-                                color: AppColors.dropDownBackground,
+                                color: AppDecoration.dropDownBackground,
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
                                   child: Text(e.getHumanName()),
@@ -359,7 +366,7 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
                         )
                         ).toList(),
                         value: widget.place.notifyToContactStatus,
-                        dropdownColor: AppColors.dropDownBackground,
+                        dropdownColor: AppDecoration.dropDownBackground,
                         underline: const SizedBox(),
                         padding: EdgeInsets.zero,
                         isDense: true,
@@ -370,6 +377,76 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
                   ),
                 ),
               ],
+            ),
+
+            const SizedBox(height: 5),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildZoneSection() {
+    return Card(
+      color: cColor,
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('مدیریت بخش زون ها').alpha().bold(),
+            const SizedBox(height: 12),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('در این بخش مناطق را مدیریت کنید').bold(),
+
+                TextButton(
+                  onPressed: onEditZoneClick,
+                  child: Text(AppMessages.manage)
+                ),
+                ],
+            ),
+
+            const SizedBox(height: 5),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildRelaySection() {
+    return Card(
+      color: cColor,
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('مدیریت بخش فرمان (رله)').alpha().bold(),
+            const SizedBox(height: 12),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CheckBoxRow(
+                    value: widget.place.useOfRelays,
+                    description: const Text('استفاده از رله ها'),
+                    onChanged: (v){
+                      widget.place.useOfRelays = v;
+                      assistCtr.updateHead();
+                      EventNotifierService.notify(AppEvents.placeDataChanged);
+                    }
+                ),
+
+                TextButton(
+                  onPressed: onEditRelayClick,
+                  child: Text(AppMessages.manage)
+                ),
+                ],
             ),
 
             const SizedBox(height: 5),
@@ -540,7 +617,24 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
     }
   }
 
-  void onChangeNotifyState(NotifyToContactStatus state) {
-    //widget.place.notifyToContactStatus
+  void onChangeNotifyState(NotifyToContactStatus state) async {
+    final sms = await SmsManager.sendSms('51*${state.getNumber()}', widget.place, context);
+
+    if(sms){
+      widget.place.notifyToContactStatus = state;
+      PlaceManager.updatePlaceToDb(widget.place);
+      assistCtr.updateHead();
+    }
+  }
+
+  void onEditZoneClick() {
+    AppDialogIris.instance.showIrisDialog(
+        context,
+      descView: ManageZoneDialog(place: widget.place),
+      decoration: AppDialogIris.instance.dialogDecoration.copy()..widthFactor = 0.9,
+    );
+  }
+
+  void onEditRelayClick() {
   }
 }

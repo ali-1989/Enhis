@@ -43,7 +43,7 @@ class HomePage extends StatefulWidget {
 ///==================================================================================
 class _HomePageState extends StateBase<HomePage> {
   PlaceModel? currentPlace;
-  Color cColor = AppColors.secondColor;
+  Color cColor = AppDecoration.secondColor;
 
   @override
   void initState(){
@@ -425,7 +425,7 @@ class _HomePageState extends StateBase<HomePage> {
                   children: [
                     const Text('آنتن دهی').bold(),
                     const SizedBox(height: 4),
-                    Text(currentPlace!.getSimCardAntenna()).color(currentPlace!.getSimCardAntennaColor()).bold(),
+                    Text(currentPlace!.getSimCardAntenna()).bold().color(currentPlace!.getSimCardAntennaColor()),
                   ],
                 )
               ],
@@ -656,8 +656,6 @@ class _HomePageState extends StateBase<HomePage> {
 
   void listenPlacesDataChanged({data}){
     if(PlaceManager.places.isNotEmpty){
-      SmsManager.listenToDeviceMessage();
-
       if(currentPlace == null) {
         currentPlace = PlaceManager.places.first;
         PlaceManager.savePickedPlace(currentPlace!.id);
