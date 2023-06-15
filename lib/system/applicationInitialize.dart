@@ -11,7 +11,7 @@ import 'package:iris_tools/net/trustSsl.dart';
 
 import 'package:app/constants.dart';
 import 'package:app/system/applicationLifeCycle.dart';
-import 'package:app/system/publicAccess.dart';
+import 'package:app/system/tools.dart';
 import 'package:app/tools/app/appCache.dart';
 import 'package:app/tools/app/appDb.dart';
 import 'package:app/tools/app/appDirectories.dart';
@@ -45,10 +45,10 @@ class ApplicationInitial {
 
       if (!kIsWeb) {
         await AppDirectories.prepareStoragePaths(Constants.appName);
-        PublicAccess.reporter = Reporter(AppDirectories.getAppFolderInExternalStorage(), 'report');
+        Tools.reporter = Reporter(AppDirectories.getAppFolderInExternalStorage(), 'report');
       }
 
-      PublicAccess.logger = Logger('${AppDirectories.getExternalTempDir()}/logs');
+      Tools.logger = Logger('${AppDirectories.getExternalTempDir()}/logs');
 
       return true;
     }
@@ -82,7 +82,7 @@ class ApplicationInitial {
       _isInitialOk = true;
     }
     catch (e){
-      PublicAccess.logger.logToAll('error in inSplashInit >> $e');
+      Tools.logger.logToAll('error in inSplashInit >> $e');
     }
 
     return;
@@ -149,7 +149,7 @@ class ApplicationInitial {
     }
     catch (e){
       _callLazyInit = false;
-      PublicAccess.logger.logToAll('error in lazyInitCommands >> $e');
+      Tools.logger.logToAll('error in lazyInitCommands >> $e');
     }
   }
 }

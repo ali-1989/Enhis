@@ -1,6 +1,9 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:app/constants.dart';
+import 'package:app/services/session_service.dart';
+import 'package:app/structures/models/userModel.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
@@ -118,4 +121,27 @@ class DeviceInfoTools {
 
     return js;
   }
+
+  static Map addAppInfo(Map src, {UserModel? curUser}) {
+    final token = curUser?.token ?? SessionService.getLastLoginUser()?.token;
+
+    src.addAll(getAppInfo());
+
+    if (token?.token != null) {
+      src[Keys.token] = token?.token;
+    }
+
+    return src;
+  }
+
+  static Map<String, dynamic> getAppInfo() {
+    final res = <String, dynamic>{};
+    res[Keys.deviceId] = DeviceInfoTools.deviceId;
+    res[Keys.appName] = Constants.appName;
+    res['app_version_code'] = Constants.appVersionCode;
+    res['app_version_name'] = Constants.appVersionName;
+
+    return res;
+  }
+
 }

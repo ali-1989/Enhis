@@ -12,7 +12,7 @@ import 'package:iris_tools/api/converter.dart';
 import 'package:iris_tools/api/helpers/jsonHelper.dart';
 import 'package:iris_tools/api/helpers/listHelper.dart';
 
-import 'package:app/system/publicAccess.dart';
+import 'package:app/system/tools.dart';
 
 class AppHttpDio {
 	AppHttpDio._();
@@ -33,7 +33,7 @@ class AppHttpDio {
 				txt += 'Body: ${item.body} \n------------------------- End';
 			}
 
-			PublicAccess.logger.logToAll(txt);
+			Tools.logger.logToAll(txt);
 		}
 
 		item.prepareMultiParts();
@@ -84,7 +84,7 @@ class AppHttpDio {
 									 txt += 'statusCode:  ${res.statusCode}\n';
 									 txt += 'response.data: ${res.data}\n----------------------- End Debug';
 
-									 PublicAccess.logger.logToAll(txt);
+									 Tools.logger.logToAll(txt);
 								 }
 
 								itemRes._response = res;
@@ -104,7 +104,7 @@ class AppHttpDio {
 									txt += 'response.data: ${err.response?.data}\n';
 									txt += 'error: ${err.error} \n--------------------------- End Debug';
 
-									PublicAccess.logger.logToAll(txt);
+									Tools.logger.logToAll(txt);
 								}
 
 								final ro = RequestOptions(path: uri);
@@ -147,7 +147,7 @@ class AppHttpDio {
 
 	static HttpRequester download(HttpItem item, String savePath, {BaseOptions? options}){
 		if(item.debugMode && !kIsWeb) {
-			PublicAccess.logger.logToAll('==== Stack Trace : ${StackTrace.current.toString()}');
+			Tools.logger.logToAll('==== Stack Trace : ${StackTrace.current.toString()}');
 		}
 
 		final itemRes = HttpRequester();

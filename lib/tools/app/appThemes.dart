@@ -7,7 +7,7 @@ import 'package:iris_tools/api/helpers/colorHelper.dart';
 import 'package:iris_tools/api/system.dart';
 
 import 'package:app/structures/models/colorTheme.dart';
-import '/managers/fontManager.dart';
+import '/managers/font_manager.dart';
 
 /// hlp:
 /// https://htmlcolorcodes.com/

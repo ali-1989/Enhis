@@ -8,7 +8,7 @@ import 'package:iris_tools/api/system.dart';
 import 'package:iris_tools/widgets/customCard.dart';
 
 import 'package:app/constants.dart';
-import 'package:app/managers/settingsManager.dart';
+import 'package:app/managers/settings_manager.dart';
 import 'package:app/structures/middleWares/requester.dart';
 import 'package:app/structures/models/versionModel.dart';
 import 'package:app/system/keys.dart';
@@ -27,20 +27,20 @@ class VersionManager {
   static VersionModel? newVersionModel;
 
   static Future<void> onFirstInstall() async {
-    SettingsManager.settingsModel.currentVersion = Constants.appVersionCode;
+    SettingsManager.localSettings.currentVersion = Constants.appVersionCode;
 
     await AppDB.firstLaunch();
-    AppThemes.prepareFonts(SettingsManager.settingsModel.appLocale.languageCode);
+    AppThemes.prepareFonts(SettingsManager.localSettings.appLocale.languageCode);
     SettingsManager.saveSettings();
   }
 
   static Future<void> onReInstall() async {
-    SettingsManager.settingsModel.currentVersion = Constants.appVersionCode;
+    SettingsManager.localSettings.currentVersion = Constants.appVersionCode;
     SettingsManager.saveSettings();
   }
 
   static Future<void> checkVersionOnLaunch() async {
-    final oldVersion = SettingsManager.settingsModel.currentVersion;
+    final oldVersion = SettingsManager.localSettings.currentVersion;
 
     if (oldVersion == null) {
       onFirstInstall();
@@ -92,7 +92,10 @@ class VersionManager {
         AppDB.setReplaceKv('promptVersion_${vm.newVersionCode}', true);
 
         await Future.delayed(const Duration(seconds: 4));
-        showUpdateDialog(context, vm);
+
+        if(context.mounted) {
+          showUpdateDialog(context, vm);
+        }
       }
     }
   }

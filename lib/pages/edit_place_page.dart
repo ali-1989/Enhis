@@ -1,5 +1,5 @@
-import 'package:app/managers/placeManager.dart';
-import 'package:app/managers/smsManager.dart';
+import 'package:app/managers/place_manager.dart';
+import 'package:app/managers/sms_manager.dart';
 import 'package:app/pages/contact_manager_page.dart';
 import 'package:app/structures/enums/appEvents.dart';
 import 'package:app/structures/enums/notifyToContactStatus.dart';
@@ -364,7 +364,7 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
                         padding: EdgeInsets.zero,
                         isDense: true,
                         onChanged: (sim){
-                          SettingsManager.settingsModel.defaultSimSlot = sim?.slot?? 1;
+                          SettingsManager.localSettings.defaultSimSlot = sim?.slot?? 1;
                           SettingsManager.saveSettings(context: context);
                           assistCtr.updateHead();
                         }

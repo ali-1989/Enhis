@@ -7,7 +7,7 @@ import 'package:app/structures/enums/appEvents.dart';
 import 'package:app/structures/models/userModel.dart';
 import 'package:app/tools/app/appDb.dart';
 import 'package:app/tools/app/appLocale.dart';
-import '/managers/settingsManager.dart';
+import '/managers/settings_manager.dart';
 import '/system/extensions.dart';
 import '/system/keys.dart';
 
@@ -39,7 +39,7 @@ class SessionService {
 		}
 
 		/// last user
-		final lastSaved = SettingsManager.settingsModel.lastUserId;
+		final lastSaved = SettingsManager.localSettings.lastUserId;
 
 		if (!Checker.isNullOrEmpty(lastSaved)) {
 			_lastLoginUser = currentLoginList.firstWhereSafe((element) => element.userId == lastSaved);
@@ -74,7 +74,7 @@ class SessionService {
 
 	static void _setLastLoginUser(UserModel? newUser){
 		_lastLoginUser = newUser;
-		SettingsManager.settingsModel.lastUserId = newUser?.userId;
+		SettingsManager.localSettings.lastUserId = newUser?.userId;
 
 		SettingsManager.saveSettings();
 	}

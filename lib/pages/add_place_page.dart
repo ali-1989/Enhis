@@ -1,4 +1,4 @@
-import 'package:app/managers/placeManager.dart';
+import 'package:app/managers/place_manager.dart';
 import 'package:app/structures/enums/appEvents.dart';
 import 'package:app/structures/enums/contactLevel.dart';
 import 'package:app/structures/models/contactModel.dart';

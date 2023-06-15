@@ -10,10 +10,10 @@ import 'package:iris_tools/api/system.dart';
 import 'package:iris_tools/widgets/maxWidth.dart';
 
 import 'package:app/constants.dart';
-import 'package:app/managers/settingsManager.dart';
+import 'package:app/managers/settings_manager.dart';
 import 'package:app/structures/models/settingsModel.dart';
 import 'package:app/system/applicationInitialize.dart';
-import 'package:app/system/publicAccess.dart';
+import 'package:app/system/tools.dart';
 import 'package:app/tools/app/appBroadcast.dart';
 import 'package:app/tools/app/appLocale.dart';
 import 'package:app/tools/app/appSizes.dart';
@@ -55,7 +55,7 @@ Future<void> main() async {
                       child: OrientationBuilder( /// detect orientation change and rotate screen
                           builder: (context, orientation) {
                             return Toaster(
-                              child: MyApp(),
+                              child: const MyApp(),
                             );
                           }
                       ),
@@ -95,7 +95,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         color: Colors.transparent,
         builder: (ctx, home){
-            return SplashPage();
+            return const SplashPage();
         },
       );
     }
@@ -117,7 +117,7 @@ class MyApp extends StatelessWidget {
           PointerDeviceKind.touch,
         },
       ),
-      locale: ApplicationInitial.isInit()? SettingsManager.settingsModel.appLocale : SettingsModel.defaultAppLocale,
+      locale: ApplicationInitial.isInit()? SettingsManager.localSettings.appLocale : SettingsModel.defaultAppLocale,
       supportedLocales: AppLocale.getAssetSupportedLocales(),
       localizationsDelegates: AppLocale.getLocaleDelegates(), // this do correct Rtl/Ltr
       /*localeResolutionCallback: (deviceLocale, supportedLocales) {
@@ -136,7 +136,7 @@ class MyApp extends StatelessWidget {
 
         return MediaQuery(
             data: MediaQuery.of(localContext).copyWith(textScaleFactor: 1),
-            child: SplashPage()
+            child: const SplashPage()
         );
       },
     );
@@ -181,7 +181,7 @@ void onErrorCatch(FlutterErrorDetails errorDetails) {
 
   txt += '\n**************************************** [END CATCH]';
 
-  PublicAccess.logger.logToAll(txt);
+  Tools.logger.logToAll(txt);
 }
 ///==============================================================================================
 bool mainIsolateError(error, sTrace) {
@@ -192,7 +192,7 @@ bool mainIsolateError(error, sTrace) {
   }
 
   txt += '\n**************************************** [END MAIN-ISOLATE]';
-  PublicAccess.logger.logToAll(txt);
+  Tools.logger.logToAll(txt);
 
   if(kDebugMode) {
     return false;
@@ -209,7 +209,7 @@ void zonedGuardedCatch(error, sTrace) {
   }
 
   txt += '\n**************************************** [END ZONED-GUARDED]';
-  PublicAccess.logger.logToAll(txt);
+  Tools.logger.logToAll(txt);
 
   if(kDebugMode) {
     throw error;

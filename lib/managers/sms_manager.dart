@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:app/managers/placeManager.dart';
-import 'package:app/managers/settingsManager.dart';
+import 'package:app/managers/place_manager.dart';
+import 'package:app/managers/settings_manager.dart';
 import 'package:app/services/sms_service.dart';
 import 'package:app/structures/enums/appEvents.dart';
 import 'package:app/structures/models/placeModel.dart';
@@ -27,7 +27,7 @@ class SmsManager {
 
       for(final p in PlaceManager.places){
         var n2 = p.simCardNumber.split('').reversed.take(10).join();
-print('>>>  $n1    ,n2:$n2');
+
         if(n1 == n2){
           p.parseUpdate(msg.body?? '');
           EventNotifierService.notify(AppEvents.placeDataChanged);
@@ -80,7 +80,7 @@ print('>>>  $n1    ,n2:$n2');
   }
 
   static Future<bool> sendSms(String sc, PlaceModel place, BuildContext context, {bool showSmsDialog = true}) async {
-    if(showSmsDialog && SettingsManager.settingsModel.askSndSmsEveryTime){
+    if(showSmsDialog && SettingsManager.localSettings.askSndSmsEveryTime){
       final can = await AppDialogIris.instance.showYesNoDialog(
           context,
         desc: 'آیا پیامک ارسال شود؟',

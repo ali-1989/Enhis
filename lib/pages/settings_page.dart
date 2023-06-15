@@ -1,4 +1,4 @@
-import 'package:app/managers/settingsManager.dart';
+import 'package:app/managers/settings_manager.dart';
 import 'package:app/pages/add_place_page.dart';
 import 'package:app/services/lock_service.dart';
 import 'package:app/services/sms_service.dart';
@@ -148,17 +148,17 @@ class _SettingsPageState extends StateBase<SettingsPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 CheckBoxRow(
-                    value: SettingsManager.settingsModel.unLockByNumber,
+                    value: SettingsManager.localSettings.unLockByNumber,
                     description: const Text('استفاده از قفل عددی'),
                     onChanged: (v){
                       if(v == true){
-                        if(SettingsManager.settingsModel.appNumberLock == null){
+                        if(SettingsManager.localSettings.appNumberLock == null){
                           gotoNumberLockScreen();
                         }
                       }
                       else {
-                        SettingsManager.settingsModel.unLockByNumber = false;
-                        SettingsManager.settingsModel.appNumberLock = null;
+                        SettingsManager.localSettings.unLockByNumber = false;
+                        SettingsManager.localSettings.appNumberLock = null;
                         SettingsManager.saveSettings(context: context);
                         assistCtr.updateHead();
                       }
@@ -166,7 +166,7 @@ class _SettingsPageState extends StateBase<SettingsPage> {
                 ),
 
                 Visibility(
-                  visible: SettingsManager.settingsModel.unLockByNumber,
+                  visible: SettingsManager.localSettings.unLockByNumber,
                   child: TextButton(
                     style: TextButton.styleFrom(
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -187,14 +187,14 @@ class _SettingsPageState extends StateBase<SettingsPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     CheckBoxRow(
-                        value: SettingsManager.settingsModel.unLockByBiometric,
+                        value: SettingsManager.localSettings.unLockByBiometric,
                         description: const Text('استفاده از بیومتریک (اثر انگشت و ...)'),
                         onChanged: (v){
                           if(v == true){
                             checkBiometric();
                           }
                           else {
-                            SettingsManager.settingsModel.unLockByBiometric = false;
+                            SettingsManager.localSettings.unLockByBiometric = false;
                             SettingsManager.saveSettings(context: context);
                             assistCtr.updateHead();
                           }
@@ -236,10 +236,10 @@ class _SettingsPageState extends StateBase<SettingsPage> {
             ),
 
             CheckBoxRow(
-                value: SettingsManager.settingsModel.askSndSmsEveryTime,
+                value: SettingsManager.localSettings.askSndSmsEveryTime,
                 description: const Text('قبل از ارسال پیامک، تایید گرفته شود'),
                 onChanged: (v){
-                  SettingsManager.settingsModel.askSndSmsEveryTime = v;
+                  SettingsManager.localSettings.askSndSmsEveryTime = v;
                   SettingsManager.saveSettings(context: context);
                   assistCtr.updateHead();
                 }
@@ -280,7 +280,7 @@ class _SettingsPageState extends StateBase<SettingsPage> {
                                 padding: EdgeInsets.zero,
                                 isDense: true,
                                 onChanged: (sim){
-                                  SettingsManager.settingsModel.defaultSimSlot = sim?.slot?? 1;
+                                  SettingsManager.localSettings.defaultSimSlot = sim?.slot?? 1;
                                   SettingsManager.saveSettings(context: context);
                                   assistCtr.updateHead();
                                 }
@@ -300,12 +300,12 @@ class _SettingsPageState extends StateBase<SettingsPage> {
   }
 
   SimCard? getDefaultSimCard() {
-    if(SettingsManager.settingsModel.defaultSimSlot == null){
+    if(SettingsManager.localSettings.defaultSimSlot == null){
       return simCards.first;
     }
 
     for(final sim in simCards){
-      if(sim.slot == SettingsManager.settingsModel.defaultSimSlot){
+      if(sim.slot == SettingsManager.localSettings.defaultSimSlot){
         return sim;
       }
     }
@@ -316,7 +316,7 @@ class _SettingsPageState extends StateBase<SettingsPage> {
   void gotoNumberLockScreen() async {
     final page = NumberLockScreen(
       onNewPassword: (p){
-        SettingsManager.settingsModel.appNumberLock = p;
+        SettingsManager.localSettings.appNumberLock = p;
         SettingsManager.saveSettings(context: context);
 
       },
@@ -326,8 +326,8 @@ class _SettingsPageState extends StateBase<SettingsPage> {
 
     await RouteTools.pushPage(context, page);
 
-    if(SettingsManager.settingsModel.appNumberLock != null && mounted){
-      SettingsManager.settingsModel.unLockByNumber = true;
+    if(SettingsManager.localSettings.appNumberLock != null && mounted){
+      SettingsManager.localSettings.unLockByNumber = true;
       SettingsManager.saveSettings(context: context);
       assistCtr.updateHead();
     }
@@ -352,7 +352,7 @@ class _SettingsPageState extends StateBase<SettingsPage> {
       return;
     }
 
-    SettingsManager.settingsModel.unLockByBiometric = true;
+    SettingsManager.localSettings.unLockByBiometric = true;
     SettingsManager.saveSettings(context: context);
     assistCtr.updateHead();
   }

@@ -6,10 +6,10 @@ import 'package:iris_tools/api/helpers/jsonHelper.dart';
 import 'package:iris_tools/api/logger/logger.dart';
 import 'package:iris_tools/api/tools.dart';
 
-import 'package:app/managers/settingsManager.dart';
+import 'package:app/managers/settings_manager.dart';
 import 'package:app/system/httpProcess.dart';
 import 'package:app/system/keys.dart';
-import 'package:app/system/publicAccess.dart';
+import 'package:app/system/tools.dart';
 import 'package:app/tools/app/appHttpDio.dart';
 import 'package:app/tools/app/appSheet.dart';
 
@@ -51,14 +51,14 @@ class Requester {
     _bodyJs = js;
 
     if(js != null) {
-      PublicAccess.addAppInfo(_bodyJs!);
+      Tools.addAppInfo(_bodyJs!);
     }
   }
 
   void _prepareHttp(){
     _http = HttpItem();
     _http.setResponseIsPlain();
-    _http.fullUrl = SettingsManager.settingsModel.httpAddress;
+    _http.fullUrl = SettingsManager.localSettings.httpAddress;
   }
 
   void prepareUrl({String? fullUrl, String? pathUrl}){
@@ -69,7 +69,7 @@ class Requester {
 
     pathUrl ??= '/graph-v1';
 
-    _http.fullUrl = SettingsManager.settingsModel.httpAddress + pathUrl;
+    _http.fullUrl = SettingsManager.localSettings.httpAddress + pathUrl;
   }
 
   void request([BuildContext? context, bool promptErrors = true]){

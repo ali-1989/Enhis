@@ -1,4 +1,4 @@
-import 'package:app/managers/settingsManager.dart';
+import 'package:app/managers/settings_manager.dart';
 import 'package:app/structures/models/countryModel.dart';
 import 'package:app/system/extensions.dart';
 import 'package:app/tools/countryTools.dart';
@@ -11,7 +11,7 @@ class CurrencyTools {
 
   static String formatCurrency(num cur, {String name = '', String? symbol}){
     final format = NumberFormat.currency(
-      locale: SettingsManager.settingsModel.appLocale.languageCode,
+      locale: SettingsManager.localSettings.appLocale.languageCode,
       name: name,
       symbol: symbol,
       decimalDigits: 0,
