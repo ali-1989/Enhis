@@ -2,9 +2,9 @@ import 'package:app/managers/settings_manager.dart';
 import 'package:app/pages/add_place_page.dart';
 import 'package:app/services/lock_service.dart';
 import 'package:app/services/sms_service.dart';
+import 'package:app/tools/app/appColors.dart';
 import 'package:app/tools/app/appIcons.dart';
 import 'package:app/tools/app/appSheet.dart';
-import 'package:app/tools/app/appThemes.dart';
 import 'package:app/tools/routeTools.dart';
 import 'package:app/views/components/number_lock_screen.dart';
 import 'package:app/views/states/backBtn.dart';
@@ -260,14 +260,14 @@ class _SettingsPageState extends StateBase<SettingsPage> {
                         const SizedBox(width: 14),
 
                         ColoredBox(
-                          color: AppThemes.instance.currentTheme.accentColor,
+                          color: AppColors.dropDownBackground,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 4.0),
                             child: DropdownButton<SimCard>(
                                 items: simCards.map((e) => DropdownMenuItem<SimCard>(
                                     value: e,
                                     child: ColoredBox(
-                                      color: AppThemes.instance.currentTheme.accentColor,
+                                      color: AppColors.dropDownBackground,
                                         child: Padding(
                                           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
                                           child: SizedBox(width: 50, child: Text('Sim ${e.slot}')),
@@ -275,7 +275,7 @@ class _SettingsPageState extends StateBase<SettingsPage> {
                                 )
                                 ).toList(),
                                 value: getDefaultSimCard(),
-                                dropdownColor: AppThemes.instance.currentTheme.accentColor,
+                                dropdownColor: AppColors.dropDownBackground,
                                 underline: const SizedBox(),
                                 padding: EdgeInsets.zero,
                                 isDense: true,
@@ -353,7 +353,7 @@ class _SettingsPageState extends StateBase<SettingsPage> {
     }
 
     SettingsManager.localSettings.unLockByBiometric = true;
-    SettingsManager.saveSettings(context: context);
+    SettingsManager.saveSettings();
     assistCtr.updateHead();
   }
 

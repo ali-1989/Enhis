@@ -1,3 +1,4 @@
+import 'package:app/tools/deviceInfoTools.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
@@ -9,7 +10,6 @@ import 'package:iris_tools/api/tools.dart';
 import 'package:app/managers/settings_manager.dart';
 import 'package:app/system/httpProcess.dart';
 import 'package:app/system/keys.dart';
-import 'package:app/system/tools.dart';
 import 'package:app/tools/app/appHttpDio.dart';
 import 'package:app/tools/app/appSheet.dart';
 
@@ -51,7 +51,7 @@ class Requester {
     _bodyJs = js;
 
     if(js != null) {
-      Tools.addAppInfo(_bodyJs!);
+      DeviceInfoTools.addAppInfo(_bodyJs!);
     }
   }
 
@@ -190,7 +190,7 @@ class Requester {
       else {
         await httpRequestEvents.onFailState?.call(_httpRequester, val);
 
-        if(context != null) {
+        if(context != null && context.mounted) {
           if (promptErrors && !HttpProcess.processCommonRequestError(context, js)) {
             await AppSheet.showSheet$ServerNotRespondProperly(context);
           }

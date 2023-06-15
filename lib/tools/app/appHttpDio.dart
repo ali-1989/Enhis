@@ -2,6 +2,7 @@ import 'dart:convert' as system_convert;
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:app/tools/log_tools.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:dio/dio.dart';
@@ -11,8 +12,6 @@ import 'package:http_parser/http_parser.dart';
 import 'package:iris_tools/api/converter.dart';
 import 'package:iris_tools/api/helpers/jsonHelper.dart';
 import 'package:iris_tools/api/helpers/listHelper.dart';
-
-import 'package:app/system/tools.dart';
 
 class AppHttpDio {
 	AppHttpDio._();
@@ -33,7 +32,7 @@ class AppHttpDio {
 				txt += 'Body: ${item.body} \n------------------------- End';
 			}
 
-			Tools.logger.logToAll(txt);
+			LogTools.logger.logToAll(txt);
 		}
 
 		item.prepareMultiParts();
@@ -84,7 +83,7 @@ class AppHttpDio {
 									 txt += 'statusCode:  ${res.statusCode}\n';
 									 txt += 'response.data: ${res.data}\n----------------------- End Debug';
 
-									 Tools.logger.logToAll(txt);
+									 LogTools.logger.logToAll(txt);
 								 }
 
 								itemRes._response = res;
@@ -104,7 +103,7 @@ class AppHttpDio {
 									txt += 'response.data: ${err.response?.data}\n';
 									txt += 'error: ${err.error} \n--------------------------- End Debug';
 
-									Tools.logger.logToAll(txt);
+									LogTools.logger.logToAll(txt);
 								}
 
 								final ro = RequestOptions(path: uri);
@@ -147,7 +146,7 @@ class AppHttpDio {
 
 	static HttpRequester download(HttpItem item, String savePath, {BaseOptions? options}){
 		if(item.debugMode && !kIsWeb) {
-			Tools.logger.logToAll('==== Stack Trace : ${StackTrace.current.toString()}');
+			LogTools.logger.logToAll('==== Stack Trace : ${StackTrace.current.toString()}');
 		}
 
 		final itemRes = HttpRequester();
@@ -310,7 +309,7 @@ class AppHttpDio {
 		  return null;
 		}
 
-		return uri.replaceAll(RegExp('/{2,}'), '/').replaceFirst(':\/', ':\/\/');
+		return uri.replaceAll(RegExp('/{2,}'), '/').replaceFirst(':/', '://');
 		//return uri.replaceAll(RegExp('(?<!:)(/{2,})'), '/');
 	}
 }

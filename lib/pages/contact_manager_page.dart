@@ -4,10 +4,10 @@ import 'package:app/structures/enums/appEvents.dart';
 import 'package:app/structures/enums/contactLevel.dart';
 import 'package:app/structures/models/contactModel.dart';
 import 'package:app/structures/models/placeModel.dart';
+import 'package:app/tools/app/appColors.dart';
 import 'package:app/tools/app/appDialogIris.dart';
 import 'package:app/tools/app/appIcons.dart';
 import 'package:app/tools/app/appSheet.dart';
-import 'package:app/tools/app/appThemes.dart';
 import 'package:app/views/dialogs/addContactDialog.dart';
 import 'package:app/views/states/backBtn.dart';
 import 'package:flutter/material.dart';
@@ -149,14 +149,14 @@ class _ContactManagerPageState extends StateBase<ContactManagerPage> {
             Visibility(
               visible: itm.phoneNumber != widget.place.adminPhoneNumber,
               child: ColoredBox(
-                color: AppThemes.instance.currentTheme.accentColor,
+                color: AppColors.dropDownBackground,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4.0),
                   child: DropdownButton<ContactLevel>(
                       items: ContactLevel.values.map((e) => DropdownMenuItem<ContactLevel>(
                           value: e,
                           child: ColoredBox(
-                              color: AppThemes.instance.currentTheme.accentColor,
+                              color: AppColors.dropDownBackground,
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
                                 child: SizedBox(width: 40, child: Text('سطح ${e.getChar()}')),
@@ -164,7 +164,7 @@ class _ContactManagerPageState extends StateBase<ContactManagerPage> {
                       )
                       ).toList(),
                       value: itm.level,
-                      dropdownColor: AppThemes.instance.currentTheme.accentColor,
+                      dropdownColor: AppColors.dropDownBackground,
                       underline: const SizedBox(),
                       padding: EdgeInsets.zero,
                       isDense: true,

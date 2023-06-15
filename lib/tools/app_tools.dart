@@ -5,8 +5,8 @@ import 'package:iris_tools/dateSection/dateHelper.dart';
 
 import 'package:app/structures/mixins/dateFieldMixin.dart';
 
-class Tools {
-  Tools._();
+class AppTools {
+  AppTools._();
 
   static void sortList(List<DateFieldMixin> list, bool isAsc){
     if(list.isEmpty){

@@ -1,7 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:iris_notifier/iris_notifier.dart';
 
-import 'package:app/managers/systemParameterManager.dart';
 import 'package:app/structures/enums/appEvents.dart';
 import 'package:app/tools/app/appBroadcast.dart';
 import 'package:app/tools/app/appCache.dart';
@@ -17,7 +16,7 @@ class NetListenerTools {
       AppBroadcast.isNetConnected = true;
       EventNotifierService.notify(AppEvents.networkConnected);
       //await ServerTimeTools.requestUtcTimeOfServer();
-      //SystemParameterManager.requestParameters();
+      //SettingsManager.requestParameters();
     }
     else {
       AppBroadcast.isNetConnected = false;

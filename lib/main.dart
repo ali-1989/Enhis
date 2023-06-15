@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:app/tools/log_tools.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,6 @@ import 'package:app/constants.dart';
 import 'package:app/managers/settings_manager.dart';
 import 'package:app/structures/models/settingsModel.dart';
 import 'package:app/system/applicationInitialize.dart';
-import 'package:app/system/tools.dart';
 import 'package:app/tools/app/appBroadcast.dart';
 import 'package:app/tools/app/appLocale.dart';
 import 'package:app/tools/app/appSizes.dart';
@@ -181,7 +181,7 @@ void onErrorCatch(FlutterErrorDetails errorDetails) {
 
   txt += '\n**************************************** [END CATCH]';
 
-  Tools.logger.logToAll(txt);
+  LogTools.logger.logToAll(txt);
 }
 ///==============================================================================================
 bool mainIsolateError(error, sTrace) {
@@ -192,7 +192,7 @@ bool mainIsolateError(error, sTrace) {
   }
 
   txt += '\n**************************************** [END MAIN-ISOLATE]';
-  Tools.logger.logToAll(txt);
+  LogTools.logger.logToAll(txt);
 
   if(kDebugMode) {
     return false;
@@ -209,7 +209,7 @@ void zonedGuardedCatch(error, sTrace) {
   }
 
   txt += '\n**************************************** [END ZONED-GUARDED]';
-  Tools.logger.logToAll(txt);
+  LogTools.logger.logToAll(txt);
 
   if(kDebugMode) {
     throw error;

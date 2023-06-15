@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:app/tools/log_tools.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -11,7 +12,6 @@ import 'package:iris_tools/net/trustSsl.dart';
 
 import 'package:app/constants.dart';
 import 'package:app/system/applicationLifeCycle.dart';
-import 'package:app/system/tools.dart';
 import 'package:app/tools/app/appCache.dart';
 import 'package:app/tools/app/appDb.dart';
 import 'package:app/tools/app/appDirectories.dart';
@@ -45,10 +45,10 @@ class ApplicationInitial {
 
       if (!kIsWeb) {
         await AppDirectories.prepareStoragePaths(Constants.appName);
-        Tools.reporter = Reporter(AppDirectories.getAppFolderInExternalStorage(), 'report');
+        LogTools.reporter = Reporter(AppDirectories.getAppFolderInExternalStorage(), 'report');
       }
 
-      Tools.logger = Logger('${AppDirectories.getExternalTempDir()}/logs');
+      LogTools.logger = Logger('${AppDirectories.getExternalTempDir()}/logs');
 
       return true;
     }
@@ -82,7 +82,7 @@ class ApplicationInitial {
       _isInitialOk = true;
     }
     catch (e){
-      Tools.logger.logToAll('error in inSplashInit >> $e');
+      LogTools.logger.logToAll('error in inSplashInit >> $e');
     }
 
     return;
@@ -149,7 +149,7 @@ class ApplicationInitial {
     }
     catch (e){
       _callLazyInit = false;
-      Tools.logger.logToAll('error in lazyInitCommands >> $e');
+      LogTools.logger.logToAll('error in lazyInitCommands >> $e');
     }
   }
 }

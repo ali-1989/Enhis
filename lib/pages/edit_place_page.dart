@@ -4,11 +4,11 @@ import 'package:app/pages/contact_manager_page.dart';
 import 'package:app/structures/enums/appEvents.dart';
 import 'package:app/structures/enums/notifyToContactStatus.dart';
 import 'package:app/structures/models/placeModel.dart';
+import 'package:app/tools/app/appColors.dart';
 import 'package:app/tools/app/appDialogIris.dart';
 import 'package:app/tools/app/appMessages.dart';
 import 'package:app/tools/app/appNavigator.dart';
 import 'package:app/tools/app/appSnack.dart';
-import 'package:app/tools/app/appThemes.dart';
 import 'package:app/tools/routeTools.dart';
 import 'package:app/views/states/backBtn.dart';
 import 'package:flutter/material.dart';
@@ -344,29 +344,27 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 ColoredBox(
-                  color: AppThemes.instance.currentTheme.accentColor,
+                  color: AppColors.dropDownBackground,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4.0),
                     child: DropdownButton<NotifyToContactStatus>(
                         items: NotifyToContactStatus.values.map((e) => DropdownMenuItem<NotifyToContactStatus>(
                             value: e,
                             child: ColoredBox(
-                                color: AppThemes.instance.currentTheme.accentColor,
+                                color: AppColors.dropDownBackground,
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
-                                  child: SizedBox(width: 50, child: Text('Sim ${e.slot}')),
+                                  child: Text(e.getHumanName()),
                                 ))
                         )
                         ).toList(),
-                        value: getDefaultSimCard(),
-                        dropdownColor: AppThemes.instance.currentTheme.accentColor,
+                        value: widget.place.notifyToContactStatus,
+                        dropdownColor: AppColors.dropDownBackground,
                         underline: const SizedBox(),
                         padding: EdgeInsets.zero,
                         isDense: true,
-                        onChanged: (sim){
-                          SettingsManager.localSettings.defaultSimSlot = sim?.slot?? 1;
-                          SettingsManager.saveSettings(context: context);
-                          assistCtr.updateHead();
+                        onChanged: (state){
+                          onChangeNotifyState(state!);
                         }
                     ),
                   ),
@@ -540,5 +538,9 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
       PlaceManager.updatePlaceToDb(widget.place);
       assistCtr.updateHead();
     }
+  }
+
+  void onChangeNotifyState(NotifyToContactStatus state) {
+    //widget.place.notifyToContactStatus
   }
 }

@@ -2,16 +2,14 @@
 import 'package:app/structures/enums/contactLevel.dart';
 import 'package:app/structures/models/contactModel.dart';
 import 'package:app/system/extensions.dart';
+import 'package:app/tools/app/appColors.dart';
 import 'package:app/tools/app/appIcons.dart';
 import 'package:app/tools/app/appNavigator.dart';
 import 'package:app/tools/app/appSnack.dart';
-import 'package:app/tools/app/appThemes.dart';
 import 'package:flutter/material.dart';
 import 'package:iris_tools/api/checker.dart';
 import 'package:iris_tools/api/helpers/focusHelper.dart';
 
-typedef OnApply = void Function(String txt, BuildContext context);
-///=============================================================================
 class AddContactDialog extends StatefulWidget {
 
   const AddContactDialog({
@@ -91,14 +89,14 @@ class _AddContactDialogState extends State<AddContactDialog> {
         Align(
           alignment: Alignment.centerRight,
           child: ColoredBox(
-            color: AppThemes.instance.currentTheme.accentColor,
+            color: AppColors.dropDownBackground,
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 4.0),
               child: DropdownButton<ContactLevel>(
                   items: ContactLevel.values.map((e) => DropdownMenuItem<ContactLevel>(
                       value: e,
                       child: ColoredBox(
-                          color: AppThemes.instance.currentTheme.accentColor,
+                          color: AppColors.dropDownBackground,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
                             child: SizedBox(width: 40, child: Text('سطح ${e.getChar()}')),
@@ -106,7 +104,7 @@ class _AddContactDialogState extends State<AddContactDialog> {
                   )
                   ).toList(),
                   value: contactLevel,
-                  dropdownColor: AppThemes.instance.currentTheme.accentColor,
+                  dropdownColor: AppColors.dropDownBackground,
                   underline: const SizedBox(),
                   padding: EdgeInsets.zero,
                   isDense: true,
