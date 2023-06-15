@@ -1,11 +1,10 @@
 
 import 'package:app/managers/place_manager.dart';
 import 'package:app/structures/enums/appEvents.dart';
-import 'package:app/structures/enums/zoneStatus.dart';
 import 'package:app/structures/models/placeModel.dart';
 import 'package:app/structures/models/zoneModel.dart';
 import 'package:app/system/extensions.dart';
-import 'package:app/tools/app/appColors.dart';
+import 'package:app/tools/app/appDecoration.dart';
 import 'package:app/tools/app/appDialogIris.dart';
 import 'package:app/tools/app/appIcons.dart';
 import 'package:app/tools/app/appNavigator.dart';
@@ -120,6 +119,8 @@ class _ManageZoneDialogState extends State<ManageZoneDialog> {
           Future.delayed(const Duration(milliseconds: 200)).then((value) {
             AppNavigator.pop(c, result: txt);
           });
+
+          return null;
         }
     );
 

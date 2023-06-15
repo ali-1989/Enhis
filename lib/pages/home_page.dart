@@ -2,13 +2,14 @@ import 'package:app/managers/place_manager.dart';
 import 'package:app/managers/sms_manager.dart';
 import 'package:app/pages/add_place_page.dart';
 import 'package:app/pages/edit_place_page.dart';
+import 'package:app/pages/relay_page.dart';
 import 'package:app/pages/settings_page.dart';
 import 'package:app/structures/enums/appEvents.dart';
 import 'package:app/structures/enums/deviceStatus.dart';
 import 'package:app/structures/enums/zoneStatus.dart';
 import 'package:app/structures/models/placeModel.dart';
 import 'package:app/structures/models/zoneModel.dart';
-import 'package:app/tools/app/appColors.dart';
+import 'package:app/tools/app/appDecoration.dart';
 import 'package:app/tools/app/appDialogIris.dart';
 import 'package:app/tools/app/appIcons.dart';
 import 'package:app/tools/app/appImages.dart';
@@ -225,9 +226,12 @@ class _HomePageState extends StateBase<HomePage> {
         ),
 
         /// relay
-        TextButton(
-            onPressed: onRelayClick,
-            child: const Text('کلید (رله)')
+        Visibility(
+          visible: currentPlace!.useOfRelays,
+          child: TextButton(
+              onPressed: onRelayClick,
+              child: const Text('کلید (رله)')
+          ),
         )
       ],
     );
@@ -466,7 +470,7 @@ class _HomePageState extends StateBase<HomePage> {
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: currentPlace!.zones.map(mapZone).toList(),
+              children: currentPlace!.zones.where((element) => element.show).map(mapZone).toList(),
             ),
           ],
         ),
@@ -681,6 +685,7 @@ class _HomePageState extends StateBase<HomePage> {
   }
 
   void onRelayClick() {
+    RouteTools.pushPage(context, RelayPage(place: currentPlace!));
   }
 
   void onChangeZoneStatusClick(ZoneModel zm, PlaceModel place) async {

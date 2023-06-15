@@ -4,7 +4,7 @@ import 'package:app/pages/contact_manager_page.dart';
 import 'package:app/structures/enums/appEvents.dart';
 import 'package:app/structures/enums/notifyToContactStatus.dart';
 import 'package:app/structures/models/placeModel.dart';
-import 'package:app/tools/app/appColors.dart';
+import 'package:app/tools/app/appDecoration.dart';
 import 'package:app/tools/app/appDialogIris.dart';
 import 'package:app/tools/app/appMessages.dart';
 import 'package:app/tools/app/appNavigator.dart';
@@ -23,7 +23,6 @@ import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:app/structures/abstract/stateBase.dart';
 import 'package:app/system/extensions.dart';
 import 'package:iris_tools/widgets/optionsRow/checkRow.dart';
-import 'package:iris_tools/widgets/optionsRow/optionRow.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 

@@ -28,4 +28,10 @@ class RelayModel {
 
     return (data as List).map((e) => RelayModel.fromMap(e)).toList();
   }
+
+  String getName(){
+    final post = name != null && name!.isNotEmpty ? '($name)' : '';
+
+    return 'رله $number $post';
+  }
 }
