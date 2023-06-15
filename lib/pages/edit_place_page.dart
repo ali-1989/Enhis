@@ -10,6 +10,7 @@ import 'package:app/tools/app/appMessages.dart';
 import 'package:app/tools/app/appNavigator.dart';
 import 'package:app/tools/app/appSnack.dart';
 import 'package:app/tools/routeTools.dart';
+import 'package:app/views/dialogs/manageRelayDialog.dart';
 import 'package:app/views/dialogs/manageZoneDialog.dart';
 import 'package:app/views/states/backBtn.dart';
 import 'package:flutter/material.dart';
@@ -40,13 +41,10 @@ class EditPlacePage extends StatefulWidget {
 ///==================================================================================
 class _EditPlacePageState extends StateBase<EditPlacePage> {
   late InputDecoration inputDecoration;
-  late Color cColor;
-
+  
   @override
   void initState(){
     super.initState();
-
-    cColor = Colors.grey.shade300;
 
     inputDecoration = const InputDecoration(
       border: OutlineInputBorder(),
@@ -142,7 +140,7 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
 
   Widget buildDeviceNameSection() {
     return Card(
-      color: cColor,
+      color: AppDecoration.cardSectionsColor,
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -171,7 +169,7 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
 
   Widget buildDeviceNumberSection() {
     return Card(
-      color: cColor,
+      color: AppDecoration.cardSectionsColor,
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -200,7 +198,7 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
 
   Widget buildDevicePasswordSection() {
     return Card(
-      color: cColor,
+      color: AppDecoration.cardSectionsColor,
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -229,7 +227,7 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
 
   Widget buildContactSection() {
     return Card(
-      color: cColor,
+      color: AppDecoration.cardSectionsColor,
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -258,7 +256,7 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
 
   Widget buildLanguageSection() {
     return Card(
-      color: cColor,
+      color: AppDecoration.cardSectionsColor,
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -297,7 +295,7 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
 
   Widget buildCallOnDisConnectPowerSection() {
     return Card(
-      color: cColor,
+      color: AppDecoration.cardSectionsColor,
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -336,7 +334,7 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
 
   Widget buildNotifyStateSection() {
     return Card(
-      color: cColor,
+      color: AppDecoration.cardSectionsColor,
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -387,7 +385,7 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
 
   Widget buildZoneSection() {
     return Card(
-      color: cColor,
+      color: AppDecoration.cardSectionsColor,
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -418,7 +416,7 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
 
   Widget buildRelaySection() {
     return Card(
-      color: cColor,
+      color: AppDecoration.cardSectionsColor,
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -433,7 +431,7 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
               children: [
                 CheckBoxRow(
                     value: widget.place.useOfRelays,
-                    description: const Text('استفاده از رله ها'),
+                    description: const Text('استفاده از رله ها').bold(),
                     onChanged: (v){
                       widget.place.useOfRelays = v;
                       assistCtr.updateHead();
@@ -460,7 +458,7 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
         context,
         descView: const Text('یک نام جدید وارد کنید').bold(),
         inputDecoration: inputDecoration,
-        yesFn: (ctx, txt){
+        mainButton: (ctx, txt){
           FocusHelper.hideKeyboardByUnFocusRoot();
 
           final newValue = txt.trim();
@@ -486,7 +484,6 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
           saveAndNotify();
 
           AppNavigator.pop(ctx);
-          return null;
         }
     );
   }
@@ -497,31 +494,30 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
         descView: const Text('شماره خط تلفن دستگاه را وارد کنید').bold(),
         inputDecoration: inputDecoration,
         textInputType: TextInputType.phone,
-        yesFn: (ctx, txt) {
+        mainButton: (ctx, txt) {
           FocusHelper.hideKeyboardByUnFocusRoot();
           final newValue = txt.trim();
 
           if (widget.place.simCardNumber == newValue) {
             AppNavigator.pop(ctx);
-            return false;
+            return null;
           }
 
           if(!Checker.validateMobile(newValue)){
             AppSnack.showError(context, AppMessages.simCardNumberIsInvalid);
-            return true;
+            return null;
           }
 
           for (final p in PlaceManager.places) {
             if (p.simCardNumber == newValue) {
               AppSnack.showError(context, 'این شماره تلفن قبلا ثبت شده است');
-              return false;
+              return null;
             }
           }
 
           widget.place.simCardNumber = newValue;
           saveAndNotify();
           AppNavigator.pop(ctx);
-          return false;
         }
     );
   }
@@ -532,7 +528,7 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
         descView: const Text('رمز جدید را وارد کنید (حداکثر 4 رقم)').bold(),
         inputDecoration: inputDecoration,
         textInputType: TextInputType.number,
-        yesFn: (ctx, txt) {
+        mainButton: (ctx, txt) {
           FocusHelper.hideKeyboardByUnFocusRoot();
 
           final newValue = txt.trim();
@@ -543,12 +539,12 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
 
           if(newValue.length < 2) {
             AppSnack.showError(context, 'حداقل 2 رقم وارد کنید');
-            return false;
+            return null;
           }
 
           if(newValue.length > 4) {
             AppSnack.showError(context, 'حداکثر 4 رقم وارد کنید');
-            return false;
+            return null;
           }
 
           SmsManager.sendSms('40*$newValue', widget.place, context).then((send) {
@@ -559,7 +555,6 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
           });
 
           AppNavigator.pop(ctx);
-          return false;
         }
     );
   }
@@ -578,6 +573,9 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
     final res = await AppDialogIris.instance.showYesNoDialog(
         context,
       desc: 'آیا دستگاه حذف شود؟',
+      yesFn: (_){
+          return true;
+      }
     );
 
     if(res is bool && res && mounted){
@@ -635,5 +633,10 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
   }
 
   void onEditRelayClick() {
+    AppDialogIris.instance.showIrisDialog(
+      context,
+      descView: ManageRelayDialog(place: widget.place),
+      decoration: AppDialogIris.instance.dialogDecoration.copy()..widthFactor = 0.9,
+    );
   }
 }

@@ -1,9 +1,15 @@
 import 'dart:async';
 
+import 'package:app/managers/settings_manager.dart';
+import 'package:app/structures/enums/appEvents.dart';
+import 'package:app/tools/routeTools.dart';
+import 'package:app/views/components/number_lock_screen.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_auth_invisible/auth_strings.dart';
 import 'package:flutter_local_auth_invisible/flutter_local_auth_invisible.dart';
+import 'package:iris_notifier/iris_notifier.dart';
 import 'package:iris_tools/api/system.dart';
+import 'package:iris_tools/dateSection/dateHelper.dart';
 
 ///*** Limit: some function need android SDK 23 (6)
 
@@ -24,6 +30,14 @@ enum LockException {
 ///-----------------------------------------------------------------------------
 class LockService {
   LockService._();
+
+  static void init(){
+    if(isLockActive()){
+      EventNotifierService.addListener(AppEvents.appPause, _onPause);
+      EventNotifierService.addListener(AppEvents.appDeAttach, _onDetach);
+      EventNotifierService.addListener(AppEvents.appResume, _onResume);
+    }
+  }
 
   /// android SDK 23 (6)
   static Future<bool> hasBiometrics() async {
@@ -119,5 +133,68 @@ class LockService {
 
   static Future<bool> stopAuthenticationAndroid() async {
     return await LocalAuthentication.stopAuthentication();
+  }
+
+  static void _onPause({data}) async {
+    SettingsManager.localSettings.lastToBackgroundTs = DateHelper.getNowTimestamp();
+    await SettingsManager.saveSettings();
+  }
+
+  static void _onDetach({data}) async {
+    SettingsManager.localSettings.lastToBackgroundTs = DateHelper.getNowTimestamp();
+    await SettingsManager.saveSettings();
+  }
+
+  static void _onResume({data}) async {
+    if (mustShowLockScreen()) {
+      showLockScreen();
+    }
+  }
+
+  static bool isLockActive(){
+    return SettingsManager.localSettings.unLockByNumber || SettingsManager.localSettings.unLockByBiometric;
+  }
+
+  static bool mustShowLockScreen(){
+    if(!isLockActive()){
+      return false;
+    }
+
+    final lastForegroundTs = SettingsManager.localSettings.lastToBackgroundTs;
+
+    if (lastForegroundTs != null) {
+      var lastForeground = DateHelper.tsToSystemDate(lastForegroundTs)!;
+      lastForeground = lastForeground.add(const Duration(seconds: 30));
+
+      if (lastForeground.isBefore(DateTime.now())) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  static void showLockScreen(){
+    SettingsManager.localSettings.lastToBackgroundTs = null;
+    SettingsManager.saveSettings();
+
+    if(SettingsManager.localSettings.unLockByBiometric){
+      authenticate().then((value) {
+        RouteTools.popTopView();
+      });
+    }
+
+    final page = NumberLockScreen(
+      canBack: false,
+      showAppBar: false,
+      showFingerPrint: SettingsManager.localSettings.unLockByBiometric,
+      correctPassword: SettingsManager.localSettings.appNumberLock,
+      enterCodeDescription: 'لطفا رمز ورود را وارد کنید',
+      onCorrectPassword: (p){
+        RouteTools.popTopView();
+      },
+    );
+
+    RouteTools.pushPage(RouteTools.getTopContext()!, page);
   }
 }

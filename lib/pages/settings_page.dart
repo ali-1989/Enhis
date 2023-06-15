@@ -326,10 +326,14 @@ class _SettingsPageState extends StateBase<SettingsPage> {
 
     await RouteTools.pushPage(context, page);
 
-    if(SettingsManager.localSettings.appNumberLock != null && mounted){
+    if(SettingsManager.localSettings.appNumberLock != null){
       SettingsManager.localSettings.unLockByNumber = true;
-      SettingsManager.saveSettings(context: context);
-      assistCtr.updateHead();
+      LockService.init();
+
+      if(mounted) {
+        SettingsManager.saveSettings(context: context);
+        assistCtr.updateHead();
+      }
     }
   }
 
@@ -347,17 +351,19 @@ class _SettingsPageState extends StateBase<SettingsPage> {
 
     bio = await LockService.isSetFinger();
 
-    if(!bio && mounted){
-      AppSheet.showSheetOk(context, 'شما قفل بیومتریک برای گوشی تنظیم نکرده اید.ابتدا وارد تنظیمات گوشی شوید و بیومتریک را فعال کنید ، سپس دوباره اقدام کنید');
-      return;
+    if(!bio) {
+      if (mounted) {
+        AppSheet.showSheetOk(context,
+            'شما قفل بیومتریک برای گوشی تنظیم نکرده اید.ابتدا وارد تنظیمات گوشی شوید و بیومتریک را فعال کنید ، سپس دوباره اقدام کنید');
+        return;
+      }
     }
 
     SettingsManager.localSettings.unLockByBiometric = true;
+    LockService.init();
     SettingsManager.saveSettings();
     assistCtr.updateHead();
   }
-
-
 
   void onBiometricHelpClick(BuildContext anchor) {
     const txt1 = 'برای فعال کردن قفل بیومتریک:';

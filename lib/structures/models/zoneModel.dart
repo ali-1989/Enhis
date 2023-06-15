@@ -35,4 +35,10 @@ class ZoneModel {
 
     return (data as List).map((e) => ZoneModel.fromMap(e)).toList();
   }
+
+  String getName(){
+    final post = name != null && name!.isNotEmpty ? '($name)' : '';
+
+    return 'زون $number $post';
+  }
 }

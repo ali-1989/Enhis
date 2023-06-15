@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:app/services/lock_service.dart';
 import 'package:app/tools/log_tools.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -126,6 +127,7 @@ class ApplicationInitial {
 
       /// life cycle
       ApplicationLifeCycle.init();
+      LockService.init();
 
 
       /// login & logoff

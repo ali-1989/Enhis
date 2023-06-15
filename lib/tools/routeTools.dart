@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:iris_route/iris_route.dart';
 
 import 'package:app/pages/contact_us_page.dart';
-import 'package:app/pages/e404_page.dart';
 import 'package:app/pages/home_page.dart';
 import 'package:app/tools/app/appNavigator.dart';
 
@@ -15,7 +14,6 @@ class RouteTools {
   static prepareWebRoute(){
     final homePage = WebRoute.by((HomePage).toString(), HomePage());
     final contactUsPage = WebRoute.by((ContactUsPage).toString(), ContactUsPage());
-    final e404Page = WebRoute.by((E404Page).toString(), E404Page());
     //final imageFullScreen = WebRoute.by((ImageFullScreen).toString(), ImageFullScreen());
     //final videoPlayerPage = WebRoute.by((VideoPlayerPage).toString(), VideoPlayerPage());
     //final contentViewPage = WebRoute.by((ContentViewPage).toString(), ContentViewPage());
@@ -29,7 +27,6 @@ class RouteTools {
 
     IrisNavigatorObserver.webRoutes.add(homePage);
     IrisNavigatorObserver.webRoutes.add(contactUsPage);
-    IrisNavigatorObserver.webRoutes.add(e404Page);
     //IrisNavigatorObserver.webRoutes.add(registerPage);
     //IrisNavigatorObserver.webRoutes.add(audioPlayerPage);
 

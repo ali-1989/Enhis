@@ -54,6 +54,8 @@ class PlaceModel {
       zIdx++;
     }
 
+    zIdx = 1;
+
     while(relays.length < 4){
       relays.add(RelayModel()..number = zIdx);
       zIdx++;

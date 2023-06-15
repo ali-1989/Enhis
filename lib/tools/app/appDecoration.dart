@@ -12,6 +12,10 @@ class AppDecoration {
     return AppThemes.instance.currentTheme.accentColor;
   }
 
+  static Color get cardSectionsColor {
+    return Colors.grey.shade300;
+  }
+
   static InputDecoration get inputDecor {
     return const InputDecoration(
       border: OutlineInputBorder(),

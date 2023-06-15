@@ -2,7 +2,7 @@
 import 'package:app/managers/place_manager.dart';
 import 'package:app/structures/enums/appEvents.dart';
 import 'package:app/structures/models/placeModel.dart';
-import 'package:app/structures/models/zoneModel.dart';
+import 'package:app/structures/models/relayModel.dart';
 import 'package:app/system/extensions.dart';
 import 'package:app/tools/app/appDecoration.dart';
 import 'package:app/tools/app/appDialogIris.dart';
@@ -12,21 +12,20 @@ import 'package:flutter/material.dart';
 import 'package:iris_notifier/iris_notifier.dart';
 import 'package:iris_tools/api/helpers/focusHelper.dart';
 import 'package:iris_tools/api/helpers/textHelper.dart';
-import 'package:iris_tools/widgets/optionsRow/checkRow.dart';
 
-class ManageZoneDialog extends StatefulWidget {
+class ManageRelayDialog extends StatefulWidget {
   final PlaceModel place;
 
-  const ManageZoneDialog({
+  const ManageRelayDialog({
     super.key,
     required this.place,
   });
 
   @override
-  State<ManageZoneDialog> createState() => _ManageZoneDialogState();
+  State<ManageRelayDialog> createState() => _ManageRelayDialogState();
 }
 ///=============================================================================
-class _ManageZoneDialogState extends State<ManageZoneDialog> {
+class _ManageRelayDialogState extends State<ManageRelayDialog> {
 
   @override
   void initState(){
@@ -55,23 +54,13 @@ class _ManageZoneDialogState extends State<ManageZoneDialog> {
             ),
           ),
 
-          const Text('مدیریت زون ها').bold().fsR(2),
+          const Text('مدیریت رله ها').bold().fsR(2),
           const SizedBox(height: 25),
-
-          const Card(
-            color: Colors.amber,
-            child: Padding(
-              padding: EdgeInsets.all(10.0),
-              child: Text('حداقل یک مورد انتخاب شده باشد'),
-            ),
-          ),
-
-          const SizedBox(height: 15),
 
           ListView.builder(
             shrinkWrap: true,
-              itemCount: widget.place.zones.length,
-              itemBuilder: itemBuilderZoneList
+              itemCount: widget.place.relays.length,
+              itemBuilder: itemBuilderRelayList
           ),
 
           const SizedBox(height: 15),
@@ -80,23 +69,13 @@ class _ManageZoneDialogState extends State<ManageZoneDialog> {
     );
   }
 
-  Widget? itemBuilderZoneList(BuildContext context, int index) {
-    final itm = widget.place.zones[index];
+  Widget? itemBuilderRelayList(BuildContext context, int index) {
+    final itm = widget.place.relays[index];
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(
-          children: [
-            CheckBoxRow(
-                value: itm.show,
-                description: Text('نمایش ${itm.getName()}'),
-                onChanged: (v){
-                  onChangeShowState(itm, v);
-                },
-            )
-          ],
-        ),
+        Text(itm.getName()),
 
         TextButton(
             onPressed: (){
@@ -108,12 +87,12 @@ class _ManageZoneDialogState extends State<ManageZoneDialog> {
     );
   }
 
-  void onChangeNameClick(ZoneModel itm) async {
+  void onChangeNameClick(RelayModel itm) async {
     final res = await AppDialogIris.instance.showTextInputDialog(
         context,
         descView: const Text('یک نام وارد کنید'),
         inputDecoration: AppDecoration.inputDecor,
-        mainButton: (c, txt){
+        mainButton: (c, txt) async {
           FocusHelper.hideKeyboardByUnFocusRoot();
           Future.delayed(const Duration(milliseconds: 200)).then((value) {
             AppNavigator.pop(c, result: txt);
@@ -132,26 +111,6 @@ class _ManageZoneDialogState extends State<ManageZoneDialog> {
       }
 
       saveAndNotify();
-    }
-  }
-
-  void onChangeShowState(ZoneModel itm, bool v) {
-    if(v){
-      if(!itm.show) {
-        itm.show = true;
-        saveAndNotify();
-      }
-    }
-    else {
-      final activeCount = widget.place.zones.where((element) => element.show).length;
-
-      if(activeCount < 2){
-
-      }
-      else{
-        itm.show = false;
-        saveAndNotify();
-      }
     }
   }
 
