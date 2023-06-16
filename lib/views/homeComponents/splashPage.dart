@@ -7,17 +7,27 @@ import 'package:flutter/material.dart';
 import 'package:app/managers/settings_manager.dart';
 import 'package:app/managers/version_manager.dart';
 import 'package:app/structures/abstract/stateBase.dart';
-import 'package:app/system/applicationInitialize.dart';
 import 'package:app/tools/app/appBroadcast.dart';
 import 'package:app/views/homeComponents/routeDispatcher.dart';
 import 'package:app/views/homeComponents/splashView.dart';
 import 'package:app/views/states/waitToLoad.dart';
 
-bool _isInit = false;
-bool _isInLoadingSettings = true;
-bool _isConnectToServer = true;
-bool isInSplashTimer = true;
-int splashWaitingMil = 3500;
+import 'package:app/services/lock_service.dart';
+import 'package:app/tools/log_tools.dart';
+
+import 'package:iris_tools/net/trustSsl.dart';
+
+import 'package:app/system/applicationSignal.dart';
+import 'package:app/tools/app/appCache.dart';
+import 'package:app/tools/app/appDb.dart';
+import 'package:app/tools/app/appImages.dart';
+import 'package:app/tools/app/appLocale.dart';
+import 'package:app/tools/app/appThemes.dart';
+import 'package:app/tools/deviceInfoTools.dart';
+import 'package:app/tools/routeTools.dart';
+
+bool isInitialOk = false;
+bool mustWaitToSplashTimer = true;
 
 class SplashPage extends StatefulWidget {
 
@@ -28,13 +38,19 @@ class SplashPage extends StatefulWidget {
 }
 ///======================================================================================================
 class SplashPageState extends StateBase<SplashPage> {
+  static bool _callInSplashInit = false;
+  static bool _callLazyInit = false;
+  static bool _isInit = false;
+  static bool _isInLoadingSettings = true;
+  bool _isConnectToServer = true;
+  int splashWaitingMil = 3500;
 
   @override
   Widget build(BuildContext context) {
     splashWaitTimer();
-    init();
+    startInit();
 
-    if (waitInSplash()) {
+    if (mustWaitInSplash()) {
       //System.hideBothStatusBarOnce();
       return getSplashView();
     }
@@ -52,37 +68,35 @@ class SplashPageState extends StateBase<SplashPage> {
   }
 
   Widget getFirstPage(){
-    if(kIsWeb && !ApplicationInitial.isInit()){
+    if(kIsWeb && !isInitialOk){
       return const SizedBox();
     }
 
     return RouteDispatcher.dispatch();
   }
 
-  bool waitInSplash(){
-    return !kIsWeb && (isInSplashTimer || _isInLoadingSettings || !_isConnectToServer);
+  bool mustWaitInSplash(){
+    return !kIsWeb && (mustWaitToSplashTimer || _isInLoadingSettings || !_isConnectToServer);
   }
 
   void splashWaitTimer() async {
-    if(splashWaitingMil > 0){
+    if(mustWaitToSplashTimer){
+      mustWaitToSplashTimer = false;
+
       Timer(Duration(milliseconds: splashWaitingMil), (){
-        isInSplashTimer = false;
         callState();
       });
-
-      splashWaitingMil = 0;
     }
   }
 
-  void init() async {
+  void startInit() async {
     if (_isInit) {
       return;
     }
 
     _isInit = true;
 
-    await ApplicationInitial.inSplashInit();
-    await ApplicationInitial.inSplashInitWithContext(context);
+    await inSplashInit(context);
     final settingsLoad = SettingsManager.loadSettings();
 
     if (settingsLoad) {
@@ -91,7 +105,7 @@ class SplashPageState extends StateBase<SplashPage> {
       await VersionManager.checkVersionOnLaunch();
       connectToServer();
 
-      ApplicationInitial.appLazyInit();
+      appLazyInit();
       _isInLoadingSettings = false;
 
       AppBroadcast.reBuildMaterialBySetTheme();
@@ -99,7 +113,7 @@ class SplashPageState extends StateBase<SplashPage> {
   }
 
   void connectToServer() async {
-    /*final serverData = await SystemParameterManager.requestSystemParameters();
+    /*final serverData = await SettingsManager.requestSystemParameters();
 
     if(serverData == null){
       AppSheet.showSheetOneAction(
@@ -119,5 +133,91 @@ class SplashPageState extends StateBase<SplashPage> {
       Session.fetchLoginUsers();
       callState();
     }*/
+  }
+
+  static Future<void> inSplashInit(BuildContext? context) async {
+    if (_callInSplashInit) {
+      return;
+    }
+
+    try {
+      _callInSplashInit = true;
+
+      await AppDB.init();
+      AppThemes.init();
+      await AppLocale.init();
+      await DeviceInfoTools.prepareDeviceInfo();
+      await DeviceInfoTools.prepareDeviceId();
+      TrustSsl.acceptBadCertificate();
+      //AudioPlayerService.init();
+
+      if (!kIsWeb) {
+      }
+
+      if(context != null && context.mounted){
+        RouteTools.prepareWebRoute();
+        AppCache.screenBack = const AssetImage(AppImages.logoSplash);
+        await precacheImage(AppCache.screenBack!, context);
+      }
+
+      isInitialOk = true;
+    }
+    catch (e){
+      LogTools.logger.logToAll('error in inSplashInit >> $e');
+    }
+
+    return;
+  }
+
+  static Future<void> appLazyInit() {
+    final c = Completer<void>();
+
+    if (!_callLazyInit) {
+      Timer.periodic(const Duration(milliseconds: 50), (Timer timer) async {
+        if (isInitialOk) {
+          timer.cancel();
+          await _lazyInitCommands();
+          c.complete();
+        }
+      });
+    }
+    else {
+      c.complete();
+    }
+
+    return c.future;
+  }
+
+  static Future<void> _lazyInitCommands() async {
+    if (_callLazyInit) {
+      return;
+    }
+
+    try {
+      _callLazyInit = true;
+
+      ApplicationSignal.start();
+      LockService.init();
+
+
+      /*if (System.isWeb()) {
+        void onSizeCheng(oldW, oldH, newW, newH) {
+          AppDialogIris.prepareDialogDecoration();
+        }
+
+        AppSizes.instance.addMetricListener(onSizeCheng);
+      }*/
+
+      //SystemParameterManager.requestParameters();
+
+      if(RouteTools.materialContext != null) {
+        //VersionManager.checkAppHasNewVersion(RouteTools.getBaseContext()!);
+      }
+
+    }
+    catch (e){
+      _callLazyInit = false;
+      LogTools.logger.logToAll('error in lazyInitCommands >> $e');
+    }
   }
 }

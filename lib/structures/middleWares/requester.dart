@@ -51,7 +51,7 @@ class Requester {
     _bodyJs = js;
 
     if(js != null) {
-      DeviceInfoTools.addAppInfo(_bodyJs!);
+      DeviceInfoTools.attachApplicationInfo(_bodyJs!);
     }
   }
 

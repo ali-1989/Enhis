@@ -50,11 +50,6 @@ class _SettingsPageState extends StateBase<SettingsPage> {
   }
 
   @override
-  void dispose(){
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Assist(
         controller: assistCtr,

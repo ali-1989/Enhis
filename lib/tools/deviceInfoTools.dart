@@ -89,7 +89,7 @@ class DeviceInfoTools {
     return SynchronousFuture<String>(deviceId!);
   }
 
-  static Map<String, dynamic> getDeviceInfo() {
+  static Map<String, dynamic> mapDeviceInfo() {
     final js = <String, dynamic>{};
 
     if(kIsWeb){
@@ -122,21 +122,9 @@ class DeviceInfoTools {
     return js;
   }
 
-  static Map addAppInfo(Map src, {UserModel? curUser}) {
-    final token = curUser?.token ?? SessionService.getLastLoginUser()?.token;
-
-    src.addAll(getAppInfo());
-
-    if (token?.token != null) {
-      src[Keys.token] = token?.token;
-    }
-
-    return src;
-  }
-
-  static Map<String, dynamic> getAppInfo() {
+  static Map<String, dynamic> mapApplicationInfo() {
     final res = <String, dynamic>{};
-    res[Keys.deviceId] = DeviceInfoTools.deviceId;
+    res[Keys.deviceId] = deviceId;
     res[Keys.appName] = Constants.appName;
     res['app_version_code'] = Constants.appVersionCode;
     res['app_version_name'] = Constants.appVersionName;
@@ -144,4 +132,15 @@ class DeviceInfoTools {
     return res;
   }
 
+  static Map attachApplicationInfo(Map src, {UserModel? curUser}) {
+    final token = curUser?.token ?? SessionService.getLastLoginUser()?.token;
+
+    src.addAll(mapApplicationInfo());
+
+    if (token?.token != null) {
+      src[Keys.token] = token?.token;
+    }
+
+    return src;
+  }
 }

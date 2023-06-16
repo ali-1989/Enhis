@@ -33,7 +33,7 @@ class AppThemes {
 	StrutStyle strutStyle = const StrutStyle(forceStrutHeight: true, height: 1.08, leading: 0.36);
 
 	static AppThemes get instance {
-		initial();
+		init();
 
 		return _instance;
 	}
@@ -52,7 +52,7 @@ class AppThemes {
 		return Theme.of(context);
 	}
 
-	static void initial() {
+	static void init() {
 		if(!_isInit) {
 			_isInit = true;
 

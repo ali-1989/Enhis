@@ -78,7 +78,7 @@ class VersionManager {
   }
 
   static void checkAppHasNewVersion(BuildContext context) async {
-    final deviceInfo = DeviceInfoTools.getDeviceInfo();
+    final deviceInfo = DeviceInfoTools.mapDeviceInfo();
 
     final vm = await requestGetLastVersion(context, deviceInfo);
 

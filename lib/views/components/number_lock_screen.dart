@@ -3,8 +3,9 @@ import 'dart:async';
 import 'package:app/tools/app/appMessages.dart';
 import 'package:app/tools/app/appSnack.dart';
 import 'package:app/tools/app/appThemes.dart';
-import 'package:app/views/components/number_pad.dart';
 import 'package:flutter/material.dart';
+import 'package:iris_tools/api/system.dart';
+import 'package:iris_tools/widgets/number_pad.dart';
 
 typedef OnNewPassword = void Function(String pass);
 typedef OnCorrectPassword = void Function(String pass);
@@ -13,6 +14,7 @@ class NumberLockScreen extends StatefulWidget {
   final bool showAppBar;
   final bool showFingerPrint;
   final bool canBack;
+  final bool exitAppOnBack;
   final String? correctPassword;
   final String? enterCodeDescription;
   final String? createCodeDescription;
@@ -28,6 +30,7 @@ class NumberLockScreen extends StatefulWidget {
     this.correctPassword,
     this.showAppBar = false,
     this.canBack = false,
+    this.exitAppOnBack = false,
     this.showFingerPrint = false,
     this.enterCodeDescription,
     this.createCodeDescription,
@@ -79,7 +82,11 @@ class NumberLockScreenState extends State<NumberLockScreen> {
           return Future.value(true);
         }
 
-        return Future.value(widget.canBack? true : false);
+        if(widget.exitAppOnBack && !widget.canBack) {
+          System.exitApp();
+        }
+
+        return Future.value(widget.canBack);
       },
       child: Scaffold(
         appBar: widget.showAppBar? AppBar() : null,

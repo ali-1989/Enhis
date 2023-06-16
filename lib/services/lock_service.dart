@@ -186,6 +186,7 @@ class LockService {
 
     final page = NumberLockScreen(
       canBack: false,
+      exitAppOnBack: true,
       showAppBar: false,
       showFingerPrint: SettingsManager.localSettings.unLockByBiometric,
       correctPassword: SettingsManager.localSettings.appNumberLock,

@@ -1,4 +1,3 @@
-import 'package:app/managers/settings_manager.dart';
 import 'package:app/services/lock_service.dart';
 import 'package:app/tools/app/appCache.dart';
 import 'package:flutter/material.dart';
