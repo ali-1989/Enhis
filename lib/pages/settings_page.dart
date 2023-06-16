@@ -1,22 +1,22 @@
+import 'package:flutter/material.dart';
+
+import 'package:iris_tools/features/overlayDialog.dart';
+import 'package:iris_tools/modules/stateManagers/assist.dart';
+import 'package:iris_tools/widgets/optionsRow/checkRow.dart';
+import 'package:sms_advanced/sms_advanced.dart';
+
 import 'package:app/managers/settings_manager.dart';
 import 'package:app/pages/add_place_page.dart';
 import 'package:app/services/lock_service.dart';
 import 'package:app/services/sms_service.dart';
+import 'package:app/structures/abstract/stateBase.dart';
+import 'package:app/system/extensions.dart';
 import 'package:app/tools/app/appDecoration.dart';
 import 'package:app/tools/app/appIcons.dart';
 import 'package:app/tools/app/appSheet.dart';
 import 'package:app/tools/routeTools.dart';
 import 'package:app/views/components/number_lock_screen.dart';
 import 'package:app/views/states/backBtn.dart';
-import 'package:flutter/material.dart';
-import 'package:iris_tools/features/overlayDialog.dart';
-
-import 'package:iris_tools/modules/stateManagers/assist.dart';
-
-import 'package:app/structures/abstract/stateBase.dart';
-import 'package:app/system/extensions.dart';
-import 'package:iris_tools/widgets/optionsRow/checkRow.dart';
-import 'package:sms_advanced/sms_advanced.dart';
 
 class SettingsPage extends StatefulWidget {
 

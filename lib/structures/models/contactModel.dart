@@ -1,6 +1,6 @@
+import 'package:iris_tools/api/generator.dart';
 
 import 'package:app/structures/enums/contactLevel.dart';
-import 'package:iris_tools/api/generator.dart';
 
 class ContactModel {
   late String id;

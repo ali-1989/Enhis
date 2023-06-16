@@ -1,3 +1,7 @@
+import 'package:flutter/material.dart';
+
+import 'package:iris_tools/api/checker.dart';
+import 'package:iris_tools/api/helpers/focusHelper.dart';
 
 import 'package:app/structures/enums/contactLevel.dart';
 import 'package:app/structures/models/contactModel.dart';
@@ -6,9 +10,6 @@ import 'package:app/tools/app/appDecoration.dart';
 import 'package:app/tools/app/appIcons.dart';
 import 'package:app/tools/app/appNavigator.dart';
 import 'package:app/tools/app/appSnack.dart';
-import 'package:flutter/material.dart';
-import 'package:iris_tools/api/checker.dart';
-import 'package:iris_tools/api/helpers/focusHelper.dart';
 
 class AddContactDialog extends StatefulWidget {
 

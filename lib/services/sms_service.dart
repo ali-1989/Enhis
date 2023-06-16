@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
+
+import 'package:sms_advanced/sms_advanced.dart';
+
 import 'package:app/tools/app/appDialog.dart';
 import 'package:app/tools/app/appMessages.dart';
-import 'package:flutter/material.dart';
-import 'package:sms_advanced/sms_advanced.dart';
 
 typedef SmsReceiveHandler = Function(SmsMessage msg);
 ///-----------------------------------------------------------------------------

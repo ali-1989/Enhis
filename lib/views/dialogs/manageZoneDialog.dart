@@ -1,3 +1,9 @@
+import 'package:flutter/material.dart';
+
+import 'package:iris_notifier/iris_notifier.dart';
+import 'package:iris_tools/api/helpers/focusHelper.dart';
+import 'package:iris_tools/api/helpers/textHelper.dart';
+import 'package:iris_tools/widgets/optionsRow/checkRow.dart';
 
 import 'package:app/managers/place_manager.dart';
 import 'package:app/structures/enums/appEvents.dart';
@@ -8,11 +14,6 @@ import 'package:app/tools/app/appDecoration.dart';
 import 'package:app/tools/app/appDialogIris.dart';
 import 'package:app/tools/app/appIcons.dart';
 import 'package:app/tools/app/appNavigator.dart';
-import 'package:flutter/material.dart';
-import 'package:iris_notifier/iris_notifier.dart';
-import 'package:iris_tools/api/helpers/focusHelper.dart';
-import 'package:iris_tools/api/helpers/textHelper.dart';
-import 'package:iris_tools/widgets/optionsRow/checkRow.dart';
 
 class ManageZoneDialog extends StatefulWidget {
   final PlaceModel place;

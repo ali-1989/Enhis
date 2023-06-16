@@ -1,14 +1,26 @@
+import 'package:flutter/material.dart';
+
+import 'package:iris_notifier/iris_notifier.dart';
+import 'package:iris_tools/api/helpers/focusHelper.dart';
+import 'package:iris_tools/api/helpers/textHelper.dart';
+import 'package:iris_tools/features/overlayDialog.dart';
+import 'package:iris_tools/modules/stateManagers/assist.dart';
+import 'package:iris_tools/widgets/customCard.dart';
+import 'package:toggle_switch/toggle_switch.dart';
+
 import 'package:app/managers/place_manager.dart';
 import 'package:app/managers/sms_manager.dart';
 import 'package:app/pages/add_place_page.dart';
 import 'package:app/pages/edit_place_page.dart';
 import 'package:app/pages/relay_page.dart';
 import 'package:app/pages/settings_page.dart';
+import 'package:app/structures/abstract/stateBase.dart';
 import 'package:app/structures/enums/appEvents.dart';
 import 'package:app/structures/enums/deviceStatus.dart';
 import 'package:app/structures/enums/zoneStatus.dart';
 import 'package:app/structures/models/placeModel.dart';
 import 'package:app/structures/models/zoneModel.dart';
+import 'package:app/system/extensions.dart';
 import 'package:app/tools/app/appDecoration.dart';
 import 'package:app/tools/app/appDialogIris.dart';
 import 'package:app/tools/app/appIcons.dart';
@@ -19,18 +31,6 @@ import 'package:app/tools/app/appThemes.dart';
 import 'package:app/tools/routeTools.dart';
 import 'package:app/views/dialogs/changeZoneStatusDialog.dart';
 import 'package:app/views/dialogs/reChargeSimCardDialog.dart';
-import 'package:flutter/material.dart';
-import 'package:iris_tools/api/helpers/focusHelper.dart';
-import 'package:iris_tools/api/helpers/textHelper.dart';
-import 'package:iris_tools/features/overlayDialog.dart';
-
-import 'package:iris_tools/modules/stateManagers/assist.dart';
-import 'package:iris_notifier/iris_notifier.dart';
-
-import 'package:app/structures/abstract/stateBase.dart';
-import 'package:app/system/extensions.dart';
-import 'package:iris_tools/widgets/customCard.dart';
-import 'package:toggle_switch/toggle_switch.dart';
 
 class HomePage extends StatefulWidget {
 

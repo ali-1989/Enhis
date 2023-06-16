@@ -1,30 +1,28 @@
 import 'dart:async';
 
-import 'package:app/managers/place_manager.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:app/managers/settings_manager.dart';
-import 'package:app/managers/version_manager.dart';
-import 'package:app/structures/abstract/stateBase.dart';
-import 'package:app/tools/app/appBroadcast.dart';
-import 'package:app/views/homeComponents/routeDispatcher.dart';
-import 'package:app/views/homeComponents/splashView.dart';
-import 'package:app/views/states/waitToLoad.dart';
-
-import 'package:app/services/lock_service.dart';
-import 'package:app/tools/log_tools.dart';
-
 import 'package:iris_tools/net/trustSsl.dart';
 
+import 'package:app/managers/place_manager.dart';
+import 'package:app/managers/settings_manager.dart';
+import 'package:app/managers/version_manager.dart';
+import 'package:app/services/lock_service.dart';
+import 'package:app/structures/abstract/stateBase.dart';
 import 'package:app/system/applicationSignal.dart';
+import 'package:app/tools/app/appBroadcast.dart';
 import 'package:app/tools/app/appCache.dart';
 import 'package:app/tools/app/appDb.dart';
 import 'package:app/tools/app/appImages.dart';
 import 'package:app/tools/app/appLocale.dart';
 import 'package:app/tools/app/appThemes.dart';
 import 'package:app/tools/deviceInfoTools.dart';
+import 'package:app/tools/log_tools.dart';
 import 'package:app/tools/routeTools.dart';
+import 'package:app/views/homeComponents/routeDispatcher.dart';
+import 'package:app/views/homeComponents/splashView.dart';
+import 'package:app/views/states/waitToLoad.dart';
 
 bool isInitialOk = false;
 bool mustWaitToSplashTimer = true;
@@ -100,7 +98,6 @@ class SplashPageState extends StateBase<SplashPage> {
     final settingsLoad = SettingsManager.loadSettings();
 
     if (settingsLoad) {
-      //await SessionService.fetchLoginUsers();
       await PlaceManager.fetchPlaces();
       await VersionManager.checkVersionOnLaunch();
       connectToServer();
@@ -208,12 +205,9 @@ class SplashPageState extends StateBase<SplashPage> {
         AppSizes.instance.addMetricListener(onSizeCheng);
       }*/
 
-      //SystemParameterManager.requestParameters();
-
       if(RouteTools.materialContext != null) {
         //VersionManager.checkAppHasNewVersion(RouteTools.getBaseContext()!);
       }
-
     }
     catch (e){
       _callLazyInit = false;

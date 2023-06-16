@@ -1,9 +1,6 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:app/constants.dart';
-import 'package:app/services/session_service.dart';
-import 'package:app/structures/models/userModel.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
@@ -12,6 +9,9 @@ import 'package:iris_tools/api/generator.dart';
 import 'package:iris_tools/api/system.dart';
 import 'package:platform_device_id/platform_device_id.dart';
 
+import 'package:app/constants.dart';
+import 'package:app/services/session_service.dart';
+import 'package:app/structures/models/userModel.dart';
 import 'package:app/system/keys.dart';
 import 'package:app/tools/app/appDb.dart';
 

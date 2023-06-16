@@ -1,6 +1,5 @@
 import 'dart:async';
 
-
 import 'package:dio/dio.dart';
 import 'package:iris_tools/api/helpers/jsonHelper.dart';
 import 'package:iris_tools/api/system.dart';

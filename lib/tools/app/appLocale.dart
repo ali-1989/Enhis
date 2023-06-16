@@ -1,5 +1,3 @@
-import 'package:app/system/keys.dart';
-import 'package:app/tools/routeTools.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -8,6 +6,8 @@ import 'package:iris_tools/api/helpers/localeHelper.dart';
 import 'package:iris_tools/api/system.dart';
 import 'package:iris_tools/modules/irisLocalizations.dart';
 
+import 'package:app/system/keys.dart';
+import 'package:app/tools/routeTools.dart';
 import '/managers/settings_manager.dart';
 import '/tools/app/appThemes.dart';
 

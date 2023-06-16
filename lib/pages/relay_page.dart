@@ -1,15 +1,15 @@
-import 'package:app/managers/place_manager.dart';
-import 'package:app/managers/sms_manager.dart';
-import 'package:app/structures/models/placeModel.dart';
-import 'package:app/tools/app/appDecoration.dart';
-import 'package:app/views/states/backBtn.dart';
 import 'package:flutter/material.dart';
 
 import 'package:iris_tools/modules/stateManagers/assist.dart';
-
-import 'package:app/structures/abstract/stateBase.dart';
-import 'package:app/system/extensions.dart';
 import 'package:toggle_switch/toggle_switch.dart';
+
+import 'package:app/managers/place_manager.dart';
+import 'package:app/managers/sms_manager.dart';
+import 'package:app/structures/abstract/stateBase.dart';
+import 'package:app/structures/models/placeModel.dart';
+import 'package:app/system/extensions.dart';
+import 'package:app/tools/app/appDecoration.dart';
+import 'package:app/views/states/backBtn.dart';
 
 class RelayPage extends StatefulWidget {
   final PlaceModel place;

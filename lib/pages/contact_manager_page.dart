@@ -1,23 +1,23 @@
+import 'package:flutter/material.dart';
+
+import 'package:iris_notifier/iris_notifier.dart';
+import 'package:iris_tools/features/overlayDialog.dart';
+import 'package:iris_tools/modules/stateManagers/assist.dart';
+
 import 'package:app/managers/place_manager.dart';
 import 'package:app/managers/sms_manager.dart';
+import 'package:app/structures/abstract/stateBase.dart';
 import 'package:app/structures/enums/appEvents.dart';
 import 'package:app/structures/enums/contactLevel.dart';
 import 'package:app/structures/models/contactModel.dart';
 import 'package:app/structures/models/placeModel.dart';
+import 'package:app/system/extensions.dart';
 import 'package:app/tools/app/appDecoration.dart';
 import 'package:app/tools/app/appDialogIris.dart';
 import 'package:app/tools/app/appIcons.dart';
 import 'package:app/tools/app/appSheet.dart';
 import 'package:app/views/dialogs/addContactDialog.dart';
 import 'package:app/views/states/backBtn.dart';
-import 'package:flutter/material.dart';
-import 'package:iris_notifier/iris_notifier.dart';
-import 'package:iris_tools/features/overlayDialog.dart';
-
-import 'package:iris_tools/modules/stateManagers/assist.dart';
-
-import 'package:app/structures/abstract/stateBase.dart';
-import 'package:app/system/extensions.dart';
 
 class ContactManagerPage extends StatefulWidget {
   final PlaceModel place;

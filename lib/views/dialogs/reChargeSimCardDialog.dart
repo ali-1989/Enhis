@@ -1,9 +1,9 @@
+import 'package:flutter/material.dart';
 
 import 'package:app/system/extensions.dart';
 import 'package:app/tools/app/appDecoration.dart';
 import 'package:app/tools/app/appIcons.dart';
 import 'package:app/tools/app/appNavigator.dart';
-import 'package:flutter/material.dart';
 
 typedef OnApply = void Function(String txt, BuildContext context);
 ///=============================================================================

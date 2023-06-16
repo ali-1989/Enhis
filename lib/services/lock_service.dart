@@ -1,15 +1,17 @@
 import 'dart:async';
 
-import 'package:app/managers/settings_manager.dart';
-import 'package:app/structures/enums/appEvents.dart';
-import 'package:app/tools/routeTools.dart';
-import 'package:app/views/components/number_lock_screen.dart';
 import 'package:flutter/services.dart';
+
 import 'package:flutter_local_auth_invisible/auth_strings.dart';
 import 'package:flutter_local_auth_invisible/flutter_local_auth_invisible.dart';
 import 'package:iris_notifier/iris_notifier.dart';
 import 'package:iris_tools/api/system.dart';
 import 'package:iris_tools/dateSection/dateHelper.dart';
+
+import 'package:app/managers/settings_manager.dart';
+import 'package:app/structures/enums/appEvents.dart';
+import 'package:app/tools/routeTools.dart';
+import 'package:app/views/components/number_lock_screen.dart';
 
 ///*** Limit: some function need android SDK 23 (6)
 

@@ -1,4 +1,3 @@
-import 'package:app/tools/app/appDecoration.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,6 +6,7 @@ import 'package:iris_tools/api/helpers/colorHelper.dart';
 import 'package:iris_tools/api/system.dart';
 
 import 'package:app/structures/models/colorTheme.dart';
+import 'package:app/tools/app/appDecoration.dart';
 import '/managers/font_manager.dart';
 
 /// hlp:

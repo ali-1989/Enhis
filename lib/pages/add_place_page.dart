@@ -1,25 +1,25 @@
+import 'package:flutter/material.dart';
+
+import 'package:iris_notifier/iris_notifier.dart';
+import 'package:iris_tools/api/checker.dart';
+import 'package:iris_tools/api/helpers/focusHelper.dart';
+import 'package:iris_tools/api/helpers/inputFormatter.dart';
+import 'package:iris_tools/api/helpers/textHelper.dart';
+import 'package:iris_tools/modules/stateManagers/assist.dart';
+
 import 'package:app/managers/place_manager.dart';
+import 'package:app/structures/abstract/stateBase.dart';
 import 'package:app/structures/enums/appEvents.dart';
 import 'package:app/structures/enums/contactLevel.dart';
 import 'package:app/structures/models/contactModel.dart';
 import 'package:app/structures/models/placeModel.dart';
+import 'package:app/system/extensions.dart';
 import 'package:app/tools/app/appDb.dart';
 import 'package:app/tools/app/appMessages.dart';
 import 'package:app/tools/app/appSheet.dart';
 import 'package:app/tools/app/appSnack.dart';
 import 'package:app/tools/routeTools.dart';
 import 'package:app/views/states/backBtn.dart';
-import 'package:flutter/material.dart';
-import 'package:iris_notifier/iris_notifier.dart';
-import 'package:iris_tools/api/checker.dart';
-import 'package:iris_tools/api/helpers/focusHelper.dart';
-import 'package:iris_tools/api/helpers/inputFormatter.dart';
-import 'package:iris_tools/api/helpers/textHelper.dart';
-
-import 'package:iris_tools/modules/stateManagers/assist.dart';
-
-import 'package:app/structures/abstract/stateBase.dart';
-import 'package:app/system/extensions.dart';
 
 class AddPlacePage extends StatefulWidget {
 

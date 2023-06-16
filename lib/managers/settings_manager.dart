@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:app/structures/middleWares/requester.dart';
-import 'package:app/structures/models/globalSettingsModel.dart';
-import 'package:app/tools/app/appCache.dart';
 import 'package:flutter/material.dart';
 
+import 'package:app/structures/middleWares/requester.dart';
+import 'package:app/structures/models/globalSettingsModel.dart';
 import 'package:app/structures/models/settingsModel.dart';
+import 'package:app/tools/app/appCache.dart';
 import 'package:app/tools/app/appDb.dart';
 import '/system/keys.dart';
 
@@ -17,6 +17,18 @@ class SettingsManager {
 	static bool _isInit = false;
 	static final List<VoidCallback> _localSettingsListeners = [];
 
+	static void init(){
+		if(_isInit){
+			return;
+		}
+
+		loadSettings();
+		//EventNotifierService.addListener(AppEvents.networkConnected, _listener);
+	}
+
+	/*static void _listener({data}) {
+		requestGlobalSettings();
+	}*/
 
 	static SettingsModel get localSettings {
 		if(!_isInit){
@@ -53,10 +65,9 @@ class SettingsManager {
 	}
 	///===================================================================================
 	static bool loadSettings() {
-		final res = AppDB.fetchKv(Keys.setting$appSettings);
-
 		if(!_isInit) {
 			_isInit = true;
+			final res = AppDB.fetchKv(Keys.setting$appSettings);
 
 			if (res == null) {
 				_localSettings = SettingsModel();

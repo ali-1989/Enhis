@@ -1,10 +1,11 @@
-
 import 'dart:developer';
 
-import 'package:app/tools/app/appDirectories.dart';
 import 'package:flutter/foundation.dart';
+
 import 'package:iris_tools/api/logger/logger.dart';
 import 'package:iris_tools/api/logger/reporter.dart';
+
+import 'package:app/tools/app/appDirectories.dart';
 
 class LogTools {
   LogTools._();

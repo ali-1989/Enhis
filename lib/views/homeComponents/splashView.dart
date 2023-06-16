@@ -1,9 +1,9 @@
-import 'package:app/tools/app/appSizes.dart';
 import 'package:flutter/material.dart';
 
 import 'package:animate_do/animate_do.dart';
 
 import 'package:app/tools/app/appImages.dart';
+import 'package:app/tools/app/appSizes.dart';
 
 class SplashView extends StatelessWidget {
   const SplashView({Key? key}) : super(key: key);
