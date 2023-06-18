@@ -16,7 +16,7 @@ import 'package:app/tools/app/appIcons.dart';
 import 'package:app/tools/app/appSheet.dart';
 import 'package:app/tools/routeTools.dart';
 import 'package:app/views/components/number_lock_screen.dart';
-import 'package:app/views/states/backBtn.dart';
+import 'package:app/views/components/backBtn.dart';
 
 class SettingsPage extends StatefulWidget {
 

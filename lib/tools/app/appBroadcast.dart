@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:app/tools/app/appThemes.dart';
-import 'package:app/views/homeComponents/splashPage.dart';
+import 'package:app/views/baseComponents/splashPage.dart';
 
 class AppBroadcast {
   AppBroadcast._();

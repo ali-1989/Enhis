@@ -9,7 +9,7 @@ import 'package:app/structures/abstract/stateBase.dart';
 import 'package:app/structures/models/placeModel.dart';
 import 'package:app/system/extensions.dart';
 import 'package:app/tools/app/appDecoration.dart';
-import 'package:app/views/states/backBtn.dart';
+import 'package:app/views/components/backBtn.dart';
 
 class RelayPage extends StatefulWidget {
   final PlaceModel place;

@@ -24,7 +24,7 @@ import 'package:app/tools/app/appSnack.dart';
 import 'package:app/tools/routeTools.dart';
 import 'package:app/views/dialogs/manageRelayDialog.dart';
 import 'package:app/views/dialogs/manageZoneDialog.dart';
-import 'package:app/views/states/backBtn.dart';
+import 'package:app/views/components/backBtn.dart';
 
 class EditPlacePage extends StatefulWidget {
   final PlaceModel place;

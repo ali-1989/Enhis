@@ -17,7 +17,7 @@ import 'package:app/tools/app/appDialogIris.dart';
 import 'package:app/tools/app/appIcons.dart';
 import 'package:app/tools/app/appSheet.dart';
 import 'package:app/views/dialogs/addContactDialog.dart';
-import 'package:app/views/states/backBtn.dart';
+import 'package:app/views/components/backBtn.dart';
 
 class ContactManagerPage extends StatefulWidget {
   final PlaceModel place;
