@@ -13,6 +13,9 @@ import '/managers/font_manager.dart';
 /// https://htmlcolorcodes.com/
 /// https://colorhunt.co/
 
+/// notes:
+/// material library's theme is only supported by the material library widgets and not by RichText. use Text.rich.
+
 class AppThemes {
 	AppThemes._();
 
@@ -330,8 +333,11 @@ class AppThemes {
 			),
 		);
 
+		final buttonBorder = MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))));
+
 		final elevatedButtonTheme = ElevatedButtonThemeData(
 			style: ButtonStyle(
+				shape: buttonBorder,
 					tapTargetSize: MaterialTapTargetSize.padded,
 				//backgroundColor: MaterialStateProperty.all(th.buttonBackColor),
 				foregroundColor: MaterialStateProperty.all(th.buttonTextColor),
@@ -388,6 +394,7 @@ class AppThemes {
 				tapTargetSize: MaterialTapTargetSize.shrinkWrap,
 				//backgroundColor: MaterialStateProperty.all(th.buttonBackColor),
 				foregroundColor: MaterialStateProperty.all(th.textColor),
+				shape: buttonBorder,
 			),
 		);
 

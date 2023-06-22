@@ -333,7 +333,7 @@ class _AddPlacePageState extends StateBase<AddPlacePage> {
       return;
     }
 
-    AppSheet.showSheetOneAction(context, 'دستگاه با موفقیت ثبت شد', (){
+    AppSheet.showSheetOneAction(context, 'دستگاه با موفقیت ثبت شد', onButton: (){
       RouteTools.popTopView(context: context);
     });
   }
