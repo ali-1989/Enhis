@@ -34,7 +34,7 @@ dependencies:
   platform_device_id: ^1.0.1
   permission_handler: ^10.3.0            # NoWeb
   flutter_spinkit: ^5.2.0
-  http: ^1.0.0
+  http: ^1.1.0
   dio: ^5.2.1+1
   connectivity_plus: ^4.0.1
   material_dialogs: ^1.1.4
@@ -45,7 +45,7 @@ dependencies:
   photo_view: ^0.14.0                   # image view gallery
   toggle_switch: ^2.1.0
   persian_needs: ^0.1.1
-  sms_advanced: ^1.0.2
+  sms_advanced: ^1.1.0
   flutter_pin_code_widget: ^0.1.0
   flutter_local_auth_invisible: ^2.2.0
 
@@ -61,15 +61,15 @@ dependencies:
 
 
 dependency_overrides:
-  http: ^1.0.0
-  file: ^7.0.0
+  http: 1.1.0
+  file: 7.0.0
   intl: 0.18.1  #flutter_local_auth_invisible
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.1
+  flutter_lints: ^2.0.2
 
 
 flutter:

@@ -3,9 +3,7 @@ class GlobalSettingsModel {
 
   GlobalSettingsModel();
 
-  GlobalSettingsModel.fromMap(Map map) {
-
-  }
+  GlobalSettingsModel.fromMap(Map map);
 
   Map<String, dynamic> toMap() {
     final map = <String, dynamic>{};

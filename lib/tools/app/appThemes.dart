@@ -85,7 +85,6 @@ class AppThemes {
 			final mainTheme = ColorTheme(
 					AppDecoration.mainColor, AppDecoration.secondColor,
 					AppDecoration.differentColor, Colors.black);
-			//primary: ^1976D2, 1060A0 | dif: (FF006E|d81b60), ^F77F00
 
 			mainTheme.themeName = 'Main';
 			mainTheme.appBarItemColor = Colors.black.withAlpha(180);

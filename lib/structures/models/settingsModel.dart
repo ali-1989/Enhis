@@ -8,7 +8,7 @@ import 'package:app/tools/app/appThemes.dart';
 import 'package:app/tools/dateTools.dart';
 
 class SettingsModel {
-  static const defaultHttpAddress = 'http://vosatezehn.com:7436';
+  static const defaultHttpAddress = '';
   static const Locale defaultAppLocale = Locale('fa', 'IR');
   static const CalendarType defaultCalendarType = CalendarType.solarHijri;
   static final defaultDateFormat = DateFormat.yyyyMmDd.format();
@@ -43,11 +43,14 @@ class SettingsModel {
     colorTheme = map[Keys.setting$colorThemeName];
     httpAddress = map['http_address']?? defaultHttpAddress;
     currentVersion = map[Keys.setting$currentVersion];
-    {///-- SMS
+    ///-- SMS
+    {
       askSndSmsEveryTime = map[Keys.setting$askSendSmsEveryTime] ?? true;
       defaultSimSlot = map[Keys.setting$defaultSimSlot];
     }
-    {///-- Lock
+
+    ///-- Lock
+    {
       //lockApp = map[Keys.setting$lockApp] ?? false;
       unLockByBiometric = map[Keys.setting$unLockByBiometric] ?? false;
       unLockByNumber = map[Keys.setting$unLockByNumber] ?? false;
@@ -68,11 +71,14 @@ class SettingsModel {
     map[Keys.setting$colorThemeName] = colorTheme;
     map[Keys.setting$currentVersion] = currentVersion;
     map['http_address'] = httpAddress;
-    {///-- SMS
+    ///-- SMS
+    {
       map[Keys.setting$defaultSimSlot] = defaultSimSlot;
       map[Keys.setting$askSendSmsEveryTime] = askSndSmsEveryTime;
     }
-    {///-- lock
+
+    ///-- lock
+    {
       map[Keys.setting$unLockByBiometric] = unLockByBiometric;
       map[Keys.setting$unLockByNumber] = unLockByNumber;
       map[Keys.setting$numberLock] = appNumberLock;
@@ -89,11 +95,13 @@ class SettingsModel {
     dateFormat = other.dateFormat;
     colorTheme = other.colorTheme;
     httpAddress = other.httpAddress;
-    {///--SMS
+    ///--SMS
+    {
       askSndSmsEveryTime = other.askSndSmsEveryTime;
       defaultSimSlot = other.defaultSimSlot;
     }
-    {///--lock
+    ///-- lock
+    {
       unLockByBiometric = other.unLockByBiometric;
       unLockByNumber = other.unLockByNumber;
       appNumberLock = other.appNumberLock;

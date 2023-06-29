@@ -12,23 +12,12 @@ class RouteTools {
   RouteTools._();
 
   static prepareWebRoute(){
-    final homePage = WebRoute.by((HomePage).toString(), HomePage());
-    final contactUsPage = WebRoute.by((ContactUsPage).toString(), ContactUsPage());
-    //final imageFullScreen = WebRoute.by((ImageFullScreen).toString(), ImageFullScreen());
-    //final videoPlayerPage = WebRoute.by((VideoPlayerPage).toString(), VideoPlayerPage());
-    //final contentViewPage = WebRoute.by((ContentViewPage).toString(), ContentViewPage());
-    //final bucketPage = WebRoute.by((BucketPage).toString(), BucketPage());
-    //final subBucketPage = WebRoute.by((SubBucketPage).toString(), SubBucketPage());
-    //final registerPage = WebRoute.by((RegisterPage).toString(), RegisterPage());
-    //final audioPlayerPage = WebRoute.by((AudioPlayerPage).toString(), AudioPlayerPage());
+    final homePage = IrisPageRoute.by((HomePage).toString(), HomePage());
+    final contactUsPage = IrisPageRoute.by((ContactUsPage).toString(), const ContactUsPage());
 
-    //final registerFormPage = WebRoute.by((RegisterFormPage).toString(), RegisterFormPage());
-    //final profilePage = WebRoute.by((ProfilePage).toString(), ProfilePage());
-
-    IrisNavigatorObserver.webRoutes.add(homePage);
-    IrisNavigatorObserver.webRoutes.add(contactUsPage);
-    //IrisNavigatorObserver.webRoutes.add(registerPage);
-    //IrisNavigatorObserver.webRoutes.add(audioPlayerPage);
+    IrisNavigatorObserver.notFoundHandler = (settings) => null;
+    IrisNavigatorObserver.allAppRoutes.add(homePage);
+    IrisNavigatorObserver.allAppRoutes.add(contactUsPage);
 
     IrisNavigatorObserver.homeName = homePage.routeName;
   }

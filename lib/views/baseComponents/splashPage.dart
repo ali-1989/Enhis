@@ -41,7 +41,7 @@ class SplashPageState extends StateBase<SplashPage> {
   static bool _isInit = false;
   static bool _isInLoadingSettings = true;
   bool _isConnectToServer = true;
-  int splashWaitingMil = 3500;
+  int splashWaitingMil = 3000;
 
   @override
   Widget build(BuildContext context) {
