@@ -1,5 +1,6 @@
 // ignore_for_file: empty_catches
 
+import 'package:app/tools/app/appDecoration.dart';
 import 'package:app/tools/app/appLocale.dart';
 import 'package:flutter/material.dart';
 
@@ -660,7 +661,7 @@ extension TextExtension on Text {
 
   Text fsR(double size, {double? max /*20*/}) {
     var siz = style?.fontSize?? AppThemes.instance.currentTheme.baseTextStyle.fontSize;
-    siz = siz! + size;
+    siz = (siz?? 13) + size;
 
     if (max != null) {
       siz = MathHelper.minDouble(siz, max);
@@ -952,7 +953,7 @@ extension SelectableTextExtension on SelectableText {
     var siz = style?.fontSize;
     siz ??= AppThemes.instance.currentTheme.baseTextStyle.fontSize;
 
-    siz = siz! + size;
+    siz = (siz?? 13) + size;
 
     if (max != null) {
       siz = MathHelper.minDouble(siz, max);
@@ -1056,9 +1057,9 @@ extension DropdownButtonExtension on DropdownButton {
     return Container(
       width: width,
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
-      decoration: AppThemes.dropdownDecoration(color: back, radius: radius),
+      decoration: AppDecoration.dropdownDecoration(color: back, radius: radius),
       child: Theme(
-        data: AppThemes.dropdownTheme(context, color: back),
+        data: AppDecoration.dropdownTheme(context, color: back),
         child: DropdownButton(
           items: items,
           value: value,

@@ -1,3 +1,4 @@
+import 'package:app/managers/font_manager.dart';
 import 'package:flutter/material.dart';
 
 import 'package:iris_notifier/iris_notifier.dart';
@@ -86,7 +87,11 @@ class _HomePageState extends StateBase<HomePage> {
       return buildEmptyPlaces();
     }
 
-
+    /*final tt = Theme.of(context);
+    Future.delayed(Duration(seconds: 1), (){
+      print('---------> ${tt.textTheme.bodySmall?.fontSize}');
+      print('----p-----> ${FontManager.instance.getPlatformFont().size}');
+    });*/
     return Column(
       children: [
         buildTopSection(),
