@@ -41,7 +41,8 @@ class SplashPageState extends StateBase<SplashPage> {
   static bool _isInit = false;
   static bool _isInLoadingSettings = true;
   bool _isConnectToServer = true;
-  int splashWaitingMil = 3000;
+  int splashWaitingMil = 4000;
+  Timer? timer;
 
   @override
   Widget build(BuildContext context) {
@@ -78,10 +79,9 @@ class SplashPageState extends StateBase<SplashPage> {
   }
 
   void splashWaitTimer() async {
-    if(mustWaitToSplashTimer){
-      mustWaitToSplashTimer = false;
-
-      Timer(Duration(milliseconds: splashWaitingMil), (){
+    if(mustWaitToSplashTimer || timer == null){
+      timer = Timer(Duration(milliseconds: splashWaitingMil), (){
+        mustWaitToSplashTimer = false;
         callState();
       });
     }
