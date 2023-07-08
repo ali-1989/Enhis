@@ -396,7 +396,7 @@ class _HomePageState extends StateBase<HomePage> {
                           [Colors.blue]
                         ],
                         onToggle: (index) {
-                          onChangeDeviceStatusClick(index?? 0);
+                          onChangeDeviceStatusClick((index?? 0)+2);
                         },
                       ),
                     ],

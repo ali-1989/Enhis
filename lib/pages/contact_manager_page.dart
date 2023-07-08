@@ -159,7 +159,7 @@ class _ContactManagerPageState extends StateBase<ContactManagerPage> {
                               color: AppDecoration.dropDownBackground,
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
-                                child: SizedBox(width: 40, child: Text('سطح ${e.getChar()}')),
+                                child: SizedBox(width: 54, child: Text('سطح ${e.getChar()}')),
                               ))
                       )
                       ).toList(),

@@ -98,7 +98,6 @@ class SmsManager {
 
     listenToDeviceMessage();
     final code = '*${place.currentPassword}*$sc#';
-    print('@@@@@@@ $code  to   ${place.simCardNumber}');
     final result = SmsService.sendSms(code, [place.simCardNumber]);
 
     final sms = await result.first;

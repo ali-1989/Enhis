@@ -43,7 +43,6 @@ class _SettingsPageState extends StateBase<SettingsPage> {
         assistCtr.updateHead();
       });
 
-      SmsService.read();
       LockService.hasBiometrics().then((value){
         if(value){
           canUseBiometric = true;

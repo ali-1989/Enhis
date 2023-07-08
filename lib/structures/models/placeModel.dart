@@ -41,7 +41,7 @@ class PlaceModel {
   int? simCardAntennaStatus;
   int? contactCount;
   int? remoteCount;
-  int? wirelessState;
+  bool? wirelessIsActive;
   String? simCardAmount;
   List<ZoneModel> zones = [];
   List<RelayModel> relays = [];
@@ -85,7 +85,7 @@ class PlaceModel {
     simCardAmount = map['simCardAmount'];
     speakerIsConnected = map['speakerIsConnected'];
     useOfRelays = map['useOfRelays'];
-    wirelessState = map['wirelessState'];
+    wirelessIsActive = map['wirelessState'];
     zones = ZoneModel.mapToList(map['zones']);
     relays = RelayModel.mapToList(map['relays']);
     contacts = ContactModel.mapToList(map['contacts']);
@@ -114,7 +114,7 @@ class PlaceModel {
     map['simCardAmount'] = simCardAmount;
     map['speakerIsConnected'] = speakerIsConnected;
     map['useOfRelays'] = useOfRelays;
-    map['wirelessState'] = wirelessState;
+    map['wirelessState'] = wirelessIsActive;
     map['zones'] = zones.map((e) => e.toMap()).toList();
     map['relays'] = relays.map((e) => e.toMap()).toList();
     map['contacts'] = contacts.map((e) => e.toMap()).toList();
@@ -255,7 +255,6 @@ class PlaceModel {
   void parseUpdate(String txt){
     print('>>>> pars >>>>>> $txt');
 
-
     if(txt.startsWith('*') && txt.endsWith('#')){
       final splits = txt.split('*');
 
@@ -263,7 +262,6 @@ class PlaceModel {
       if(txt.contains('Z')) {
         final pat = RegExp(r'.*?Z(\d+)(\w+)', multiLine: false, unicode: false);
 
-        print('zzz:$splits');
         for (final z in splits) {
           if (!z.startsWith('Z')) {
             continue;
@@ -274,7 +272,6 @@ class PlaceModel {
           if (res != null) {
             final number = res.group(1);
             final status = res.group(2);
-            print('---zone: $number-$status');
 
             for (final zon in zones) {
               if (zon.number == MathHelper.clearToInt(number)) {
@@ -323,19 +320,28 @@ class PlaceModel {
       }
     }
 
-    /// update
+    /// update info
     else if(txt.endsWith(';')) {
       lastUpdateTimeUTC = DateHelper.getNowToUtc();
       final splits = txt.split(',');
 
-      print('>>>>>> $splits');
-
       deviceStatus = DeviceStatus.from(MathHelper.clearToInt(splits[0]));
       isConnectedPower = MathHelper.clearToInt(splits[1]) == 1;
-      //batteryCharge = MathHelper.clearToInt(splits[3]) == 1;
+      final zonesState = splits[2];
+      speakerIsConnected = MathHelper.clearToInt(splits[3]) == 1;
       remoteCount = MathHelper.clearToInt(splits[4]);
       simCardAntennaStatus = MathHelper.clearToInt(splits[5]);
       contactCount = MathHelper.clearToInt(splits[6]) + 1;
+      wirelessIsActive = MathHelper.clearToInt(splits[7]) == 1;
+      batteryCharge = MathHelper.clearToInt(splits[8]);
+      relays.first.isActive = MathHelper.clearToInt(splits[9]) == 1;
+
+      for(var i =0; i < zones.length; i++){
+        final z = zones[i];
+        z.isOpen = zonesState[i] == '1';
+      }
+
+      EventNotifierService.notify(AppEvents.contactDataChanged);
     }
 
     /// charge-sim

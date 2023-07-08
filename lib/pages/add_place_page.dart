@@ -261,7 +261,7 @@ class _AddPlacePageState extends StateBase<AddPlacePage> {
 
   void onRegisterClick() async {
     FocusHelper.hideKeyboardByUnFocusRoot();
-    await System.wait(const Duration(milliseconds: 200));
+    await System.wait(const Duration(milliseconds: 500));
 
     if(!mounted){
       return;

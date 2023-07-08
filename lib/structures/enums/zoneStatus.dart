@@ -65,6 +65,10 @@ enum ZoneStatus {
       return ZoneStatus.guard;
     }
 
+    if(data == 'O'){//5
+      return ZoneStatus.normalClose;
+    }
+
     if(data == 'S'){
       return ZoneStatus.spy;
     }

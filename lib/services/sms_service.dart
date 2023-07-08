@@ -134,7 +134,7 @@ class SmsService {
     // usage : s.body, s.address, s.sender
   }
 
-  static void read() async {
+  static void readAllThread() async {
     final query = SmsQuery();
     /*await query.querySms(
       kinds: [SmsQueryKind.Inbox, SmsQueryKind.Sent]
@@ -145,9 +145,6 @@ class SmsService {
     for(final th in threads) {
       String? senderNumber = th.contact?.address;
       String? message = th.messages.first.body;
-
-      print('sender: $senderNumber | : ${th.messages.first.id}, ${th.id} | message: $message');
-      //final x = await deleteSms(th.messages.first.id!, th.id!);
     }
   }
 
