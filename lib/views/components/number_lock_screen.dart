@@ -164,9 +164,18 @@ class NumberLockScreenState extends State<NumberLockScreen> {
 
     return Visibility(
       visible: !isInCreate() && widget.showFingerPrint,
-      child: const Icon(
-        Icons.fingerprint,
-        size: 40,
+      child: const Column(
+        children: [
+          SizedBox(height: 20),
+          Text('می توانید با اثر انگشت وارد شوید'),
+
+          SizedBox(height: 10),
+          Icon(
+            Icons.fingerprint,
+            size: 55,
+            color: Colors.red,
+          ),
+        ],
       ),
     );
   }

@@ -33,6 +33,7 @@ class AppThemes {
 	ThemeMode currentThemeMode = ThemeMode.light;
 	Brightness currentBrightness = Brightness.light;
 	TextDirection textDirection = TextDirection.rtl;
+	/// sets minimum vertical layout metrics
 	StrutStyle strutStyle = const StrutStyle(forceStrutHeight: true, height: 1.08, leading: 0.36);
 
 	static AppThemes get instance {
@@ -134,8 +135,6 @@ class AppThemes {
 			brightness: _instance.currentBrightness,
 		);
 
-		th.fontSize = _instance.baseFont.size ?? FontManager.instance.getPlatformFont().size!;
-
 		final raw = FontManager.instance.rawTextTheme;
 
 		th.baseTextStyle = raw.bodyMedium!.copyWith(
@@ -160,7 +159,7 @@ class AppThemes {
 		);
 
 		th.textUnderlineStyle = th.textUnderlineStyle.copyWith(
-			fontSize: th.fontSize,
+			fontSize: _instance.baseFont.size,
 			height: _instance.baseFont.height,
 			color: th.underLineDecorationColor,
 			decorationColor: th.underLineDecorationColor,
@@ -225,7 +224,7 @@ class AppThemes {
 			);
 		}
 		else {
-			final fontSize = th.fontSize;
+			final fontSize = _instance.baseFont.size ?? FontManager.instance.getPlatformFont().size?? FontManager.defaultFontSize;
 
 			primaryTextTheme = TextTheme(
 				bodyLarge: raw.textTheme.bodyLarge!.copyWith(
@@ -429,9 +428,9 @@ class AppThemes {
 							return Colors.lightBlue;
 						},
 				),
-				/*overlayColor: MaterialStateProperty.all(
+				overlayColor: MaterialStateProperty.all(
 						AppDecoration.checkPrimaryByWB(th.primaryColor, th.differentColor).withAlpha(100)
-				),*/
+				),
 			),
 		);
 
@@ -451,14 +450,14 @@ class AppThemes {
 		);
 
 		final radioThemeData = RadioThemeData(
-			//fillColor: MaterialStateProperty.all(AppDecoration.checkPrimaryByWB(th.primaryColor, th.differentColor)),
+			fillColor: MaterialStateProperty.all(AppDecoration.checkPrimaryByWB(th.primaryColor, th.differentColor)),
 			overlayColor: MaterialStateProperty.all(th.differentColor),
 			materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
 			visualDensity: VisualDensity.comfortable,
 		);
 
 		final checkboxThemeData = CheckboxThemeData(
-			//fillColor: MaterialStateProperty.all(AppDecoration.checkPrimaryByWB(th.primaryColor, th.differentColor)),
+			fillColor: MaterialStateProperty.all(AppDecoration.checkPrimaryByWB(th.primaryColor, th.differentColor)),
 			overlayColor: MaterialStateProperty.all(th.differentColor),
 			materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
 			visualDensity: VisualDensity.comfortable,
@@ -482,8 +481,8 @@ class AppThemes {
 			focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: th.hintColor)),
 			enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: th.hintColor)),
 			disabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: th.inactiveTextColor)),
-			//errorBorder: UnderlineInputBorder(borderSide: BorderSide(color: th.inactiveTextColor)),
-			//focusedErrorBorder: UnderlineInputBorder(borderSide: BorderSide(color: th.inactiveTextColor)),
+			errorBorder: UnderlineInputBorder(borderSide: BorderSide(color: th.errorColor)),
+			focusedErrorBorder: UnderlineInputBorder(borderSide: BorderSide(color: th.errorColor)),
 		); ///OutlineInputBorder, UnderlineInputBorder
 
 		final textSelectionTheme = TextSelectionThemeData(
@@ -559,10 +558,6 @@ class AppThemes {
 		return AppThemes._instance.themeData.textTheme;
 	}
 
-	static TextStyle appBarTextStyle() {
-		return AppThemes._instance.themeData.appBarTheme.toolbarTextStyle!;
-	}
-
 	static TextStyle baseTextStyle() {
 		return AppThemes._instance.currentTheme.baseTextStyle;
 	}
@@ -575,20 +570,24 @@ class AppThemes {
 		return AppThemes._instance.currentTheme.subTextStyle;
 	}
 
-	/*static TextStyle? bodyTextStyle() {
-		return AppThemes._instance.themeData.textTheme.bodyMedium;
-	}
-*/
 	static Color buttonBackgroundColor() {
 		return AppThemes.instance.themeData.elevatedButtonTheme.style!.backgroundColor!.resolve({MaterialState.focused})!;
 	}
-	///------------------------------------------------------------------------------------------------------
+
 	static TextDirection getOppositeDirection() {
 		if (AppThemes._instance.textDirection == TextDirection.rtl) {
 		  return TextDirection.ltr;
 		}
 
 		return TextDirection.rtl;
+	}
+
+	static TextAlign getTextAlign() {
+		if (AppThemes._instance.textDirection == TextDirection.rtl) {
+		  return TextAlign.left;
+		}
+
+		return TextAlign.right;
 	}
 
 	static bool isLtrDirection() {

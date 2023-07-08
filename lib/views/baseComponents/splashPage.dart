@@ -152,7 +152,7 @@ class SplashPageState extends StateBase<SplashPage> {
       }
 
       if(context != null && context.mounted){
-        RouteTools.prepareWebRoute();
+        RouteTools.prepareRoutes();
         AppCache.screenBack = const AssetImage(AppImages.logoSplash);
         await precacheImage(AppCache.screenBack!, context);
       }

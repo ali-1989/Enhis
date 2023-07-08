@@ -57,7 +57,7 @@ class PlaceModel {
 
     zIdx = 1;
 
-    while(relays.length < 4){
+    while(relays.length < 2){
       relays.add(RelayModel()..number = zIdx);
       zIdx++;
     }
@@ -130,13 +130,23 @@ class PlaceModel {
     return deviceStatus != DeviceStatus.unKnow;
   }
 
-  int? getDeviceStatsForSwitchButton(){
+  int? getDeviceStatsForSwitchButtonA(){
     return switch(deviceStatus){
       DeviceStatus.unKnow => null,
       DeviceStatus.active => 0,
       DeviceStatus.inActive => 1,
-      DeviceStatus.semiActive => 2,
-      DeviceStatus.silent => 3,
+      DeviceStatus.semiActive => null,
+      DeviceStatus.silent => null,
+    };
+  }
+
+  int? getDeviceStatsForSwitchButtonB(){
+    return switch(deviceStatus){
+      DeviceStatus.unKnow => null,
+      DeviceStatus.active => null,
+      DeviceStatus.inActive => null,
+      DeviceStatus.semiActive => 0,
+      DeviceStatus.silent => 1,
     };
   }
 

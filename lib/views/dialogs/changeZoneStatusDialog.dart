@@ -106,12 +106,11 @@ class _ChangeZoneStatusDialogState extends State<ChangeZoneStatusDialog> {
         label: ConstrainedBox(
             constraints: const BoxConstraints(
               minWidth: 50,
-              maxWidth: 110,
+              maxWidth: 95,
+              maxHeight: 42,
             ),
-            child: UnconstrainedBox(
-              child: Center(
-                child: Text(itm.getHumanName()),
-              ),
+            child: Center(
+              child: Text(itm.getHumanName()).fitWidthOverflow(),
             )
         )
     );

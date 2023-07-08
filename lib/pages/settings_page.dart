@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iris_tools/api/helpers/open_helper.dart';
 
 import 'package:iris_tools/features/overlayDialog.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
@@ -36,16 +37,19 @@ class _SettingsPageState extends StateBase<SettingsPage> {
   void initState(){
     super.initState();
 
-    SmsService.getSimCards().then((value){
-      simCards = value;
-      assistCtr.updateHead();
-    });
-
-    LockService.hasBiometrics().then((value){
-      if(value){
-        canUseBiometric = true;
+    addPostOrCall(fn:(){
+      SmsService.getSimCards().then((value){
+        simCards = value;
         assistCtr.updateHead();
-      }
+      });
+
+      SmsService.read();
+      LockService.hasBiometrics().then((value){
+        if(value){
+          canUseBiometric = true;
+          assistCtr.updateHead();
+        }
+      });
     });
   }
 
@@ -81,6 +85,8 @@ class _SettingsPageState extends StateBase<SettingsPage> {
         Expanded(
             child: ListView(
               children: [
+                buildAboutSection(),
+
                 buildAddLocationSection(),
 
                 buildSecuritySection(),
@@ -90,6 +96,45 @@ class _SettingsPageState extends StateBase<SettingsPage> {
             )
         ),
       ],
+    );
+  }
+
+  Widget buildAboutSection(){
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+      color: AppDecoration.secondColor,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('درباره ی ما').bold().fsR(2),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Divider(color: Colors.grey.shade300),
+            ),
+
+            const Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(text: 'گروه حفاظتی '),
+                    TextSpan(text: 'اینهایس ', style: TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold)),
+                    TextSpan(text: '(enhis)', style: TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold)),
+                    TextSpan(text: ' با شعار '),
+                    TextSpan(text: '`از امنیت بالا لذت ببرید` ', style: TextStyle(color: Colors.pink, fontWeight: FontWeight.bold)),
+                    TextSpan(text: ' تولید کننده سیستم های امنیتی.'),
+                  ]
+                )
+            ),
+
+            ElevatedButton(
+                onPressed: onGotoSiteClick,
+                child: const Text('www.enhis.ir')
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -381,5 +426,9 @@ class _SettingsPageState extends StateBase<SettingsPage> {
         ],
       ),
     );
+  }
+
+  void onGotoSiteClick() {
+    OpenHelper.launchInBrowser('http://enhis.ir');
   }
 }

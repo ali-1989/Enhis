@@ -5,13 +5,15 @@ import 'package:iris_route/iris_route.dart';
 import 'package:app/pages/contact_us_page.dart';
 import 'package:app/pages/home_page.dart';
 import 'package:app/tools/app/appNavigator.dart';
+import 'package:iris_tools/api/stackList.dart';
 
 class RouteTools {
   static BuildContext? materialContext;
+  static final StackList<State> widgetStateStack = StackList();
 
   RouteTools._();
 
-  static prepareWebRoute(){
+  static prepareRoutes(){
     final homePage = IrisPageRoute.by((HomePage).toString(), HomePage());
     final contactUsPage = IrisPageRoute.by((ContactUsPage).toString(), const ContactUsPage());
 
@@ -20,6 +22,18 @@ class RouteTools {
     IrisNavigatorObserver.allAppRoutes.add(contactUsPage);
 
     IrisNavigatorObserver.homeName = homePage.routeName;
+  }
+
+  static void addWidgetState(State state){
+    return widgetStateStack.push(state);
+  }
+
+  static State removeWidgetState(){
+    return widgetStateStack.pop();
+  }
+
+  static State getTopWidgetState(){
+    return widgetStateStack.top();
   }
 
   static BuildContext? getTopContext() {

@@ -55,8 +55,10 @@ class _ManageRelayDialogState extends State<ManageRelayDialog> {
             ),
           ),
 
-          const Text('مدیریت رله ها').bold().fsR(2),
-          const SizedBox(height: 25),
+          const Text('مدیریت رله ها').fsR(3).bold(),
+          const SizedBox(height: 20),
+          const Divider(indent: 20, endIndent: 20,),
+          const SizedBox(height: 20),
 
           ListView.builder(
             shrinkWrap: true,

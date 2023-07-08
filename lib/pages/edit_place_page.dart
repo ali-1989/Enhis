@@ -1,11 +1,17 @@
+import 'package:app/tools/app/appDirectories.dart';
+import 'package:app/tools/app/appIcons.dart';
 import 'package:flutter/material.dart';
 
 import 'package:iris_notifier/iris_notifier.dart';
+import 'package:iris_tools/api/callAction/manageCallAction.dart';
 import 'package:iris_tools/api/checker.dart';
 import 'package:iris_tools/api/helpers/focusHelper.dart';
+import 'package:iris_tools/api/helpers/open_helper.dart';
 import 'package:iris_tools/api/helpers/textHelper.dart';
+import 'package:iris_tools/api/managers/assetManager.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/optionsRow/checkRow.dart';
+import 'package:iris_tools/widgets/text/titleInfo.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 import 'package:app/managers/place_manager.dart';
@@ -40,7 +46,8 @@ class EditPlacePage extends StatefulWidget {
 ///==================================================================================
 class _EditPlacePageState extends StateBase<EditPlacePage> {
   late InputDecoration inputDecoration;
-  
+  final ClickCounter clickCounter = ClickCounter(const Duration(seconds: 3), 5);
+
   @override
   void initState(){
     super.initState();
@@ -110,6 +117,8 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
                 buildCallOnDisConnectPowerSection(),
 
                 buildNotifyStateSection(),
+
+                buildInstallerSection(),
 
                 const SizedBox(height: 14),
               ],
@@ -452,6 +461,66 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
     );
   }
 
+  Widget buildInstallerSection(){
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+      color: Colors.grey.shade200,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            GestureDetector(
+              onTap: onHiddenHelpClick,
+                behavior: HitTestBehavior.translucent,
+                child: const Text('اطلاعات پشتیبان').bold().fsR(2)
+            ),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Divider(color: Colors.grey.shade300),
+            ),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TitleInfo(title: 'نام: ', info: widget.place.supportName),
+
+                TextButton(
+                    onPressed: onChangeInstallerName,
+                    child: const Text('تغییر')
+                )
+              ],
+            ),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: (){
+                    OpenHelper.makePhoneCall(widget.place.supportPhoneNumber);
+                  },
+                  child: Row(
+                    children: [
+                      TitleInfo(title: 'شماره تماس: ', info: widget.place.supportPhoneNumber),
+                      const SizedBox(width: 8),
+                      const Icon(AppIcons.callPhone, color: Colors.blueAccent),
+                    ],
+                  ),
+                ),
+
+                TextButton(
+                    onPressed: onChangeInstallerMobile,
+                    child: const Text('تغییر')
+                )
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void onEditNameClick() {
     AppDialogIris.instance.showTextInputDialog(
         context,
@@ -637,5 +706,48 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
       descView: ManageRelayDialog(place: widget.place),
       decoration: AppDialogIris.instance.dialogDecoration.copy()..widthFactor = 0.9,
     );
+  }
+
+  void onChangeInstallerName() {
+    AppDialogIris.instance.showTextInputDialog(
+        context,
+        descView: const Text('نام پشتیبان یا نصاب').bold(),
+        inputDecoration: AppDecoration.inputDecor,
+        textInputType: TextInputType.text,
+        mainButton: (ctx, txt) {
+          FocusHelper.hideKeyboardByUnFocusRoot();
+          widget.place.supportName = txt.trim();
+          PlaceManager.updatePlaceToDb(widget.place);
+          EventNotifierService.notify(AppEvents.placeDataChanged);
+          assistCtr.updateHead();
+          AppNavigator.pop(ctx);
+        }
+    );
+  }
+
+  void onChangeInstallerMobile() {
+    AppDialogIris.instance.showTextInputDialog(
+        context,
+        descView: const Text('شماره تماس پشتیبان یا نصاب').bold(),
+        inputDecoration: AppDecoration.inputDecor,
+        textInputType: TextInputType.phone,
+        mainButton: (ctx, txt) {
+          FocusHelper.hideKeyboardByUnFocusRoot();
+          widget.place.supportPhoneNumber = txt.trim();
+          PlaceManager.updatePlaceToDb(widget.place);
+          EventNotifierService.notify(AppEvents.placeDataChanged);
+          assistCtr.updateHead();
+          AppNavigator.pop(ctx);
+        }
+    );
+  }
+
+  void onHiddenHelpClick() async {
+    if(clickCounter.touch()){
+      print('yessss');
+      final path = '${AppDirectories.getAppFolderInInternalStorage()}/help.pdf';
+      await AssetsManager.assetsToFile('assets/pdf/test.pdf', path);
+      OpenHelper.openFile(path, type: 'application/pdf');
+    }
   }
 }

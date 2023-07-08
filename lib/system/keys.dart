@@ -81,5 +81,6 @@ class Keys {
   static const setting$unLockByNumber = 'setting_unLockByNumber';
   static const setting$numberLock = 'app_lock_number';
   static const selectedPlaceId = 'selected_place_id';
-
+  static const relayCaseIsShow = 'relayCaseIsShow';
+  static const homeCaseIsShow = 'homeCaseIsShow';
 }

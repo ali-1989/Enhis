@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -11,7 +13,7 @@ class FontManager {
 
   static late final FontManager _instance;
   static bool useFlutterFontSize = true;
-  static const double _defaultFontSize = 13;
+  static const double defaultFontSize = 13;
 
   static final List<Font> _fontList = [];
   static late Font _platformDefaultFont;
@@ -185,7 +187,7 @@ class FontManager {
   }
 
   static void _createThemes(){
-    useFlutterFontSize = false;//PlatformDispatcher.instance.implicitView!.devicePixelRatio > 2.9;
+    useFlutterFontSize = PlatformDispatcher.instance.implicitView!.devicePixelRatio > 2.5;
     final fs = useFlutterFontSize? null : Font.getRelativeFontSize();
     final temp = ThemeData();
     const c1 = Colors.teal;
@@ -311,7 +313,7 @@ class Font {
 
     family = map['family'];
     fileName = map['file_name'];
-    size = map['size']?? FontManager._defaultFontSize;
+    size = map['size'];
     height = map['height'];
     textHeightBehavior = const TextHeightBehavior().fromMap(map['textHeightBehavior']);
     defaultUsage = FontUsage.fromName(map['default_usage']);
@@ -347,9 +349,10 @@ class Font {
     }
     else {
       final appHeight = (isLandscape ? realPixelWidth : realPixelHeight) / pixelRatio;
+      final fSize = appHeight / 52;
       print('======== realWidth:$realPixelWidth | realHeight;$realPixelHeight'
           ' | Ratio: $pixelRatio | appH: $appHeight  |${(appHeight / 51)}| ${PlatformDispatcher.instance.textScaleFactor}');
-      return (appHeight / 51);    //  this is relative to any fonts
+      return max(10.0, fSize);
     }
   }
 }

@@ -80,6 +80,7 @@
 # The proguard configuration file for the following section is E:\Programming\Projects\FlutterProjects\Enhis\android\app\build\intermediates\aapt_proguard_file\debug\aapt_rules.txt
 -keep class android.app.Application { <init>(); }
 -keep class androidx.core.app.CoreComponentFactory { <init>(); }
+-keep class androidx.core.content.FileProvider { <init>(); }
 -keep class androidx.startup.InitializationProvider { <init>(); }
 -keep class com.crazecoder.openfile.FileProvider { <init>(); }
 -keep class io.flutter.plugins.urllauncher.WebViewActivity { <init>(); }

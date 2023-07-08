@@ -5,6 +5,7 @@ import 'package:iris_tools/api/checker.dart';
 import 'package:iris_tools/api/helpers/focusHelper.dart';
 import 'package:iris_tools/api/helpers/inputFormatter.dart';
 import 'package:iris_tools/api/helpers/textHelper.dart';
+import 'package:iris_tools/api/system.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 
 import 'package:app/managers/place_manager.dart';
@@ -260,17 +261,17 @@ class _AddPlacePageState extends StateBase<AddPlacePage> {
 
   void onRegisterClick() async {
     FocusHelper.hideKeyboardByUnFocusRoot();
-    await Future.delayed(const Duration(milliseconds: 200));
+    await System.wait(const Duration(milliseconds: 200));
+
+    if(!mounted){
+      return;
+    }
 
     final name = nameCtr.text.trim();
     final simNumber = numberCtr.text.trim();
     final adminNumber = adminNumberCtr.text.trim();
     final curPassword = currentPasswordCtr.text.trim();
     //final newPassword = newPasswordCtr.text.trim();
-
-    if(!mounted){
-      return;
-    }
 
     if(name.length < 2){
       AppSnack.showError(context, AppMessages.nameIsShort);

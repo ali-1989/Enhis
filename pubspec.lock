@@ -490,19 +490,19 @@ packages:
     dependency: "direct main"
     description:
       name: iris_notifier
-      sha256: "998efce0280424e6c8bb669e3220c47da19c758782cbe12394b7e8e641542727"
+      sha256: "7e805e716b8a4524061824214d1141bfd141cc39fc8c88d5924cf89ce4aa938e"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.4"
+    version: "0.0.7"
   iris_route:
     dependency: "direct main"
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "04acaed6c12ff64b0187f3c9de4779a14c3256dc"
+      resolved-ref: "06dee9a8bd1fff74a36fb7ffb3072710434bda07"
       url: "https://github.com/ali-1989/iris_route.git"
     source: git
-    version: "0.0.27"
+    version: "0.0.30"
   iris_runtime_cache:
     dependency: "direct main"
     description:
@@ -517,10 +517,10 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "8b51ce307b857ed3d32dd7f7954914dc87b849d3"
+      resolved-ref: "62d4876e7138f8b6c9c3a057b3d0a5beac85166e"
       url: "https://github.com/ali-1989/IrisTools.git"
     source: git
-    version: "0.1.11"
+    version: "0.1.21"
   jiffy:
     dependency: transitive
     description:
@@ -677,42 +677,42 @@ packages:
     dependency: "direct main"
     description:
       name: permission_handler
-      sha256: "1b6b3e73f0bcbc856548bbdfb1c33084a401c4f143e220629a9055233d76c331"
+      sha256: "415af30ba76a84faccfe1eb251fe1e4fdc790f876924c65ad7d6ed7a1404bcd6"
       url: "https://pub.dev"
     source: hosted
-    version: "10.3.0"
+    version: "10.4.2"
   permission_handler_android:
     dependency: transitive
     description:
       name: permission_handler_android
-      sha256: "8f6a95ccbca13766882f95d32684d7c9bfe6c45650c32bedba948ef1c6a4ddf7"
+      sha256: "3b61f3da3b1c83bc3fb6a2b431e8dab01d0e5b45f6a3d9c7609770ec88b2a89e"
       url: "https://pub.dev"
     source: hosted
-    version: "10.2.3"
+    version: "10.3.0"
   permission_handler_apple:
     dependency: transitive
     description:
       name: permission_handler_apple
-      sha256: "08dcb6ce628ac0b257e429944b4c652c2a4e6af725bdf12b498daa2c6b2b1edb"
+      sha256: "7a187b671a39919462af2b5e813148365b71a615979165a119868d667fe90c03"
       url: "https://pub.dev"
     source: hosted
-    version: "9.1.0"
+    version: "9.1.3"
   permission_handler_platform_interface:
     dependency: transitive
     description:
       name: permission_handler_platform_interface
-      sha256: de20a5c3269229c1ae2e5a6b822f6cb59578b23e8255c93fbeebfc82116e6b11
+      sha256: "463a07cb7cc6c758a7a1c7da36ce666bb80a0b4b5e92df0fa36872e0ed456993"
       url: "https://pub.dev"
     source: hosted
-    version: "3.10.0"
+    version: "3.11.1"
   permission_handler_windows:
     dependency: transitive
     description:
       name: permission_handler_windows
-      sha256: f67cab14b4328574938ecea2db3475dad7af7ead6afab6338772c5f88963e38b
+      sha256: cc074aace208760f1eee6aa4fae766b45d947df85bc831cde77009cdb4720098
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.2"
+    version: "0.1.3"
   persian_needs:
     dependency: "direct main"
     description:
@@ -833,6 +833,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.1"
+  showcaseview:
+    dependency: "direct main"
+    description:
+      name: showcaseview
+      sha256: dc62ce38820dead4a27ce39d9e6c98384be89c2f2b4da3255238a59b041c7ccd
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.3"
   simple_animations:
     dependency: "direct main"
     description:
@@ -938,10 +946,10 @@ packages:
     dependency: transitive
     description:
       name: url_launcher
-      sha256: eb1e00ab44303d50dd487aab67ebc575456c146c6af44422f9c13889984c00f3
+      sha256: "781bd58a1eb16069412365c98597726cd8810ae27435f04b3b4d3a470bacd61e"
       url: "https://pub.dev"
     source: hosted
-    version: "6.1.11"
+    version: "6.1.12"
   url_launcher_android:
     dependency: transitive
     description:
@@ -986,18 +994,18 @@ packages:
     dependency: transitive
     description:
       name: url_launcher_web
-      sha256: "6bb1e5d7fe53daf02a8fee85352432a40b1f868a81880e99ec7440113d5cfcab"
+      sha256: cc26720eefe98c1b71d85f9dc7ef0cada5132617046369d9dc296b3ecaa5cbb4
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.17"
+    version: "2.0.18"
   url_launcher_windows:
     dependency: transitive
     description:
       name: url_launcher_windows
-      sha256: "254708f17f7c20a9c8c471f67d86d76d4a3f9c1591aad1e15292008aceb82771"
+      sha256: "7967065dd2b5fccc18c653b97958fdf839c5478c28e767c61ee879f4e7882422"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.6"
+    version: "3.0.7"
   uuid:
     dependency: transitive
     description:
@@ -1026,10 +1034,10 @@ packages:
     dependency: transitive
     description:
       name: video_player
-      sha256: de95f0e9405f29b5582573d4166132e71f83b3158aac14e8ee5767a54f4f1fbd
+      sha256: "3fd106c74da32f336dc7feb65021da9b0207cb3124392935f1552834f7cce822"
       url: "https://pub.dev"
     source: hosted
-    version: "2.6.1"
+    version: "2.7.0"
   video_player_android:
     dependency: transitive
     description:

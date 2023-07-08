@@ -56,8 +56,10 @@ class _ManageZoneDialogState extends State<ManageZoneDialog> {
             ),
           ),
 
-          const Text('مدیریت زون ها').bold().fsR(2),
-          const SizedBox(height: 25),
+          const Text('مدیریت زون ها').bold().fsR(3),
+          const SizedBox(height: 20),
+          const Divider(indent: 20, endIndent: 20,),
+          const SizedBox(height: 20),
 
           const Card(
             color: Colors.amber,

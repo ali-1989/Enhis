@@ -1,3 +1,5 @@
+import 'package:app/tools/app/appDialogIris.dart';
+import 'package:app/views/dialogs/manageRelayDialog.dart';
 import 'package:flutter/material.dart';
 
 import 'package:iris_tools/modules/stateManagers/assist.dart';
@@ -64,6 +66,17 @@ class _RelayPageState extends StateBase<RelayPage> {
           ],
         ),
 
+        const SizedBox(height: 15),
+        Align(
+          alignment: Alignment.centerRight,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: TextButton(
+                onPressed: onEditRelayClick,
+                child: const Text('تنظیمات'),
+            ),
+          ),
+        ),
         const SizedBox(height: 15),
 
         buildRelay1Section(),
@@ -189,5 +202,13 @@ class _RelayPageState extends StateBase<RelayPage> {
 
   void onRelay2CommandClick() {
     SmsManager.sendSms('20*2*000002', widget.place, context);
+  }
+
+  void onEditRelayClick() {
+    AppDialogIris.instance.showIrisDialog(
+      context,
+      descView: ManageRelayDialog(place: widget.place),
+      decoration: AppDialogIris.instance.dialogDecoration.copy()..widthFactor = 0.9,
+    );
   }
 }

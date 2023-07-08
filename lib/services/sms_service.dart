@@ -133,4 +133,26 @@ class SmsService {
     return receiver.onSmsReceived!.listen(handler);
     // usage : s.body, s.address, s.sender
   }
+
+  static void read() async {
+    final query = SmsQuery();
+    /*await query.querySms(
+      kinds: [SmsQueryKind.Inbox, SmsQueryKind.Sent]
+    );*/
+
+    List<SmsThread> threads = await query.getAllThreads;
+
+    for(final th in threads) {
+      String? senderNumber = th.contact?.address;
+      String? message = th.messages.first.body;
+
+      print('sender: $senderNumber | : ${th.messages.first.id}, ${th.id} | message: $message');
+      //final x = await deleteSms(th.messages.first.id!, th.id!);
+    }
+  }
+
+  static Future<bool?> deleteSms(int smsId, int threadId) async {
+    final smsRemover = SmsRemover();
+    return smsRemover.removeSmsById(smsId, threadId);
+  }
 }

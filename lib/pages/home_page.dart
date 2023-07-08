@@ -1,9 +1,16 @@
-import 'package:app/managers/font_manager.dart';
+import 'package:app/system/keys.dart';
+import 'package:app/tools/app/appDb.dart';
+import 'package:app/tools/app/appDirectories.dart';
 import 'package:flutter/material.dart';
 
 import 'package:iris_notifier/iris_notifier.dart';
+import 'package:iris_route/iris_route.dart';
+import 'package:iris_tools/api/helpers/colorHelper.dart';
 import 'package:iris_tools/api/helpers/focusHelper.dart';
+import 'package:iris_tools/api/helpers/open_helper.dart';
 import 'package:iris_tools/api/helpers/textHelper.dart';
+import 'package:iris_tools/api/managers/assetManager.dart';
+import 'package:iris_tools/api/system.dart';
 import 'package:iris_tools/features/overlayDialog.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/customCard.dart';
@@ -32,6 +39,7 @@ import 'package:app/tools/app/appThemes.dart';
 import 'package:app/tools/routeTools.dart';
 import 'package:app/views/dialogs/changeZoneStatusDialog.dart';
 import 'package:app/views/dialogs/reChargeSimCardDialog.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 class HomePage extends StatefulWidget {
 
@@ -46,6 +54,12 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends StateBase<HomePage> {
   PlaceModel? currentPlace;
   Color cColor = AppDecoration.secondColor;
+  final settingCaseKey = GlobalKey();
+  final helpCaseKey = GlobalKey();
+  final placeSettingCaseKey = GlobalKey();
+  final reloadCaseKey = GlobalKey();
+  final relayCaseKey = GlobalKey();
+
 
   @override
   void initState(){
@@ -58,6 +72,7 @@ class _HomePageState extends StateBase<HomePage> {
     }
     
     EventNotifierService.addListener(AppEvents.placeDataChanged, listenPlacesDataChanged);
+    IrisNavigatorObserver.addEventListener(navigateState);
   }
 
   @override
@@ -69,7 +84,6 @@ class _HomePageState extends StateBase<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Assist(
         controller: assistCtr,
         builder: (context, ctr, data) {
@@ -112,6 +126,8 @@ class _HomePageState extends StateBase<HomePage> {
                         /// update status
                         buildUpdateStatusSection(),
 
+                        const SizedBox(height: 14),
+
                         /// device state
                         buildDeviceStatusSection(),
 
@@ -129,6 +145,11 @@ class _HomePageState extends StateBase<HomePage> {
 
                         /// Zones state
                         buildZonesSection(),
+
+                        Visibility(
+                          visible: currentPlace!.supportPhoneNumber.isNotEmpty,
+                            child: buildContactWithInstaller()
+                        ),
                       ],
                     ),
                   ),
@@ -140,28 +161,33 @@ class _HomePageState extends StateBase<HomePage> {
                   left: 0,
                   right: 0,
                   child: Center(
-                    child: ActionChip(
-                        labelPadding: const EdgeInsets.symmetric(horizontal: 5),
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
-                        onPressed: onEditPlaceClick,
-                        label: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Text(currentPlace!.name).bold().fsR(2),
-                            ),
-                            const SizedBox(width: 2),
-                            const CustomCard(
-                              color: Colors.green,
-                                radius: 25,
-                                padding: EdgeInsets.all(2),
-                                child: Icon(AppIcons.settings,
-                                  color: Colors.white, size: 15)
-                            )
-                          ],
-                        )
+                    child: Showcase(
+                      key: placeSettingCaseKey,
+                      description: 'تنظیمات دستگاه اینجاست',
+                      targetPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                      child: ActionChip(
+                          labelPadding: const EdgeInsets.symmetric(horizontal: 5),
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          visualDensity: const VisualDensity(horizontal: -1, vertical: -1),
+                          onPressed: onEditPlaceClick,
+                          label: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Text(currentPlace!.name).bold().fsR(2),
+                              ),
+                              const SizedBox(width: 4),
+                              const CustomCard(
+                                color: Colors.green,
+                                  radius: 25,
+                                  padding: EdgeInsets.all(2),
+                                  child: Icon(AppIcons.settings,
+                                    color: Colors.white, size: 18)
+                              )
+                            ],
+                          )
+                      ),
                     ),
                   ),
                 ),
@@ -191,7 +217,7 @@ class _HomePageState extends StateBase<HomePage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(AppImages.appIcon, width: 90, height: 60),
+            Image.asset(AppImages.appIcon, width: 90, height: 70),
           ],
         ),
 
@@ -199,9 +225,38 @@ class _HomePageState extends StateBase<HomePage> {
         Positioned(
             top: 2,
             left: 2,
-            child: IconButton(
-                onPressed: onSettingClick,
-                icon: const Icon(AppIcons.settings)
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Showcase(
+                  key: settingCaseKey,
+                  description: 'تنظیمات برنامه اینجاست',
+                  child: IconButton(
+                    style: IconButton.styleFrom(
+                      visualDensity: const VisualDensity(vertical: -4),
+                    ),
+                      onPressed: onSettingClick,
+                      visualDensity: const VisualDensity(vertical: -4),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      icon: const Icon(AppIcons.settings)
+                  ),
+                ),
+
+                Showcase(
+                  key: helpCaseKey,
+                  description: 'اگر نیاز به راهنمایی دارید، اینجاست',
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      visualDensity: const VisualDensity(vertical: -4),
+                    ),
+                    onPressed: onPdfHelpClick,
+                    child: const Text('راهنما').color(Colors.blueAccent),
+                  ),
+                )
+
+
+              ],
             )
         )
       ],
@@ -223,9 +278,13 @@ class _HomePageState extends StateBase<HomePage> {
               ],
             ),
 
-            IconButton(
-                onPressed: onUpdateInfoClick,
-                icon: const Icon(AppIcons.refreshCircle, color: Colors.blue)
+            Showcase(
+              key: reloadCaseKey,
+              description: 'با لمس این دکمه وضعیت دستگاه به روز رسانی می شود',
+              child: IconButton(
+                  onPressed: onUpdateInfoClick,
+                  icon: const Icon(AppIcons.refreshCircle, color: Colors.blue)
+              ),
             )
           ],
         ),
@@ -233,9 +292,18 @@ class _HomePageState extends StateBase<HomePage> {
         /// relay
         Visibility(
           visible: currentPlace!.useOfRelays,
-          child: TextButton(
-              onPressed: onRelayClick,
-              child: const Text('کلید (رله)')
+          child: Showcase(
+            key: relayCaseKey,
+            description: 'از اینجا دستور رله را اجرا کنید',
+            targetPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            child: GestureDetector(
+                onTap: onRelayClick,
+                child: CustomCard(
+                  color: AppDecoration.mainColor,
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: const Text('کلید (رله)').color(Colors.white)
+                )
+            ),
           ),
         )
       ],
@@ -259,7 +327,7 @@ class _HomePageState extends StateBase<HomePage> {
 
                 GestureDetector(
                     onTap: onDeviceStatusHelpClick,
-                    child: const Icon(AppIcons.questionMarkCircle, size: 16, color: Colors.orange)
+                    child: const Icon(AppIcons.questionMarkCircle, size: 22, color: Colors.orange)
                 ),
               ],
             ),
@@ -275,34 +343,64 @@ class _HomePageState extends StateBase<HomePage> {
                   );
                 }*/
 
-                return ToggleSwitch(
-                  minHeight: 30.0,
-                  initialLabelIndex: currentPlace!.getDeviceStatsForSwitchButton(),
-                  cornerRadius: 8.0,
-                  minWidth: 73,
-                  totalSwitches: 4,
-                  activeFgColor: Colors.white,
-                  inactiveBgColor: Colors.grey.shade400,
-                  inactiveFgColor: Colors.white,
-                  iconSize: 14.0,
-                  borderWidth: 1.0,
-                  multiLineText: false,
-                  changeOnTap: false,
-                  labels: const [
-                    'فعال',
-                    'غیرفعال',
-                    'نیمه فعال',
-                    'بی صدا',
-                  ],
-                  activeBgColors: const [
-                    [Colors.green],
-                    [Colors.red],
-                    [Colors.orange],
-                    [Colors.blue]
-                  ],
-                  onToggle: (index) {
-                    onChangeDeviceStatusClick(index?? 0);
-                  },
+                return SizedBox(
+                  width: double.infinity,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      ToggleSwitch(
+                        minHeight: 45.0,
+                        minWidth: 110,
+                        initialLabelIndex: currentPlace!.getDeviceStatsForSwitchButtonA(),
+                        cornerRadius: 8.0,
+                        totalSwitches: 2,
+                        activeFgColor: Colors.white,
+                        inactiveBgColor: Colors.grey.shade400,
+                        inactiveFgColor: Colors.white,
+                        iconSize: 14.0,
+                        borderWidth: 1.0,
+                        multiLineText: false,
+                        changeOnTap: false,
+                        labels: const [
+                          'فعال',
+                          'غیرفعال',
+                        ],
+                        activeBgColors: const [
+                          [Colors.green],
+                          [Colors.red],
+                        ],
+                        onToggle: (index) {
+                          onChangeDeviceStatusClick(index?? 0);
+                        },
+                      ),
+
+                      ToggleSwitch(
+                        minHeight: 45.0,
+                        minWidth: 110,
+                        initialLabelIndex: currentPlace!.getDeviceStatsForSwitchButtonB(),
+                        cornerRadius: 8.0,
+                        totalSwitches: 2,
+                        activeFgColor: Colors.white,
+                        inactiveBgColor: Colors.grey.shade400,
+                        inactiveFgColor: Colors.white,
+                        iconSize: 14.0,
+                        borderWidth: 1.0,
+                        multiLineText: false,
+                        changeOnTap: false,
+                        labels: const [
+                          'نیمه فعال',
+                          'بی صدا',
+                        ],
+                        activeBgColors: const [
+                          [Colors.orange],
+                          [Colors.blue]
+                        ],
+                        onToggle: (index) {
+                          onChangeDeviceStatusClick(index?? 0);
+                        },
+                      ),
+                    ],
+                  ),
                 );
               }
             ),
@@ -517,6 +615,30 @@ class _HomePageState extends StateBase<HomePage> {
     );
   }
 
+  Widget buildContactWithInstaller(){
+    return GestureDetector(
+      onTap: (){
+        OpenHelper.makePhoneCall(currentPlace!.supportPhoneNumber);
+      },
+      child: Card(
+        color: ColorHelper.changeHue(AppDecoration.secondColor),
+        elevation: 0,
+        margin: const EdgeInsets.only(top: 8.0, bottom: 4),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('تماس با پشتیبان').color(Colors.white).bold(),
+
+              const Icon(AppIcons.callPhone, color: Colors.pink),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   void onUpdateInfoClick() {
     SmsManager.sendSms('90', currentPlace!, context);
   }
@@ -682,11 +804,39 @@ class _HomePageState extends StateBase<HomePage> {
   }
 
   void onEditPlaceClick() async {
-      RouteTools.pushPage(context, EditPlacePage(place: currentPlace!));
+    await RouteTools.pushPage(context, EditPlacePage(place: currentPlace!));
+
+    if(context.mounted && currentPlace != null && currentPlace!.useOfRelays){
+      final isShowRelayCase = AppDB.fetchKv(Keys.relayCaseIsShow)?? false;
+
+      if(!isShowRelayCase) {
+        AppDB.setReplaceKv(Keys.relayCaseIsShow, true);
+        ShowCaseWidget.of(context).startShowCase([relayCaseKey]);
+      }
+    }
+  }
+
+  void navigateState(Route? route, NavigateState state) async {
+    await System.wait(const Duration(milliseconds: 900));
+
+    if(RouteTools.getTopWidgetState() == this){
+      final isShowCase = AppDB.fetchKv(Keys.homeCaseIsShow)?? false;
+
+      if(context.mounted && currentPlace != null && !isShowCase) {
+        AppDB.setReplaceKv(Keys.homeCaseIsShow, true);
+        ShowCaseWidget.of(context).startShowCase([settingCaseKey, helpCaseKey, placeSettingCaseKey, reloadCaseKey]);
+      }
+    }
   }
 
   void onSettingClick() {
     RouteTools.pushPage(context, const SettingsPage());
+  }
+
+  void onPdfHelpClick() async {
+    final path = '${AppDirectories.getAppFolderInInternalStorage()}/help.pdf';
+    await AssetsManager.assetsToFile('assets/pdf/test.pdf', path);
+    OpenHelper.openFile(path, type: 'application/pdf');
   }
 
   void onRelayClick() {

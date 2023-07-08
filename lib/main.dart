@@ -149,7 +149,7 @@ class MyApp extends StatelessWidget {
         RouteTools.materialContext = localContext;
         testCodes(localContext);
 
-        double factor = PlatformDispatcher.instance.textScaleFactor.clamp(0.85, 2.5);
+        double factor = PlatformDispatcher.instance.textScaleFactor.clamp(0.85, 2.0);
 
         return MediaQuery(
           data: MediaQuery.of(localContext).copyWith(textScaleFactor: factor),
