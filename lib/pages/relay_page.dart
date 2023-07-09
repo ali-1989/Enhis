@@ -1,11 +1,15 @@
+import 'package:app/managers/place_manager.dart';
+import 'package:app/structures/enums/appEvents.dart';
+import 'package:app/structures/enums/relayStatus.dart';
+import 'package:app/structures/enums/zoneStatus.dart';
 import 'package:app/tools/app/appDialogIris.dart';
 import 'package:app/views/dialogs/manageRelayDialog.dart';
 import 'package:flutter/material.dart';
+import 'package:iris_notifier/iris_notifier.dart';
 
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
-import 'package:app/managers/place_manager.dart';
 import 'package:app/managers/sms_manager.dart';
 import 'package:app/structures/abstract/stateBase.dart';
 import 'package:app/structures/models/placeModel.dart';
@@ -30,10 +34,13 @@ class _RelayPageState extends StateBase<RelayPage> {
   @override
   void initState(){
     super.initState();
+
+    EventNotifierService.addListener(AppEvents.placeDataChanged, eventListener);
   }
 
   @override
   void dispose(){
+    EventNotifierService.removeListener(AppEvents.placeDataChanged, eventListener);
     super.dispose();
   }
 
@@ -73,7 +80,7 @@ class _RelayPageState extends StateBase<RelayPage> {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: TextButton(
                 onPressed: onEditRelayClick,
-                child: const Text('تنظیمات'),
+                child: const Text('تنظیمات').bold().fsR(2),
             ),
           ),
         ),
@@ -81,7 +88,7 @@ class _RelayPageState extends StateBase<RelayPage> {
 
         buildRelay1Section(),
 
-        buildRelay2Section(),
+        //buildRelay2Section(),
       ],
     );
   }
@@ -119,10 +126,45 @@ class _RelayPageState extends StateBase<RelayPage> {
                   onToggle: onChangeRelay1state,
                 ),
 
-                TextButton(
+                InputChip(
                     onPressed: onRelay1CommandClick,
-                    child: const Text('اجرا فرمان')
+                    label: const Text('اجرا فرمان')
                 )
+              ],
+            ),
+
+            const SizedBox(height: 12),
+            const Text('نوع تحریک رله:'),
+
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                ColoredBox(
+                  color: AppDecoration.dropDownBackground,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: DropdownButton<RelayStatus>(
+                        items: RelayStatus.values.map((e) => DropdownMenuItem<RelayStatus>(
+                            value: e,
+                            child: ColoredBox(
+                                color: AppDecoration.dropDownBackground,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
+                                  child: Text(e.getHumanName()),
+                                ))
+                        )
+                        ).toList(),
+                        value: itm.status,
+                        dropdownColor: AppDecoration.dropDownBackground,
+                        underline: const SizedBox(),
+                        padding: EdgeInsets.zero,
+                        isDense: true,
+                        onChanged: (s){
+                          onChangeRelay1Status(s!);
+                        }
+                    ),
+                  ),
+                ),
               ],
             ),
           ],
@@ -164,9 +206,9 @@ class _RelayPageState extends StateBase<RelayPage> {
                   onToggle: onChangeRelay2State,
                 ),
 
-                TextButton(
+                InputChip(
                     onPressed: onRelay2CommandClick,
-                    child: const Text('اجرا فرمان')
+                    label: const Text('اجرا فرمان')
                 )
               ],
             ),
@@ -180,8 +222,8 @@ class _RelayPageState extends StateBase<RelayPage> {
     final send = await SmsManager.sendSms('20*1*${index == 0? 'ON': 'OFF'}', widget.place, context);
 
     if(send){
-      widget.place.relays[0].isActive = index == 0;
-      PlaceManager.updatePlaceToDb(widget.place);
+      //widget.place.relays[0].isActive = index == 0;
+      //PlaceManager.updatePlaceToDb(widget.place);
       assistCtr.updateHead();
     }
   }
@@ -194,8 +236,8 @@ class _RelayPageState extends StateBase<RelayPage> {
     final send = await SmsManager.sendSms('20*2*${index == 0? 'ON': 'OFF'}', widget.place, context);
 
     if(send){
-      widget.place.relays[1].isActive = index == 0;
-      PlaceManager.updatePlaceToDb(widget.place);
+      //widget.place.relays[1].isActive = index == 0;
+      //PlaceManager.updatePlaceToDb(widget.place);
       assistCtr.updateHead();
     }
   }
@@ -210,5 +252,19 @@ class _RelayPageState extends StateBase<RelayPage> {
       descView: ManageRelayDialog(place: widget.place),
       decoration: AppDialogIris.instance.dialogDecoration.copy()..widthFactor = 0.9,
     );
+  }
+
+  void eventListener({data}) {
+    assistCtr.updateHead();
+  }
+
+  void onChangeRelay1Status(RelayStatus relayStatus) async {
+    final send = await SmsManager.sendSms('29*1*${relayStatus.getNumber()}', widget.place, context);
+
+    if(send){
+      widget.place.relays[0].status = relayStatus;
+      PlaceManager.updatePlaceToDb(widget.place);
+      assistCtr.updateHead();
+    }
   }
 }

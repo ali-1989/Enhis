@@ -1,3 +1,5 @@
+import 'package:app/tools/app/appToast.dart';
+import 'package:app/tools/routeTools.dart';
 import 'package:flutter/material.dart';
 
 import 'package:iris_notifier/iris_notifier.dart';
@@ -41,6 +43,9 @@ class PlaceModel {
   int? simCardAntennaStatus;
   int? contactCount;
   int? remoteCount;
+  int sirenDurationMinutes = 2;
+  int smsCountReport = 20;
+  int batteryReportDuration = 0;
   bool? wirelessIsActive;
   String? simCardAmount;
   List<ZoneModel> zones = [];
@@ -57,7 +62,7 @@ class PlaceModel {
 
     zIdx = 1;
 
-    while(relays.length < 2){
+    while(relays.isEmpty){
       relays.add(RelayModel()..number = zIdx);
       zIdx++;
     }
@@ -86,6 +91,9 @@ class PlaceModel {
     speakerIsConnected = map['speakerIsConnected'];
     useOfRelays = map['useOfRelays'];
     wirelessIsActive = map['wirelessState'];
+    sirenDurationMinutes = map['sirenDurationMinutes'];
+    smsCountReport = map['smsCountReport'];
+    batteryReportDuration = map['batteryReportDuration'];
     zones = ZoneModel.mapToList(map['zones']);
     relays = RelayModel.mapToList(map['relays']);
     contacts = ContactModel.mapToList(map['contacts']);
@@ -115,6 +123,9 @@ class PlaceModel {
     map['speakerIsConnected'] = speakerIsConnected;
     map['useOfRelays'] = useOfRelays;
     map['wirelessState'] = wirelessIsActive;
+    map['sirenDurationMinutes'] = sirenDurationMinutes;
+    map['smsCountReport'] = smsCountReport;
+    map['batteryReportDuration'] = batteryReportDuration;
     map['zones'] = zones.map((e) => e.toMap()).toList();
     map['relays'] = relays.map((e) => e.toMap()).toList();
     map['contacts'] = contacts.map((e) => e.toMap()).toList();
@@ -253,7 +264,28 @@ class PlaceModel {
   }
 
   void parseUpdate(String txt){
-    print('>>>> pars >>>>>> $txt');
+    //print('>>>> pars >>>>>> $txt');
+
+    if(txt.contains('اپتکس: رله وصل شد')){
+      relays.first.isActive = true;
+      PlaceManager.updatePlaceToDb(this);
+      EventNotifierService.notify(AppEvents.placeDataChanged);
+      AppToast.showToast(RouteTools.materialContext!, 'رله فعال شد');
+      return;
+    }
+
+    if(txt.contains('اپتکس: رله قطع شد')){
+      relays.first.isActive = false;
+      PlaceManager.updatePlaceToDb(this);
+      EventNotifierService.notify(AppEvents.placeDataChanged);
+      AppToast.showToast(RouteTools.materialContext!, 'رله غیر فعال شد');
+      return;
+    }
+
+    if(txt.contains('اپتکس: شماره ذخیره شد')){
+      AppToast.showToast(RouteTools.materialContext!, 'مخاطب ذخیره شد');
+      return;
+    }
 
     if(txt.startsWith('*') && txt.endsWith('#')){
       final splits = txt.split('*');
@@ -338,10 +370,10 @@ class PlaceModel {
 
       for(var i =0; i < zones.length; i++){
         final z = zones[i];
-        z.isOpen = zonesState[i] == '1';
+        z.isOpen = zonesState[i] == '0';
       }
 
-      EventNotifierService.notify(AppEvents.contactDataChanged);
+      //EventNotifierService.notify(AppEvents.placeDataChanged);
     }
 
     /// charge-sim
@@ -354,6 +386,7 @@ class PlaceModel {
       }
     }
 
+    EventNotifierService.notify(AppEvents.placeDataChanged);
     PlaceManager.updatePlaceToDb(this);
   }
 }

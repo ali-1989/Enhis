@@ -346,8 +346,12 @@ class AppMessages {
     return 'وضعیت سیم کارت';
   }
 
-  static String get zoneStatus {
+  static String get zoneState {
     return 'وضعیت مناطق (زون ها)';
+  }
+
+  static String get zoneStatus {
+    return 'حالت مناطق (زون ها)';
   }
 
   static String get batteryStatus {
@@ -396,6 +400,10 @@ class AppMessages {
 
   static String get manage {
     return 'مدیریت';
+  }
+
+  static String get remoteManageDescription {
+    return 'از این طریق می توانید عملکرد ریموت ها را فعال یا غیر فعال کنید';
   }
 
 }

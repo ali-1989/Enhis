@@ -1,6 +1,8 @@
+import 'package:app/pages/contact_manager_page.dart';
 import 'package:app/system/keys.dart';
 import 'package:app/tools/app/appDb.dart';
 import 'package:app/tools/app/appDirectories.dart';
+import 'package:app/views/dialogs/remoteManageDialog.dart';
 import 'package:flutter/material.dart';
 
 import 'package:iris_notifier/iris_notifier.dart';
@@ -144,7 +146,12 @@ class _HomePageState extends StateBase<HomePage> {
                         const SizedBox(height: 6),
 
                         /// Zones state
-                        buildZonesSection(),
+                        buildZonesStateSection(),
+                        const SizedBox(height: 6),
+                        buildZonesStatusSection(),
+
+                        const SizedBox(height: 6),
+                        buildRemoteAndContactSection(),
 
                         Visibility(
                           visible: currentPlace!.supportPhoneNumber.isNotEmpty,
@@ -277,15 +284,6 @@ class _HomePageState extends StateBase<HomePage> {
                 .bold().fsR(2),
               ],
             ),
-
-            Showcase(
-              key: reloadCaseKey,
-              description: 'با لمس این دکمه وضعیت دستگاه به روز رسانی می شود',
-              child: IconButton(
-                  onPressed: onUpdateInfoClick,
-                  icon: const Icon(AppIcons.refreshCircle, color: Colors.blue)
-              ),
-            )
           ],
         ),
 
@@ -324,6 +322,23 @@ class _HomePageState extends StateBase<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(AppMessages.deviceStatus),
+
+                Showcase(
+                  key: reloadCaseKey,
+                  description: 'با لمس این دکمه وضعیت دستگاه به روز رسانی می شود',
+                  targetPadding: const EdgeInsets.all(4),
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: onUpdateInfoClick,
+                    child: Row(
+                      children: [
+                        const Text('بروز رسانی').color(Colors.blue).bold(),
+                        const SizedBox(width: 5),
+                        const Icon(AppIcons.refreshCircle, color: Colors.blue, size: 18)
+                      ],
+                    ),
+                  ),
+                ),
 
                 GestureDetector(
                     onTap: onDeviceStatusHelpClick,
@@ -436,7 +451,7 @@ class _HomePageState extends StateBase<HomePage> {
 
         /// listening
         Card(
-          color: cColor,
+          color: ColorHelper.changeHue(cColor),
           margin: const EdgeInsets.symmetric(horizontal: 0),
           elevation: 0,
           child: GestureDetector(
@@ -543,7 +558,45 @@ class _HomePageState extends StateBase<HomePage> {
     );
   }
 
-  Widget buildZonesSection() {
+  Widget buildZonesStateSection() {
+    return Card(
+      color: cColor,
+      margin: const EdgeInsets.symmetric(horizontal: 0),
+      elevation: 0,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(AppMessages.zoneState),
+
+                TextButton(
+                    style: TextButton.styleFrom(
+                      visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    onPressed: onUpdateInfoClick,
+                    child: const Text('بروز رسانی')
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 5),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: currentPlace!.zones.where((element) => element.show).map(mapStateZone).toList(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildZonesStatusSection() {
     return Card(
       color: cColor,
       margin: const EdgeInsets.symmetric(horizontal: 0),
@@ -573,7 +626,7 @@ class _HomePageState extends StateBase<HomePage> {
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: currentPlace!.zones.where((element) => element.show).map(mapZone).toList(),
+              children: currentPlace!.zones.where((element) => element.show).map(mapStatusZone).toList(),
             ),
           ],
         ),
@@ -581,7 +634,7 @@ class _HomePageState extends StateBase<HomePage> {
     );
   }
 
-  Widget mapZone(ZoneModel zm){
+  Widget mapStateZone(ZoneModel zm){
     return Column(
       children: [
         Builder(
@@ -595,9 +648,25 @@ class _HomePageState extends StateBase<HomePage> {
         ),
 
         const SizedBox(height: 8),
-        Text(zm.isOpen? '${AppMessages.open} ∑' : '☻ ${AppMessages.close}')
+        Text(zm.isOpen? '${AppMessages.open} ' : '∑ ${AppMessages.close}')
         .bold().fsR(2)
-        .color(zm.isOpen? Colors.red : Colors.green),
+        .color(zm.isOpen? Colors.green : Colors.red),
+      ],
+    );
+  }
+
+  Widget mapStatusZone(ZoneModel zm){
+    return Column(
+      children: [
+        Builder(
+          builder: (context) {
+            if(zm.name != null){
+              return Text(TextHelper.subByCharCountSafe(zm.name, 8)).bold().fsR(1);
+            }
+
+            return Text('زون ${zm.number}').bold().fsR(1);
+          }
+        ),
 
         const SizedBox(height: 8),
         GestureDetector(
@@ -610,6 +679,60 @@ class _HomePageState extends StateBase<HomePage> {
                 visualDensity: const VisualDensity(vertical: -4),
                 label: Text('${zm.status.getHumanName()} ').color(Colors.white)
             )
+        ),
+      ],
+    );
+  }
+
+  Widget buildRemoteAndContactSection(){
+    return Row(
+      children: [
+
+        Expanded(
+          child: GestureDetector(
+            onTap: onRemoteManageClick,
+            child: Card(
+              color: cColor,
+              elevation: 0,
+              margin: const EdgeInsets.only(top: 8.0, bottom: 4),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('تعداد ریموت ها: ${currentPlace!.remoteCount?? 0}').bold(),
+
+                    Icon(AppIcons.remote, color: AppThemes.instance.themeData.chipTheme.backgroundColor),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+
+        const SizedBox(width: 6),
+        Expanded(
+          child: GestureDetector(
+            onTap: (){
+              RouteTools.pushPage(context, ContactManagerPage(place: currentPlace!));
+            },
+            child: Card(
+              color: cColor,
+              elevation: 0,
+              margin: const EdgeInsets.only(top: 8.0, bottom: 4),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('تعداد مخاطبین: ${currentPlace!.contactCount?? 0}').bold(),
+
+                    Icon(AppIcons.accountDoubleCircle, color: AppThemes.instance.themeData.chipTheme.backgroundColor),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ),
       ],
     );
@@ -863,6 +986,18 @@ class _HomePageState extends StateBase<HomePage> {
         assistCtr.updateHead();
       }
     }
+  }
+
+  void onRemoteManageClick() async {
+    /*if((currentPlace!.remoteCount?? 0) < 1){
+      return;
+    }*/
+
+    await AppDialogIris.instance.showIrisDialog(
+        context,
+      descView: RemoteManageDialog(place: currentPlace!),
+      decoration: AppDialogIris.instance.dialogDecoration.copy()..widthFactor = 0.95,
+    );
   }
 
   void onChangeDeviceStatusClick(int index) async {

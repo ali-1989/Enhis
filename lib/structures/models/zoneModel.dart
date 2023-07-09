@@ -3,7 +3,7 @@ import 'package:app/structures/enums/zoneStatus.dart';
 class ZoneModel {
   late int number;
   String? name;
-  bool isOpen = false;
+  bool isOpen = true; // open = 0
   bool show = true;
   ZoneStatus status = ZoneStatus.normal;
 

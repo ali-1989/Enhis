@@ -12,7 +12,7 @@ class AppDecoration {
   static Color differentColor = const Color(0xFF65422d);
 
   static Color get dropDownBackground {
-    return AppThemes.instance.currentTheme.accentColor;
+    return ColorHelper.changeHue(AppThemes.instance.currentTheme.accentColor);
   }
 
   static Color get cardSectionsColor {

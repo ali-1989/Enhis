@@ -1,8 +1,11 @@
 
+import 'package:app/structures/enums/relayStatus.dart';
+
 class RelayModel {
   late int number;
   String? name;
   bool isActive = false;
+  RelayStatus status = RelayStatus.dingDang;
 
   RelayModel();
 
@@ -10,6 +13,7 @@ class RelayModel {
     number = map['number'];
     name = map['name'];
     isActive = map['isActive'];
+    status = RelayStatus.from(map['status']);
   }
 
   Map<String, dynamic> toMap() {
@@ -17,6 +21,7 @@ class RelayModel {
     map['number'] = number;
     map['name'] = name;
     map['isActive'] = isActive;
+    map['status'] = status.getNumber();
 
     return map;
   }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:iris_route/iris_route.dart';
 
-import 'package:app/pages/contact_us_page.dart';
 import 'package:app/pages/home_page.dart';
 import 'package:app/tools/app/appNavigator.dart';
 import 'package:iris_tools/api/stackList.dart';
@@ -15,11 +14,9 @@ class RouteTools {
 
   static prepareRoutes(){
     final homePage = IrisPageRoute.by((HomePage).toString(), HomePage());
-    final contactUsPage = IrisPageRoute.by((ContactUsPage).toString(), const ContactUsPage());
 
     IrisNavigatorObserver.notFoundHandler = (settings) => null;
     IrisNavigatorObserver.allAppRoutes.add(homePage);
-    IrisNavigatorObserver.allAppRoutes.add(contactUsPage);
 
     IrisNavigatorObserver.homeName = homePage.routeName;
   }

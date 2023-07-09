@@ -6,9 +6,11 @@ import 'package:iris_notifier/iris_notifier.dart';
 import 'package:iris_tools/api/callAction/manageCallAction.dart';
 import 'package:iris_tools/api/checker.dart';
 import 'package:iris_tools/api/helpers/focusHelper.dart';
+import 'package:iris_tools/api/helpers/mathHelper.dart';
 import 'package:iris_tools/api/helpers/open_helper.dart';
 import 'package:iris_tools/api/helpers/textHelper.dart';
 import 'package:iris_tools/api/managers/assetManager.dart';
+import 'package:iris_tools/api/system.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/optionsRow/checkRow.dart';
 import 'package:iris_tools/widgets/text/titleInfo.dart';
@@ -117,6 +119,12 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
                 buildCallOnDisConnectPowerSection(),
 
                 buildNotifyStateSection(),
+
+                buildSirenSection(),
+
+                buildChargeReportSection(),
+
+                buildBatteryReportSection(),
 
                 buildInstallerSection(),
 
@@ -461,10 +469,121 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
     );
   }
 
+  Widget buildSirenSection(){
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+      color: AppDecoration.cardSectionsColor,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            GestureDetector(
+              onTap: onHiddenHelpClick,
+                behavior: HitTestBehavior.translucent,
+                child: const Text('آژیر').bold().fsR(2)
+            ),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Divider(color: Colors.grey.shade300),
+            ),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TitleInfo(title: 'مدت زمان آژیر کشیدن: ', info: '${widget.place.sirenDurationMinutes} دقیقه'),
+
+                TextButton(
+                    onPressed: onChangeSirenDuration,
+                    child: const Text('تغییر')
+                )
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildChargeReportSection(){
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+      color: AppDecoration.cardSectionsColor,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            GestureDetector(
+              onTap: onHiddenHelpClick,
+                behavior: HitTestBehavior.translucent,
+                child: const Text('گزارش دوره ای موجودی').bold().fsR(2)
+            ),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Divider(color: Colors.grey.shade300),
+            ),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TitleInfo(title: 'تعداد فعلی: ', info: '${widget.place.smsCountReport} پیامک'),
+
+                TextButton(
+                    onPressed: onChangeSmsReportCount,
+                    child: const Text('تغییر')
+                )
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildBatteryReportSection(){
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+      color: AppDecoration.cardSectionsColor,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            GestureDetector(
+              onTap: onHiddenHelpClick,
+                behavior: HitTestBehavior.translucent,
+                child: const Text('گزارش دوره ای باطری').bold().fsR(2)
+            ),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Divider(color: Colors.grey.shade300),
+            ),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TitleInfo(title: 'مدت فعلی: ', info: '${widget.place.batteryReportDuration} دقیقه'),
+
+                TextButton(
+                    onPressed: onChangeBatteryReportDuration,
+                    child: const Text('تغییر')
+                )
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget buildInstallerSection(){
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-      color: Colors.grey.shade200,
+      color: AppDecoration.cardSectionsColor,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -596,9 +715,9 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
         descView: const Text('رمز جدید را وارد کنید (حداکثر 4 رقم)').bold(),
         inputDecoration: inputDecoration,
         textInputType: TextInputType.number,
-        mainButton: (ctx, txt) {
+        mainButton: (ctx, txt) async {
           FocusHelper.hideKeyboardByUnFocusRoot();
-
+          await System.wait(const Duration(milliseconds: 500));
           final newValue = txt.trim();
 
           if(widget.place.currentPassword == newValue){
@@ -744,10 +863,120 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
 
   void onHiddenHelpClick() async {
     if(clickCounter.touch()){
-      print('yessss');
       final path = '${AppDirectories.getAppFolderInInternalStorage()}/help.pdf';
       await AssetsManager.assetsToFile('assets/pdf/test.pdf', path);
       OpenHelper.openFile(path, type: 'application/pdf');
+    }
+  }
+
+  void onChangeSirenDuration() {
+    AppDialogIris.instance.showTextInputDialog(
+        context,
+        descView: const Text('مدت زمان آژیر کشیدن به دقیقه').bold(),
+        inputDecoration: AppDecoration.inputDecor,
+        textInputType: TextInputType.number,
+        initValue: widget.place.sirenDurationMinutes.toString(),
+        mainButton: (ctx, txt) async {
+          FocusHelper.hideKeyboardByUnFocusRoot();
+          await System.wait(const Duration(milliseconds: 500));
+
+          final min = MathHelper.clearToInt(txt.trim());
+
+          if((min < 1 || min > 99) && context.mounted){
+            AppSnack.showInfo(context, 'مقدار وارد شده صحیح نیست');
+            return;
+          }
+
+          AppNavigator.pop(ctx);
+          await System.wait(const Duration(milliseconds: 250));
+
+          sendSmsChangeSirenDuration(min);
+        }
+    );
+  }
+
+  void sendSmsChangeSirenDuration(int minutes) async {
+    final send = await SmsManager.sendSms('41*$minutes', widget.place, context);
+
+    if(send){
+      widget.place.sirenDurationMinutes = minutes;
+      PlaceManager.updatePlaceToDb(widget.place);
+      //EventNotifierService.notify(AppEvents.placeDataChanged);
+      assistCtr.updateHead();
+    }
+  }
+
+  void onChangeSmsReportCount() {
+    AppDialogIris.instance.showTextInputDialog(
+        context,
+        descView: const Text('تعداد پیامک برای گزارش موجودی سیم کارت').bold(),
+        inputDecoration: AppDecoration.inputDecor,
+        textInputType: TextInputType.number,
+        initValue: widget.place.smsCountReport.toString(),
+        mainButton: (ctx, txt) async {
+          FocusHelper.hideKeyboardByUnFocusRoot();
+          await System.wait(const Duration(milliseconds: 500));
+
+          final min = MathHelper.clearToInt(txt.trim());
+
+          if((min < 5 || min > 99) && context.mounted){
+            AppSnack.showInfo(context, 'مقدار وارد شده صحیح نیست');
+            return;
+          }
+
+          AppNavigator.pop(ctx);
+          await System.wait(const Duration(milliseconds: 250));
+
+          sendSmsChangeSmsReportCount(min);
+        }
+    );
+  }
+
+  void sendSmsChangeSmsReportCount(int count) async {
+    final send = await SmsManager.sendSms('43*$count', widget.place, context);
+
+    if(send){
+      widget.place.smsCountReport = count;
+      PlaceManager.updatePlaceToDb(widget.place);
+      //EventNotifierService.notify(AppEvents.placeDataChanged);
+      assistCtr.updateHead();
+    }
+  }
+
+  void onChangeBatteryReportDuration() {
+    AppDialogIris.instance.showTextInputDialog(
+        context,
+        descView: const Text('گزارش درصد باطری هر (دقیقه)').bold(),
+        inputDecoration: AppDecoration.inputDecor,
+        textInputType: TextInputType.number,
+        initValue: widget.place.batteryReportDuration.toString(),
+        mainButton: (ctx, txt) async {
+          FocusHelper.hideKeyboardByUnFocusRoot();
+          await System.wait(const Duration(milliseconds: 500));
+
+          final min = MathHelper.clearToInt(txt.trim());
+
+          if((min < 1 || min > 99) && context.mounted){
+            AppSnack.showInfo(context, 'مقدار وارد شده صحیح نیست');
+            return;
+          }
+
+          AppNavigator.pop(ctx);
+          await System.wait(const Duration(milliseconds: 250));
+
+          sendSmsChangeBatteryReportDuration(min);
+        }
+    );
+  }
+
+  void sendSmsChangeBatteryReportDuration(int minutes) async {
+    final send = await SmsManager.sendSms('44*$minutes', widget.place, context);
+
+    if(send){
+      widget.place.batteryReportDuration = minutes;
+      PlaceManager.updatePlaceToDb(widget.place);
+      //EventNotifierService.notify(AppEvents.placeDataChanged);
+      assistCtr.updateHead();
     }
   }
 }

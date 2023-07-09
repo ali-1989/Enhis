@@ -140,7 +140,7 @@ class _SettingsPageState extends StateBase<SettingsPage> {
   Widget buildAddLocationSection(){
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-      color: Colors.grey.shade200,
+      color: AppDecoration.cardSectionsColor,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -170,7 +170,7 @@ class _SettingsPageState extends StateBase<SettingsPage> {
   Widget buildSecuritySection(){
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-      color: Colors.grey.shade200,
+       color: AppDecoration.cardSectionsColor,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -262,7 +262,7 @@ class _SettingsPageState extends StateBase<SettingsPage> {
   Widget buildSimCardSection(){
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-      color: Colors.grey.shade200,
+       color: AppDecoration.cardSectionsColor,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
