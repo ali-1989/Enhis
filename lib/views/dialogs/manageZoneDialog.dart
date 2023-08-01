@@ -115,7 +115,7 @@ class _ManageZoneDialogState extends State<ManageZoneDialog> {
     final res = await AppDialogIris.instance.showTextInputDialog(
         context,
         descView: const Text('یک نام وارد کنید'),
-        inputDecoration: AppDecoration.inputDecor,
+        inputDecoration: AppDecoration.outlineBordersInputDecoration,
         mainButton: (c, txt){
           FocusHelper.hideKeyboardByUnFocusRoot();
           Future.delayed(const Duration(milliseconds: 200)).then((value) {

@@ -116,9 +116,8 @@ class SplashPageState extends StateBase<SplashPage> {
       AppSheet.showSheetOneAction(
         RouteTools.materialContext!,
         AppMessages.errorCommunicatingServer,
-            () {
+        onButton: () {
           AppBroadcast.gotoSplash();
-
           connectToServer();
         },
         buttonText: AppMessages.tryAgain,
@@ -127,6 +126,7 @@ class SplashPageState extends StateBase<SplashPage> {
     }
     else {
       _isConnectToServer = true;
+
       SessionService.fetchLoginUsers();
       callState();
     }*/

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:app/managers/font_manager.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,9 @@ import 'package:app/views/baseComponents/splashPage.dart';
 
 ///================ call on any hot restart
 Future<void> main() async {
+  PlatformDispatcher.instance.onError = mainIsolateError;
+  FlutterError.onError = onErrorCatch;
+
   if (defaultTargetPlatform != TargetPlatform.linux && defaultTargetPlatform != TargetPlatform.windows) {
     WidgetsFlutterBinding.ensureInitialized();
   }
@@ -73,9 +77,7 @@ Future<void> main() async {
 }
 
 Future<void> mainInitialize() async {
-  PlatformDispatcher.instance.onError = mainIsolateError;
-  FlutterError.onError = onErrorCatch;
-
+  
   usePathUrlStrategy();
 
   if(System.isAndroid()) {
@@ -144,18 +146,28 @@ class MyApp extends StatelessWidget {
   }
 
   Widget materialHomeBuilder(){
-    return Builder(
-      builder: (localContext){
-        RouteTools.materialContext = localContext;
-        testCodes(localContext);
+    double factor = PlatformDispatcher.instance.textScaleFactor.clamp(0.85, 1.7);
 
-        double factor = PlatformDispatcher.instance.textScaleFactor.clamp(0.85, 2.0);
+    return Builder(
+      builder: (context) {
+        FontManager.instance.detectDeviceFontSize(context);
+
+        if(factor == 1.0 && FontManager.useFlutterFontSize && FontManager.deviceFontSize > FontManager.maxDeviceFontSize){
+          factor = 0.94;
+        }
 
         return MediaQuery(
-          data: MediaQuery.of(localContext).copyWith(textScaleFactor: factor),
-            child: SplashPage()
+            data: MediaQuery.of(context).copyWith(textScaleFactor: factor),
+            child: Builder(
+                builder: (localContext){
+                  RouteTools.materialContext = localContext;
+                  testCodes(localContext);
+
+                  return SplashPage();
+                }
+            )
         );
-      },
+      }
     );
   }
 

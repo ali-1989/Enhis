@@ -96,8 +96,8 @@ class Requester {
 
     AppHttpDio.cancelAndClose(_httpRequester);
 
-    /*if(Session.hasAnyLogin()) {
-      _http.headers.addAll({'authorization': 'Bearer ${Session.getLastLoginUser()!.token?.token}'});
+    /*if(SessionService.hasAnyLogin()) {
+      _http.headers.addAll({'authorization': 'Bearer ${SessionService.getLastLoginUser()!.token?.token}'});
     }*/
 
     _httpRequester = AppHttpDio.send(_http);

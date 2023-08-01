@@ -3,7 +3,6 @@ import 'package:iris_tools/models/dataModels/mediaModel.dart';
 
 import 'package:app/structures/models/countryModel.dart';
 import 'package:app/system/keys.dart';
-import 'package:app/tools/uriTools.dart';
 
 class UserModel {
   late String userId;
@@ -66,7 +65,7 @@ class UserModel {
       registerDate = DateHelper.tsToSystemDate(regDate);
     }
 
-    profileModel?.url = UriTools.correctAppUrl(profileModel?.url, domain: domain);
+    profileModel?.url = 'UriTools.correctAppUrl(profileModel?.url, domain: domain)';
     //----------------------- local
     if (tLoginDate is int) {
       loginDate = DateHelper.milToDateTime(tLoginDate);

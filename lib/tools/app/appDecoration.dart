@@ -1,3 +1,4 @@
+import 'package:app/managers/font_manager.dart';
 import 'package:app/tools/app/appMessages.dart';
 import 'package:app/tools/app/appSizes.dart';
 import 'package:app/tools/app/appThemes.dart';
@@ -17,15 +18,6 @@ class AppDecoration {
 
   static Color get cardSectionsColor {
     return Colors.grey.shade300;
-  }
-
-  static InputDecoration get inputDecor {
-    return const InputDecoration(
-      border: OutlineInputBorder(),
-      enabledBorder: OutlineInputBorder(),
-      disabledBorder: OutlineInputBorder(),
-      focusedBorder: OutlineInputBorder(),
-    );
   }
 
   static TextStyle infoHeadLineTextStyle() {
@@ -82,6 +74,10 @@ class AppDecoration {
 
   static TextStyle appBarTextStyle() {
     return AppThemes.instance.themeData.appBarTheme.toolbarTextStyle!;
+  }
+  static double fontSizeRelative(double size) {
+    var siz = AppThemes.instance.currentTheme.baseTextStyle.fontSize;
+    return (siz?? FontManager.deviceFontSize) + size;
   }
   ///------------------------------------------------------------------
   static InputDecoration noneBordersInputDecoration = const InputDecoration(

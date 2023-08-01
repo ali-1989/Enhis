@@ -9,7 +9,7 @@ homepage: https://iris.ir
 
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 1.0.1+2
 
 
 environment:
@@ -28,7 +28,6 @@ dependencies:
     sdk: flutter
 
   #device_preview: ^1.1.0
-  cupertino_icons: ^1.0.5
   community_material_icon: ^5.9.55      # https://materialdesignicons.com/
   device_info_plus: ^9.0.2
   platform_device_id: ^1.0.1

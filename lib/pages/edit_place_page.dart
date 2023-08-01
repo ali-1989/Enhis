@@ -831,7 +831,7 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
     AppDialogIris.instance.showTextInputDialog(
         context,
         descView: const Text('نام پشتیبان یا نصاب').bold(),
-        inputDecoration: AppDecoration.inputDecor,
+        inputDecoration: AppDecoration.outlineBordersInputDecoration,
         textInputType: TextInputType.text,
         mainButton: (ctx, txt) {
           FocusHelper.hideKeyboardByUnFocusRoot();
@@ -848,7 +848,7 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
     AppDialogIris.instance.showTextInputDialog(
         context,
         descView: const Text('شماره تماس پشتیبان یا نصاب').bold(),
-        inputDecoration: AppDecoration.inputDecor,
+        inputDecoration: AppDecoration.outlineBordersInputDecoration,
         textInputType: TextInputType.phone,
         mainButton: (ctx, txt) {
           FocusHelper.hideKeyboardByUnFocusRoot();
@@ -873,7 +873,7 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
     AppDialogIris.instance.showTextInputDialog(
         context,
         descView: const Text('مدت زمان آژیر کشیدن به دقیقه').bold(),
-        inputDecoration: AppDecoration.inputDecor,
+        inputDecoration: AppDecoration.outlineBordersInputDecoration,
         textInputType: TextInputType.number,
         initValue: widget.place.sirenDurationMinutes.toString(),
         mainButton: (ctx, txt) async {
@@ -910,7 +910,7 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
     AppDialogIris.instance.showTextInputDialog(
         context,
         descView: const Text('تعداد پیامک برای گزارش موجودی سیم کارت').bold(),
-        inputDecoration: AppDecoration.inputDecor,
+        inputDecoration: AppDecoration.outlineBordersInputDecoration,
         textInputType: TextInputType.number,
         initValue: widget.place.smsCountReport.toString(),
         mainButton: (ctx, txt) async {
@@ -947,7 +947,7 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
     AppDialogIris.instance.showTextInputDialog(
         context,
         descView: const Text('گزارش درصد باطری هر (دقیقه)').bold(),
-        inputDecoration: AppDecoration.inputDecor,
+        inputDecoration: AppDecoration.outlineBordersInputDecoration,
         textInputType: TextInputType.number,
         initValue: widget.place.batteryReportDuration.toString(),
         mainButton: (ctx, txt) async {
