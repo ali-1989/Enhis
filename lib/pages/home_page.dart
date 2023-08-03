@@ -510,13 +510,19 @@ class _HomePageState extends StateBase<HomePage> {
               children: [
                 Text(AppMessages.simCardStatus),
 
-                TextButton(
-                    style: TextButton.styleFrom(
-                      visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                Row(
+                  children: [
+                    TextButton(
+                        style: TextButton.styleFrom(
+                          visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        onPressed: onGetSimCardBalance,
+                        child: const Text('بروز رسانی')
                     ),
-                    onPressed: onGetSimCardBalance,
-                    child: const Text('بروز رسانی')
+
+
+                  ],
                 ),
               ],
             ),
@@ -896,9 +902,20 @@ class _HomePageState extends StateBase<HomePage> {
                   Image.asset(AppImages.emptyLogo, width: 120, height: 120),
                   Text(AppMessages.mustAddAPlaceDescription),
 
+                  GestureDetector(
+                    onTap: onAddNewPlaceClick,
+                    child: CustomCard(
+                        color: AppDecoration.mainColor,
+                        padding: const EdgeInsets.fromLTRB(8, 2, 8, 3),
+                        child: const Text('اضافه کردن دستگاه').color(Colors.white)
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+
                   TextButton(
-                      onPressed: onAddNewPlaceClick,
-                      child: const Text('اضافه کردن دستگاه')
+                      onPressed: onPdfHelpClick,
+                      child: const Text('راهنما')
                   )
                 ],
               )

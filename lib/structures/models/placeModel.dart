@@ -62,7 +62,7 @@ class PlaceModel {
 
     zIdx = 1;
 
-    while(relays.isEmpty){
+    while(relays.length < 2){
       relays.add(RelayModel()..number = zIdx);
       zIdx++;
     }

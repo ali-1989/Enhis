@@ -84,13 +84,13 @@ class _SettingsPageState extends StateBase<SettingsPage> {
         Expanded(
             child: ListView(
               children: [
-                buildAboutSection(),
-
                 buildAddLocationSection(),
 
                 buildSecuritySection(),
 
                 buildSimCardSection(),
+
+                buildAboutSection(),
               ],
             )
         ),
@@ -122,7 +122,7 @@ class _SettingsPageState extends StateBase<SettingsPage> {
                     TextSpan(text: '(enhis)', style: TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold)),
                     TextSpan(text: ' با شعار '),
                     TextSpan(text: '`از امنیت بالا لذت ببرید` ', style: TextStyle(color: Colors.pink, fontWeight: FontWeight.bold)),
-                    TextSpan(text: ' تولید کننده سیستم های امنیتی.'),
+                    TextSpan(text: ' تولید کننده سیستم های حفاظتی.'),
                   ]
                 )
             ),

@@ -101,7 +101,7 @@ flutter:
 
 
 flutter_icons:
-  image_path: "#Dep/icon.jpg"
+  image_path: "#Dep/app_logo.jpg"
   android: true
   ios: true
   remove_alpha_ios: true
@@ -134,7 +134,7 @@ import_sorter:
 
 
 ## flutter pub run import_sorter:main
-## flutter pub run flutter_launcher_icons
+## dart run flutter_launcher_icons
 
 # import '[^pd/]
 

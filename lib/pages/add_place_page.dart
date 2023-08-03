@@ -104,7 +104,7 @@ class _AddPlacePageState extends StateBase<AddPlacePage> {
 
                 buildDeviceNumberInput(),
 
-                buildAdminNumberInput(),
+                //buildAdminNumberInput(),
 
                 buildCurrentPasswordInput(),
 

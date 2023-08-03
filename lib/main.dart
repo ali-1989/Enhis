@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:app/managers/font_manager.dart';
+import 'package:app/tools/deviceInfoTools.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +11,7 @@ import 'package:iris_tools/api/system.dart';
 import 'package:iris_tools/widgets/maxWidth.dart';
 
 import 'package:app/constants.dart';
+import 'package:app/managers/font_manager.dart';
 import 'package:app/managers/settings_manager.dart';
 import 'package:app/structures/models/settingsModel.dart';
 import 'package:app/tools/app/appBroadcast.dart';
@@ -28,20 +29,20 @@ Future<void> main() async {
   PlatformDispatcher.instance.onError = mainIsolateError;
   FlutterError.onError = onErrorCatch;
 
-  if (defaultTargetPlatform != TargetPlatform.linux && defaultTargetPlatform != TargetPlatform.windows) {
-    WidgetsFlutterBinding.ensureInitialized();
-  }
+  void zoneFn() async {
+    if (defaultTargetPlatform != TargetPlatform.linux && defaultTargetPlatform != TargetPlatform.windows) {
+      WidgetsFlutterBinding.ensureInitialized();
+    }
 
-  final initOk = await prepareDirectoriesAndLogger();
+    final initOk = await prepareDirectoriesAndLogger();
 
-  if(!initOk.$1){
-    runApp(MyErrorApp(errorLog: initOk.$2));
-    return;
-  }
+    if(!initOk.$1){
+      runApp(MyErrorApp(errorLog: initOk.$2));
+      return;
+    }
 
-  await mainInitialize();
+    await mainInitialize();
 
-  void zoneFn() {
     runApp(
         StreamBuilder<bool>(
             initialData: true,
@@ -72,8 +73,8 @@ Future<void> main() async {
     );
   }
 
-  //runZonedGuarded(zone, zonedGuardedCatch);
-  zoneFn();
+  runZonedGuarded(zoneFn, zonedGuardedCatch);
+  //zoneFn();
 }
 
 Future<void> mainInitialize() async {
@@ -213,17 +214,29 @@ void onErrorCatch(FlutterErrorDetails errorDetails) {
   txt += '\n**************************************** [END CATCH]';
 
   LogTools.logger.logToAll(txt);
+
+  final eMap = DeviceInfoTools.mapDeviceInfo();
+  eMap['catcher'] = 'mainIsolateError';
+  eMap['error'] = txt;
+
+  LogTools.reportError(eMap);
 }
 ///==============================================================================================
 bool mainIsolateError(error, sTrace) {
   var txt = 'main-isolate CAUGHT AN ERROR:: ${error.toString()}';
 
-  if(!kDebugMode/* && !kIsWeb*/) {
+  if(!(kDebugMode || kIsWeb)) {
     txt += '\n STACK TRACE:: $sTrace';
   }
 
   txt += '\n**************************************** [END MAIN-ISOLATE]';
   LogTools.logger.logToAll(txt);
+
+  final eMap = DeviceInfoTools.mapDeviceInfo();
+  eMap['catcher'] = 'mainIsolateError';
+  eMap['error'] = txt;
+
+  LogTools.reportError(eMap);
 
   if(kDebugMode) {
     return false;
@@ -235,12 +248,18 @@ bool mainIsolateError(error, sTrace) {
 void zonedGuardedCatch(error, sTrace) {
   var txt = 'ZONED-GUARDED CAUGHT AN ERROR:: ${error.toString()}';
 
-  if(!kDebugMode/* && !kIsWeb*/) {
+  if(!(kDebugMode || kIsWeb)) {
     txt += '\n STACK TRACE:: $sTrace';
   }
 
   txt += '\n**************************************** [END ZONED-GUARDED]';
   LogTools.logger.logToAll(txt);
+
+  final eMap = DeviceInfoTools.mapDeviceInfo();
+  eMap['catcher'] = 'zonedGuardedCatch';
+  eMap['error'] = txt;
+
+  LogTools.reportError(eMap);
 
   if(kDebugMode) {
     throw error;
