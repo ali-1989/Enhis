@@ -48,6 +48,9 @@ dependencies:
   flutter_pin_code_widget: ^0.1.0
   flutter_local_auth_invisible: ^2.2.0
   showcaseview: ^2.0.3
+  xml: ^6.3.0
+  path_drawing: ^1.0.1
+
 
   iris_tools:
     git: https://github.com/ali-1989/IrisTools.git
