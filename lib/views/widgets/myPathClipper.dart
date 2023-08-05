@@ -5,28 +5,54 @@ import 'package:path_drawing/path_drawing.dart';
 typedef OnPathClick = void Function(PathDrawModel path);
 ///=============================================================================
 class PathDraw extends StatelessWidget {
-  final PathDrawClipper clipper;
   final Color color;
   final PathDrawModel path;
   final OnPathClick? onPathClick;
+  final double? width;
+  final double? height;
+  final bool originalSize;
 
   const PathDraw({
     super.key,
-    required this.clipper,
     required this.color,
     required this.path,
     this.onPathClick,
+    this.width = double.infinity,
+    this.height = double.infinity,
+    this.originalSize = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ClipPath(
-      clipper: clipper,
-      child: GestureDetector(
-        onTap: () => onPathClick?.call(path),
-        child: Container(
-          color: color,
-        ),
+    final pathA = parseSvgPathData(path.path);
+    final orgSize = pathA.getBounds().size;
+
+
+    return SizedBox(
+      width: double.infinity,
+      height: double.infinity,
+      child: LayoutBuilder(
+        builder: (_, siz) {
+          final x = (originalSize || siz.maxWidth == double.infinity) ? orgSize.width: siz.maxWidth;
+          final y = (originalSize || siz.maxHeight == double.infinity) ? orgSize.height: siz.maxHeight;
+print(orgSize.width);
+print(orgSize.height);
+          return Align(
+            child: SizedBox(
+              width: orgSize.width,
+              height: orgSize.height,
+              child: ClipPath(
+                clipper: PathDrawClipper(orgPath: pathA),
+                child: GestureDetector(
+                  onTap: () => onPathClick?.call(path),
+                  child: ColoredBox(
+                    color: color,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
       ),
     );
   }
@@ -50,9 +76,7 @@ class PathDrawPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     canvas.drawPath(
       path,
-      Paint()
-        ..color = color
-        ..style = PaintingStyle.fill,
+      Paint()..color = color..style = PaintingStyle.fill,
     );
   }
 
@@ -61,25 +85,28 @@ class PathDrawPainter extends CustomPainter {
 }
 ///=============================================================================
 class PathDrawClipper extends CustomClipper<Path> {
-  String svgPath;
+  Path orgPath;
 
   PathDrawClipper({
-    required this.svgPath,
+    required this.orgPath,
   });
 
   @override
   Path getClip(Size size) {
-    var path = parseSvgPathData(svgPath);
+
+    final orgSize = orgPath.getBounds().size;
+    final xScale = size.width / orgSize.width;
+    final yScale = size.height / orgSize.height;
+
     final Matrix4 matrix4 = Matrix4.identity();
+    matrix4.scale(xScale, yScale);
 
-    matrix4.scale(1.1, 1.1);
-
-    return path.transform(matrix4.storage);//.shift(const Offset(-220, 0));
+    return orgPath.transform(matrix4.storage);//.shift(const Offset(-220, 0));
   }
 
 
   @override
   bool shouldReclip(CustomClipper oldClipper) {
-    return false;
+    return true;
   }
 }

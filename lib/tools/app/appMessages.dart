@@ -324,6 +324,10 @@ class AppMessages {
     return 'نا مشخص';//todo
   }
 
+  static String get bePatient {
+    return 'صبور باشید';
+  }
+
   //============================================================================
 
   static String get open {

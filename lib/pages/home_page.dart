@@ -1,8 +1,13 @@
 import 'package:app/pages/contact_manager_page.dart';
+import 'package:app/structures/models/pathDrawModel.dart';
 import 'package:app/system/keys.dart';
+import 'package:app/tools/app/appCache.dart';
 import 'package:app/tools/app/appDb.dart';
 import 'package:app/tools/app/appDirectories.dart';
+import 'package:app/tools/app/appToast.dart';
+import 'package:app/tools/app_tools.dart';
 import 'package:app/views/dialogs/remoteManageDialog.dart';
+import 'package:app/views/widgets/myPathClipper.dart';
 import 'package:flutter/material.dart';
 
 import 'package:iris_notifier/iris_notifier.dart';
@@ -15,6 +20,7 @@ import 'package:iris_tools/api/managers/assetManager.dart';
 import 'package:iris_tools/api/system.dart';
 import 'package:iris_tools/features/overlayDialog.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
+import 'package:iris_tools/widgets/coloredSpace.dart';
 import 'package:iris_tools/widgets/customCard.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
@@ -61,6 +67,7 @@ class _HomePageState extends StateBase<HomePage> {
   final placeSettingCaseKey = GlobalKey();
   final reloadCaseKey = GlobalKey();
   final relayCaseKey = GlobalKey();
+  final buttons = <PathDrawModel>[];
 
 
   @override
@@ -68,6 +75,7 @@ class _HomePageState extends StateBase<HomePage> {
     super.initState();
 
     currentPlace = PlaceManager.fetchSavedPlace();
+    loadButtonsSvg();
 
     if(currentPlace != null){
       SmsManager.listenToDeviceMessage();
@@ -308,7 +316,7 @@ class _HomePageState extends StateBase<HomePage> {
     );
   }
 
-  Widget buildDeviceStatusSection() {
+  Widget buildDeviceStatusSectionOld() {
     return Card(
       color: cColor,
       margin: const EdgeInsets.symmetric(horizontal: 0),
@@ -418,6 +426,86 @@ class _HomePageState extends StateBase<HomePage> {
                   ),
                 );
               }
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildDeviceStatusSection() {
+    if(buttons.isEmpty){
+      return const SizedBox();
+    }
+
+    return Card(
+      color: cColor,
+      margin: const EdgeInsets.symmetric(horizontal: 0),
+      elevation: 0,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(AppMessages.deviceStatus),
+
+                Showcase(
+                  key: reloadCaseKey,
+                  description: 'با لمس این دکمه وضعیت دستگاه به روز رسانی می شود',
+                  targetPadding: const EdgeInsets.all(4),
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: onUpdateInfoClick,
+                    child: Row(
+                      children: [
+                        const Text('بروز رسانی').color(Colors.blue).bold(),
+                        const SizedBox(width: 5),
+                        const Icon(AppIcons.refreshCircle, color: Colors.blue, size: 18)
+                      ],
+                    ),
+                  ),
+                ),
+
+                GestureDetector(
+                    onTap: onDeviceStatusHelpClick,
+                    child: const Icon(AppIcons.questionMarkCircle, size: 22, color: Colors.orange)
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 10),
+
+            SizedBox(
+              height: 400,
+              child: Stack(
+                children: [
+                  /*PathDraw(
+                        color: buttons[1].color,
+                        path: buttons[1],
+                        width: 150,
+                        height: 150,
+                        originalSize: false,
+                      ),*/
+
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    child: ColoredBox(
+                      color: Colors.yellow,
+                      child: PathDraw(
+                        color: buttons[0].color,
+                        path: buttons[0],
+                        width: 220,
+                        height: 220,
+                        originalSize: true,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -902,6 +990,8 @@ class _HomePageState extends StateBase<HomePage> {
                   Image.asset(AppImages.emptyLogo, width: 120, height: 120),
                   Text(AppMessages.mustAddAPlaceDescription),
 
+                  const SizedBox(height: 20),
+
                   GestureDetector(
                     onTap: onAddNewPlaceClick,
                     child: CustomCard(
@@ -915,7 +1005,7 @@ class _HomePageState extends StateBase<HomePage> {
 
                   TextButton(
                       onPressed: onPdfHelpClick,
-                      child: const Text('راهنما')
+                      child: const Text('راهنما').fsR(1)
                   )
                 ],
               )
@@ -974,6 +1064,11 @@ class _HomePageState extends StateBase<HomePage> {
   }
 
   void onPdfHelpClick() async {
+    if(!AppCache.canCallMethodAgain('onPdfHelpClick')){
+      AppToast.showToast(context, AppMessages.bePatient);
+      return;
+    }
+
     final path = '${AppDirectories.getAppFolderInInternalStorage()}/help.pdf';
     await AssetsManager.assetsToFile('assets/pdf/test.pdf', path);
     OpenHelper.openFile(path, type: 'application/pdf');
@@ -1041,6 +1136,11 @@ class _HomePageState extends StateBase<HomePage> {
       PlaceManager.updatePlaceToDb(currentPlace!);
       assistCtr.updateHead();
     }
+  }
+
+  void loadButtonsSvg() async {
+    buttons.addAll(await AppTools.loadSvgImage(svgImage: 'assets/images/buttons.svg'));
+    assistCtr.updateHead();
   }
 }
 

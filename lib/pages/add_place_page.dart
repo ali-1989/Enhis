@@ -1,3 +1,5 @@
+import 'package:app/tools/app/appCache.dart';
+import 'package:app/tools/app/appToast.dart';
 import 'package:flutter/material.dart';
 
 import 'package:iris_notifier/iris_notifier.dart';
@@ -260,6 +262,11 @@ class _AddPlacePageState extends StateBase<AddPlacePage> {
   }
 
   void onRegisterClick() async {
+    if(!AppCache.canCallMethodAgain('onPdfHelpClick')){
+      AppToast.showToast(context, AppMessages.bePatient);
+      return;
+    }
+
     FocusHelper.hideKeyboardByUnFocusRoot();
     await System.wait(const Duration(milliseconds: 400));
 

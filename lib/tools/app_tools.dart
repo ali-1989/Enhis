@@ -26,6 +26,7 @@ class AppTools {
     return WidgetsBinding.instance;
   }
 
+  /// 'assets/images/buttons.svg'
   static Future<List<PathDrawModel>> loadSvgImage({required String svgImage}) async {
     List<PathDrawModel> res = [];
     String generalString = await rootBundle.loadString(svgImage);
@@ -36,8 +37,8 @@ class AppTools {
     for (final element in paths) {
       String partId = element.getAttribute('id').toString();
       String partPath = element.getAttribute('d').toString();
-      String color = element.getAttribute('fill').toString();
-      Color c = Color(int.parse('FF$color', radix: 16));//AppDecoration.mainColor
+      //String color = element.getAttribute('fill').toString();
+      Color c = AppDecoration.mainColor;
 
       res.add(PathDrawModel(id: partId, path: partPath, color: c));
     }
