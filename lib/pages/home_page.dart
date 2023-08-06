@@ -9,6 +9,7 @@ import 'package:app/tools/app_tools.dart';
 import 'package:app/views/dialogs/remoteManageDialog.dart';
 import 'package:app/views/widgets/myPathClipper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_flip_card/flutter_flip_card.dart';
 
 import 'package:iris_notifier/iris_notifier.dart';
 import 'package:iris_route/iris_route.dart';
@@ -20,9 +21,7 @@ import 'package:iris_tools/api/managers/assetManager.dart';
 import 'package:iris_tools/api/system.dart';
 import 'package:iris_tools/features/overlayDialog.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
-import 'package:iris_tools/widgets/coloredSpace.dart';
 import 'package:iris_tools/widgets/customCard.dart';
-import 'package:toggle_switch/toggle_switch.dart';
 
 import 'package:app/managers/place_manager.dart';
 import 'package:app/managers/sms_manager.dart';
@@ -68,7 +67,7 @@ class _HomePageState extends StateBase<HomePage> {
   final reloadCaseKey = GlobalKey();
   final relayCaseKey = GlobalKey();
   final buttons = <PathDrawModel>[];
-
+  final pageController = FlipCardController();
 
   @override
   void initState(){
@@ -111,11 +110,6 @@ class _HomePageState extends StateBase<HomePage> {
       return buildEmptyPlaces();
     }
 
-    /*final tt = Theme.of(context);
-    Future.delayed(Duration(seconds: 1), (){
-      print('---------> ${tt.textTheme.bodySmall?.fontSize}');
-      print('----p-----> ${FontManager.instance.getPlatformFont().size}');
-    });*/
     return Column(
       children: [
         buildTopSection(),
@@ -131,41 +125,13 @@ class _HomePageState extends StateBase<HomePage> {
                   margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4),
-                    child: ListView(
-                      children: [
-                        /// update status
-                        buildUpdateStatusSection(),
-
-                        const SizedBox(height: 14),
-
-                        /// device state
-                        buildDeviceStatusSection(),
-
-                        const SizedBox(height: 6),
-
-                        /// batter/power
-                        buildPowerBatterySection(),
-
-                        const SizedBox(height: 6),
-
-                        /// sim card state
-                        buildSimCardSection(),
-
-                        const SizedBox(height: 6),
-
-                        /// Zones state
-                        buildZonesStateSection(),
-                        const SizedBox(height: 6),
-                        buildZonesStatusSection(),
-
-                        const SizedBox(height: 6),
-                        buildRemoteAndContactSection(),
-
-                        Visibility(
-                          visible: currentPlace!.supportPhoneNumber.isNotEmpty,
-                            child: buildContactWithInstaller()
-                        ),
-                      ],
+                    child: FlipCard(
+                      frontWidget: buildFrontPage(),
+                    backWidget: buildDetailPage(),
+                    controller: pageController,
+                    rotateSide: RotateSide.left,
+                      axis: FlipAxis.vertical,
+                      onTapFlipping: false,
                     ),
                   ),
                 ),
@@ -211,7 +177,7 @@ class _HomePageState extends StateBase<HomePage> {
         ),
 
 
-        /// bottom section
+        /// bottom section (places)
         Builder(
             builder: (_){
               if(PlaceManager.places.length < 2){
@@ -278,20 +244,76 @@ class _HomePageState extends StateBase<HomePage> {
     );
   }
 
+  Widget buildFrontPage(){
+    return ListView(
+      children: [
+        const SizedBox(height: 20),
+        /// update status
+        buildUpdateStatusSection(),
+
+        const SizedBox(height: 14),
+
+        /// device state
+        buildDeviceStatusSection(),
+
+        const SizedBox(height: 6),
+
+        /// sim card state
+        buildSimCardSection(),
+
+        Visibility(
+            visible: currentPlace!.supportPhoneNumber.isNotEmpty,
+            child: buildContactWithInstaller()
+        ),
+      ],
+    );
+  }
+
+  Widget buildDetailPage(){
+    return ListView(
+      children: [
+        const SizedBox(height: 20),
+        IconButton(
+            onPressed: onFlipPageClick,
+            icon: Row(
+              textDirection: TextDirection.ltr,
+              children: [
+                Icon(AppIcons.arrowRight),
+                Text('برگشت').bold(),
+              ],
+            )
+        ),
+        /// Zones state
+        buildZonesStateSection(),
+        const SizedBox(height: 6),
+        buildZonesStatusSection(),
+
+        const SizedBox(height: 6),
+        buildRemoteAndContactSection(),
+
+        Column(
+          children: [
+            const Text('آنتن دهی').bold(),
+            const SizedBox(height: 4),
+            Text(currentPlace!.getSimCardAntenna()).bold().color(currentPlace!.getSimCardAntennaColor()),
+          ],
+        ),
+      ],
+    );
+  }
+
   Widget buildUpdateStatusSection() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         /// last update
         Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Column(
-              children: [
-                Text(AppMessages.lastUpdate),
-                Text(currentPlace!.getLastUpdateDate()).color(currentPlace!.getUpdateColor())
+            Text(AppMessages.lastUpdate),
+            const Text(':  '),
+            Text(currentPlace!.getLastUpdateDate()).color(currentPlace!.getUpdateColor())
                 .bold().fsR(2),
-              ],
-            ),
           ],
         ),
 
@@ -316,11 +338,27 @@ class _HomePageState extends StateBase<HomePage> {
     );
   }
 
-  Widget buildDeviceStatusSectionOld() {
-    return Card(
-      color: cColor,
-      margin: const EdgeInsets.symmetric(horizontal: 0),
-      elevation: 0,
+  Widget buildDeviceStatusSection() {
+    if(buttons.isEmpty){
+      return const SizedBox();
+    }
+
+    const defaultColor = Colors.grey;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+            colors: [
+              ColorHelper.lightPlus(cColor, val: 0.02),
+              cColor,
+              ColorHelper.darkPlus(cColor, val: 0.09),
+            ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+
+        )
+      ),
+
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
         child: Column(
@@ -329,7 +367,7 @@ class _HomePageState extends StateBase<HomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(AppMessages.deviceStatus),
+                //Text(AppMessages.deviceStatus),
 
                 Showcase(
                   key: reloadCaseKey,
@@ -350,163 +388,217 @@ class _HomePageState extends StateBase<HomePage> {
 
                 GestureDetector(
                     onTap: onDeviceStatusHelpClick,
-                    child: const Icon(AppIcons.questionMarkCircle, size: 22, color: Colors.orange)
+                    child: Icon(AppIcons.questionMarkCircle, size: 25*pw, color: Colors.orange)
                 ),
               ],
             ),
 
             const SizedBox(height: 10),
 
-            Builder(
-              builder: (context) {
-                /*if(currentPlace!.deviceStatus == DeviceStatus.unKnow){
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: const Text('نا مشخص').alpha(),
-                  );
-                }*/
+            LayoutBuilder(
+              builder: (_, siz) {
+                final scale = siz.maxWidth/7;
+                final wOfButton = (siz.maxWidth -scale) /2;
+                final center = siz.maxWidth /2;
+                final circleR = siz.maxWidth /2.7;
 
                 return SizedBox(
-                  width: double.infinity,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                  height: siz.maxWidth,
+                  child: Stack(
                     children: [
-                      ToggleSwitch(
-                        minHeight: 45.0,
-                        minWidth: 110,
-                        initialLabelIndex: currentPlace!.getDeviceStatsForSwitchButtonA(),
-                        cornerRadius: 8.0,
-                        totalSwitches: 2,
-                        activeFgColor: Colors.white,
-                        inactiveBgColor: Colors.grey.shade400,
-                        inactiveFgColor: Colors.white,
-                        iconSize: 14.0,
-                        borderWidth: 1.0,
-                        multiLineText: false,
-                        changeOnTap: false,
-                        labels: const [
-                          'فعال',
-                          'غیرفعال',
-                        ],
-                        activeBgColors: const [
-                          [Colors.green],
-                          [Colors.red],
-                        ],
-                        onToggle: (index) {
-                          onChangeDeviceStatusClick(index?? 0);
-                        },
+                      /// center
+                      Positioned(
+                        top: center - (circleR /2),
+                        left: center - (circleR /2),
+                        child: Stack(
+                          children: [
+                            PathDraw(
+                              color: Colors.purple,
+                              path: buttons[0],
+                              width: circleR,
+                              height: circleR,
+                              originalSize: false,
+                              onPathClick: onButtonsClick,
+                            ),
+
+                            Positioned.fill(
+                                child: IgnorePointer(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(AppIcons.headset, color: Colors.white, size: 25*pw,),
+
+                                      const SizedBox(height: 5),
+                                      const Text('شنود').bold().fsR(2).color(Colors.white),
+                                    ],
+                                  ),
+                                )
+                            )
+                          ],
+                        ),
                       ),
 
-                      ToggleSwitch(
-                        minHeight: 45.0,
-                        minWidth: 110,
-                        initialLabelIndex: currentPlace!.getDeviceStatsForSwitchButtonB(),
-                        cornerRadius: 8.0,
-                        totalSwitches: 2,
-                        activeFgColor: Colors.white,
-                        inactiveBgColor: Colors.grey.shade400,
-                        inactiveFgColor: Colors.white,
-                        iconSize: 14.0,
-                        borderWidth: 1.0,
-                        multiLineText: false,
-                        changeOnTap: false,
-                        labels: const [
-                          'نیمه فعال',
-                          'بی صدا',
-                        ],
-                        activeBgColors: const [
-                          [Colors.orange],
-                          [Colors.blue]
-                        ],
-                        onToggle: (index) {
-                          onChangeDeviceStatusClick((index?? 0)+2);
-                        },
+                      /// inActive
+                      Positioned(
+                        top: 0,
+                        left: 0,
+                        child: Stack(
+                          children: [
+                            PathDraw(
+                              color: currentPlace!.deviceStatus != DeviceStatus.inActive ? defaultColor : Colors.red,
+                              path: buttons[1],
+                              width: wOfButton,
+                              height: wOfButton,
+                              originalSize: false,
+                              onPathClick: onButtonsClick,
+                            ),
+
+                            Positioned.fill(
+                              child: IgnorePointer(
+                                child: Center(
+                                  child: Transform.rotate(
+                                      angle: -0.8,
+                                      child: const Text('غیر فعال')
+                                          .bold().fsR(2* pw).color(Colors.white)
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            Positioned(
+                              top: 25,
+                              right: 15,
+                              child: IgnorePointer(
+                                child: Transform.rotate(
+                                    angle: -0.8,
+                                    child: Icon(AppIcons.cancel, color: Colors.white, size: 25*pw)
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      /// active
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: Stack(
+                          children: [
+                            PathDraw(
+                              color: currentPlace!.deviceStatus != DeviceStatus.active ? defaultColor : Colors.green,
+                              path: buttons[4],
+                              width: wOfButton,
+                              height: wOfButton,
+                              originalSize: false,
+                              onPathClick: onButtonsClick,
+                            ),
+
+                            Positioned.fill(
+                              child: IgnorePointer(
+                                child: Center(
+                                  child: Transform.rotate(
+                                      angle: 0.8,
+                                      child: const Text('فعال')
+                                          .bold().fsR(2* pw).color(Colors.white)
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            Positioned(
+                              top: 25,
+                              left: 15,
+                              child: IgnorePointer(
+                                  child: Icon(AppIcons.power, color: Colors.white, size: 25*pw)
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      /// semiActive
+                      Positioned(
+                        top: wOfButton + (scale),
+                        left: 0,
+                        child: Stack(
+                          children: [
+                            PathDraw(
+                              color: currentPlace!.deviceStatus != DeviceStatus.semiActive ? defaultColor : Colors.orange,
+                              path: buttons[2],
+                              width: wOfButton,
+                              height: wOfButton,
+                              originalSize: false,
+                              onPathClick: onButtonsClick,
+                            ),
+
+                            Positioned.fill(
+                              child: IgnorePointer(
+                                child: Center(
+                                  child: Transform.rotate(
+                                      angle: 0.8,
+                                      child: const Text('نیمه فعال')
+                                          .bold().fsR(2* pw).color(Colors.white)
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            Positioned(
+                              top: 10,
+                              left: 20,
+                              child: IgnorePointer(
+                                  child: Icon(AppIcons.semiActive, color: Colors.white, size: 25*pw)
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      /// silent
+                      Positioned(
+                        top: wOfButton + (scale),
+                        right: 0,
+                        child: Stack(
+                          children: [
+                            PathDraw(
+                              color: currentPlace!.deviceStatus != DeviceStatus.silent ? defaultColor : Colors.blue,
+                              path: buttons[3],
+                              width: wOfButton,
+                              height: wOfButton,
+                              originalSize: false,
+                              onPathClick: onButtonsClick,
+                            ),
+
+                            Positioned.fill(
+                              child: IgnorePointer(
+                                child: Center(
+                                  child: Transform.rotate(
+                                    angle: -0.8,
+                                      child: const Text('بی صدا')
+                                          .bold().fsR(2).color(Colors.white)
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            Positioned(
+                              top: 10,
+                              right: 20,
+                              child: IgnorePointer(
+                                  child: Icon(AppIcons.silent, color: Colors.white, size: 25*pw)
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
                 );
               }
             ),
-          ],
-        ),
-      ),
-    );
-  }
 
-  Widget buildDeviceStatusSection() {
-    if(buttons.isEmpty){
-      return const SizedBox();
-    }
-
-    return Card(
-      color: cColor,
-      margin: const EdgeInsets.symmetric(horizontal: 0),
-      elevation: 0,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(AppMessages.deviceStatus),
-
-                Showcase(
-                  key: reloadCaseKey,
-                  description: 'با لمس این دکمه وضعیت دستگاه به روز رسانی می شود',
-                  targetPadding: const EdgeInsets.all(4),
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.translucent,
-                    onTap: onUpdateInfoClick,
-                    child: Row(
-                      children: [
-                        const Text('بروز رسانی').color(Colors.blue).bold(),
-                        const SizedBox(width: 5),
-                        const Icon(AppIcons.refreshCircle, color: Colors.blue, size: 18)
-                      ],
-                    ),
-                  ),
-                ),
-
-                GestureDetector(
-                    onTap: onDeviceStatusHelpClick,
-                    child: const Icon(AppIcons.questionMarkCircle, size: 22, color: Colors.orange)
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 10),
-
-            SizedBox(
-              height: 400,
-              child: Stack(
-                children: [
-                  /*PathDraw(
-                        color: buttons[1].color,
-                        path: buttons[1],
-                        width: 150,
-                        height: 150,
-                        originalSize: false,
-                      ),*/
-
-                  Positioned(
-                    top: 0,
-                    left: 0,
-                    child: ColoredBox(
-                      color: Colors.yellow,
-                      child: PathDraw(
-                        color: buttons[0].color,
-                        path: buttons[0],
-                        width: 220,
-                        height: 220,
-                        originalSize: true,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            buildPowerBatterySection(),
           ],
         ),
       ),
@@ -519,9 +611,9 @@ class _HomePageState extends StateBase<HomePage> {
       children: [
         /// battery state
         Card(
-          color: cColor,
+          color: Colors.grey.shade50,
           margin: const EdgeInsets.symmetric(horizontal: 0),
-          elevation: 0,
+          elevation: 5,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
             child: Column(
@@ -537,34 +629,17 @@ class _HomePageState extends StateBase<HomePage> {
           ),
         ),
 
-        /// listening
-        Card(
-          color: ColorHelper.changeHue(cColor),
-          margin: const EdgeInsets.symmetric(horizontal: 0),
-          elevation: 0,
-          child: GestureDetector(
-            onTap: onListeningClick,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(AppMessages.listening),
-
-                  const SizedBox(height: 6),
-
-                  const Icon(AppIcons.light),
-                ],
-              ),
-            ),
-          ),
+        /// flip page
+        ActionChip(
+            label: const Text('اطلاعات کامل'),
+          onPressed: onFlipPageClick,
         ),
 
         /// power state
         Card(
-          color: cColor,
+          color: Colors.grey.shade50,
           margin: const EdgeInsets.symmetric(horizontal: 0),
-          elevation: 0,
+          elevation: 5,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
             child: Column(
@@ -608,8 +683,6 @@ class _HomePageState extends StateBase<HomePage> {
                         onPressed: onGetSimCardBalance,
                         child: const Text('بروز رسانی')
                     ),
-
-
                   ],
                 ),
               ],
@@ -620,10 +693,10 @@ class _HomePageState extends StateBase<HomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
+                Row(
                   children: [
-                    const Text('موجودی شارژ').bold(),
-                    const SizedBox(height: 4),
+                    const Text('موجودی شارژ:').bold(),
+                    const SizedBox(width: 8),
                     Text(currentPlace!.getSimCardCharge()).bold(),
                   ],
                 ),
@@ -636,14 +709,6 @@ class _HomePageState extends StateBase<HomePage> {
                     )
                   ],
                 ),
-
-                Column(
-                  children: [
-                    const Text('آنتن دهی').bold(),
-                    const SizedBox(height: 4),
-                    Text(currentPlace!.getSimCardAntenna()).bold().color(currentPlace!.getSimCardAntennaColor()),
-                  ],
-                )
               ],
             ),
           ],
@@ -833,24 +898,48 @@ class _HomePageState extends StateBase<HomePage> {
   }
 
   Widget buildContactWithInstaller(){
-    return GestureDetector(
-      onTap: (){
-        OpenHelper.makePhoneCall(currentPlace!.supportPhoneNumber);
-      },
-      child: Card(
-        color: ColorHelper.changeHue(AppDecoration.secondColor),
-        elevation: 0,
-        margin: const EdgeInsets.only(top: 8.0, bottom: 4),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text('تماس با پشتیبان').color(Colors.white).bold(),
+    return Card(
+      color: ColorHelper.changeHue(AppDecoration.secondColor),
+      elevation: 0,
+      margin: const EdgeInsets.only(top: 8.0, bottom: 4),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            GestureDetector(
+              onTap: (){
+                OpenHelper.makePhoneCall(currentPlace!.supportPhoneNumber);
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('تماس با پشتیبان').color(Colors.white).bold(),
 
-              const Icon(AppIcons.callPhone, color: Colors.pink),
-            ],
-          ),
+                  const Icon(AppIcons.callPhone, color: Colors.pink),
+                ],
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: SizedBox(
+                  width: 200,
+                child: Divider(color: Colors.grey.shade50),
+              ),
+            ),
+
+            GestureDetector(
+              onTap: onSendSms,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('پیامک به پشتیبان').color(Colors.white).bold(),
+
+                  const Icon(AppIcons.email, color: Colors.pink),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -1141,6 +1230,32 @@ class _HomePageState extends StateBase<HomePage> {
   void loadButtonsSvg() async {
     buttons.addAll(await AppTools.loadSvgImage(svgImage: 'assets/images/buttons.svg'));
     assistCtr.updateHead();
+  }
+
+  void onButtonsClick(PathDrawModel path) {
+    if(path.id == 'circle'){
+      onListeningClick();
+    }
+    else if(path.id == 'p4'){//active
+      onChangeDeviceStatusClick(0);
+    }
+    else if(path.id == 'p3'){//silent
+      onChangeDeviceStatusClick(3);
+    }
+    else if(path.id == 'p2'){//semi
+      onChangeDeviceStatusClick(2);
+    }
+    else if(path.id == 'p1'){//inActive
+      onChangeDeviceStatusClick(1);
+    }
+  }
+
+  void onFlipPageClick() {
+    pageController.flipcard();
+  }
+
+  void onSendSms() {
+    OpenHelper.sendSmsToByBody(currentPlace!.supportPhoneNumber, 'سلام، تکنسین محترم اینجانب درخواست پشتیبانی دارم');
   }
 }
 

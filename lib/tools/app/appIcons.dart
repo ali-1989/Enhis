@@ -107,6 +107,10 @@ class AppIcons {
   static const IconData medicalBag = CommunityMaterialIcons.medical_bag;
   static const IconData focus = CommunityMaterialIcons.image_filter_center_focus;
   static const IconData translate = CommunityMaterialIcons.translate;
+  static const IconData power = CommunityMaterialIcons.power;
+  static const IconData cancel = CommunityMaterialIcons.cancel;
 
   static const IconData remote = CommunityMaterialIcons.remote;
+  static const IconData semiActive = CommunityMaterialIcons.shield_half_full;
+  static const IconData silent = CommunityMaterialIcons.volume_off;
 }

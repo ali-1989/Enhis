@@ -29,18 +29,17 @@ class PathDraw extends StatelessWidget {
 
 
     return SizedBox(
-      width: double.infinity,
-      height: double.infinity,
+      width: width,
+      height: height,
       child: LayoutBuilder(
         builder: (_, siz) {
           final x = (originalSize || siz.maxWidth == double.infinity) ? orgSize.width: siz.maxWidth;
           final y = (originalSize || siz.maxHeight == double.infinity) ? orgSize.height: siz.maxHeight;
-print(orgSize.width);
-print(orgSize.height);
+
           return Align(
             child: SizedBox(
-              width: orgSize.width,
-              height: orgSize.height,
+              width: x,
+              height: y,
               child: ClipPath(
                 clipper: PathDrawClipper(orgPath: pathA),
                 child: GestureDetector(
@@ -94,14 +93,15 @@ class PathDrawClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
 
-    final orgSize = orgPath.getBounds().size;
+    final bound = orgPath.getBounds();
+    final orgSize = bound.size;
     final xScale = size.width / orgSize.width;
     final yScale = size.height / orgSize.height;
 
     final Matrix4 matrix4 = Matrix4.identity();
     matrix4.scale(xScale, yScale);
 
-    return orgPath.transform(matrix4.storage);//.shift(const Offset(-220, 0));
+    return orgPath.transform(matrix4.storage).shift(Offset(-bound.left*xScale, -bound.top*yScale));
   }
 
 

@@ -50,6 +50,7 @@ dependencies:
   showcaseview: ^2.0.3
   xml: ^6.3.0
   path_drawing: ^1.0.1
+  flutter_flip_card: ^0.0.4
 
 
   iris_tools:
