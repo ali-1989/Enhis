@@ -110,83 +110,106 @@ class _HomePageState extends StateBase<HomePage> {
       return buildEmptyPlaces();
     }
 
-    return Column(
+    return Stack(
       children: [
-        buildTopSection(),
+        Column(
+          children: [
+            buildTopSection(),
 
-        const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-        /// center section
-        Expanded(
-            child: Stack(
-              children: [
-                Card(
-                  color: Colors.grey.shade100,
-                  margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4),
-                    child: FlipCard(
-                      frontWidget: buildFrontPage(),
-                    backWidget: buildDetailPage(),
-                    controller: pageController,
-                    rotateSide: RotateSide.left,
-                      axis: FlipAxis.vertical,
-                      onTapFlipping: false,
-                    ),
-                  ),
-                ),
-
-                /// location-name
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: Center(
-                    child: Showcase(
-                      key: placeSettingCaseKey,
-                      description: 'تنظیمات دستگاه اینجاست',
-                      targetPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                      child: ActionChip(
-                          labelPadding: const EdgeInsets.symmetric(horizontal: 5),
-                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          visualDensity: const VisualDensity(horizontal: -1, vertical: -1),
-                          onPressed: onEditPlaceClick,
-                          label: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                child: Text(currentPlace!.name).bold().fsR(2),
-                              ),
-                              const SizedBox(width: 4),
-                              const CustomCard(
-                                color: Colors.green,
-                                  radius: 25,
-                                  padding: EdgeInsets.all(2),
-                                  child: Icon(AppIcons.settings,
-                                    color: Colors.white, size: 18)
-                              )
-                            ],
-                          )
+            /// center section
+            Expanded(
+                child: Stack(
+                  children: [
+                    Card(
+                      color: Colors.grey.shade100,
+                      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4),
+                        child: FlipCard(
+                          frontWidget: buildFrontPage(),
+                        backWidget: buildDetailPage(),
+                        controller: pageController,
+                        rotateSide: RotateSide.left,
+                          axis: FlipAxis.vertical,
+                          onTapFlipping: false,
+                        ),
                       ),
                     ),
-                  ),
-                ),
-              ],
+
+                    /// location-name
+                    Positioned(
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      child: Center(
+                        child: Showcase(
+                          key: placeSettingCaseKey,
+                          description: 'تنظیمات دستگاه اینجاست',
+                          targetPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                          child: ActionChip(
+                              labelPadding: const EdgeInsets.symmetric(horizontal: 5),
+                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              visualDensity: const VisualDensity(horizontal: -1, vertical: -1),
+                              onPressed: onEditPlaceClick,
+                              label: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                    child: Text(currentPlace!.name).bold().fsR(2),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  const CustomCard(
+                                    color: Colors.green,
+                                      radius: 25,
+                                      padding: EdgeInsets.all(2),
+                                      child: Icon(AppIcons.settings,
+                                        color: Colors.white, size: 18)
+                                  )
+                                ],
+                              )
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+            ),
+
+
+            /// bottom section (places)
+            Builder(
+                builder: (_){
+                  if(PlaceManager.places.length < 2){
+                    return const SizedBox();
+                  }
+
+                  return buildLocationsSection();
+                }
             )
+          ],
         ),
 
+        Positioned(
+          top: 14,
+            right: 14,
+            child: StreamBuilder(
+              stream: SmsManager.smsTimeStream.stream,
+              builder: (_, data){
+                if(data.data == null || data.error != null){
+                  return const SizedBox();
+                }
 
-        /// bottom section (places)
-        Builder(
-            builder: (_){
-              if(PlaceManager.places.length < 2){
-                return const SizedBox();
-              }
-
-              return buildLocationsSection();
-            }
-        )
+                return CustomCard(
+                  color: AppDecoration.mainColor,
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 1),
+                    child: Text('${data.data}').color(Colors.white)
+                );
+              },
+            )
+        ),
       ],
     );
   }
@@ -278,8 +301,8 @@ class _HomePageState extends StateBase<HomePage> {
             icon: Row(
               textDirection: TextDirection.ltr,
               children: [
-                Icon(AppIcons.arrowRight),
-                Text('برگشت').bold(),
+                const Icon(AppIcons.arrowRight),
+                const Text('برگشت').bold(),
               ],
             )
         ),
@@ -291,13 +314,7 @@ class _HomePageState extends StateBase<HomePage> {
         const SizedBox(height: 6),
         buildRemoteAndContactSection(),
 
-        Column(
-          children: [
-            const Text('آنتن دهی').bold(),
-            const SizedBox(height: 4),
-            Text(currentPlace!.getSimCardAntenna()).bold().color(currentPlace!.getSimCardAntennaColor()),
-          ],
-        ),
+        buildAntennaSection(),
       ],
     );
   }
@@ -631,7 +648,7 @@ class _HomePageState extends StateBase<HomePage> {
 
         /// flip page
         ActionChip(
-            label: const Text('اطلاعات کامل'),
+            label: const Text('اطلاعات بیشتر'),
           onPressed: onFlipPageClick,
         ),
 
@@ -671,19 +688,20 @@ class _HomePageState extends StateBase<HomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(AppMessages.simCardStatus),
+                //Text(AppMessages.simCardStatus),
 
-                Row(
-                  children: [
-                    TextButton(
-                        style: TextButton.styleFrom(
-                          visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                        onPressed: onGetSimCardBalance,
-                        child: const Text('بروز رسانی')
+                TextButton(
+                    style: TextButton.styleFrom(
+                      visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                  ],
+                    onPressed: onGetSimCardBalance,
+                    child: const Text('بروز رسانی')
+                ),
+
+                GestureDetector(
+                    onTap: onSimCardHelpClick,
+                    child: Icon(AppIcons.questionMarkCircle, size: 25*pw, color: Colors.orange)
                 ),
               ],
             ),
@@ -695,7 +713,7 @@ class _HomePageState extends StateBase<HomePage> {
               children: [
                 Row(
                   children: [
-                    const Text('موجودی شارژ:').bold(),
+                    const Text('شارژ سیم کارت:').bold(),
                     const SizedBox(width: 8),
                     Text(currentPlace!.getSimCardCharge()).bold(),
                   ],
@@ -846,7 +864,6 @@ class _HomePageState extends StateBase<HomePage> {
   Widget buildRemoteAndContactSection(){
     return Row(
       children: [
-
         Expanded(
           child: GestureDetector(
             onTap: onRemoteManageClick,
@@ -891,6 +908,45 @@ class _HomePageState extends StateBase<HomePage> {
                 ),
               ),
             ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildAntennaSection(){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Card(
+          color: cColor,
+          elevation: 0,
+          margin: const EdgeInsets.only(top: 8.0, bottom: 4),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                const Text('آنتن دهی').bold(),
+                const SizedBox(height: 4),
+                Text(currentPlace!.getSimCardAntenna()).bold().color(currentPlace!.getSimCardAntennaColor()),
+              ],
+            )
+          ),
+        ),
+
+        Card(
+          color: cColor,
+          elevation: 0,
+          margin: const EdgeInsets.only(top: 8.0, bottom: 4),
+          child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  const Text('وضعیت بلندگو').bold(),
+                  const SizedBox(height: 4),
+                  Text(currentPlace!.getSpeakerStateText()).bold(),//.color(currentPlace!.getSimCardAntennaColor()),
+                ],
+              )
           ),
         ),
       ],
@@ -977,11 +1033,28 @@ class _HomePageState extends StateBase<HomePage> {
     );
   }
 
+  void onSimCardHelpClick() {
+    const txt1 = 'برای دریافت صحیح جواب، زبان سیم کارت باید انگلیسی باشد';
+
+    OverlayDialog.showMiniInfo(context,
+      builder: (_, c){
+        return c;
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(txt1).bold(),
+        ],
+      ),
+    );
+  }
+
   void onDeviceStatusHelpClick() {
     const txt1 = 'چهار حالت ممکن:';
     const txt2 = '* حالت فعال: دزدگیر فعال می باشد';
     const txt3 = '* حالت غیرفعال: دزدگیر غیر فعال می باشد';
-    const txt4 = '* حالت بی صدا: در این حالت فقط بلندگوی داخلی کار می کتد';
+    const txt4 = '* حالت بی صدا: در این حالت فقط بلندگوی داخلی کار می کند';
     const txt5 = '* حالت نیمه فعال: در این حالت فقط مناطق (زون) 1 و 2 کار می کند';
 
     OverlayDialog.showMiniInfo(context,

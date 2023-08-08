@@ -141,26 +141,6 @@ class PlaceModel {
     return deviceStatus != DeviceStatus.unKnow;
   }
 
-  int? getDeviceStatsForSwitchButtonA(){
-    return switch(deviceStatus){
-      DeviceStatus.unKnow => null,
-      DeviceStatus.active => 0,
-      DeviceStatus.inActive => 1,
-      DeviceStatus.semiActive => null,
-      DeviceStatus.silent => null,
-    };
-  }
-
-  int? getDeviceStatsForSwitchButtonB(){
-    return switch(deviceStatus){
-      DeviceStatus.unKnow => null,
-      DeviceStatus.active => null,
-      DeviceStatus.inActive => null,
-      DeviceStatus.semiActive => 0,
-      DeviceStatus.silent => 1,
-    };
-  }
-
   String getLastUpdateDate(){
     if(!hasUpdate()){
       return AppMessages.needToUpdate;
@@ -263,7 +243,19 @@ class PlaceModel {
     return '$batteryCharge %';
   }
 
-  void parseUpdate(String txt){
+  String getSpeakerStateText(){
+    if(speakerIsConnected == null){
+      return AppMessages.unKnow;
+    }
+
+    if(speakerIsConnected == true){
+      return 'متصل';
+    }
+
+    return 'بذون بلندگو';
+  }
+
+  void parseSms(String txt){
     //print('>>>> pars >>>>>> $txt');
 
     if(txt.contains('اپتکس: رله وصل شد')){
@@ -390,3 +382,23 @@ class PlaceModel {
     PlaceManager.updatePlaceToDb(this);
   }
 }
+
+/*int? getDeviceStatsForSwitchButtonA(){
+    return switch(deviceStatus){
+      DeviceStatus.unKnow => null,
+      DeviceStatus.active => 0,
+      DeviceStatus.inActive => 1,
+      DeviceStatus.semiActive => null,
+      DeviceStatus.silent => null,
+    };
+  }
+
+  int? getDeviceStatsForSwitchButtonB(){
+    return switch(deviceStatus){
+      DeviceStatus.unKnow => null,
+      DeviceStatus.active => null,
+      DeviceStatus.inActive => null,
+      DeviceStatus.semiActive => 0,
+      DeviceStatus.silent => 1,
+    };
+  }*/

@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:app/tools/routeTools.dart';
 import 'package:flutter/material.dart';
 
 import 'package:iris_notifier/iris_notifier.dart';
+import 'package:iris_tools/dateSection/dateHelper.dart';
 import 'package:sms_advanced/sms_advanced.dart';
 
 import 'package:app/managers/place_manager.dart';
@@ -16,6 +18,9 @@ import 'package:app/tools/app/appToast.dart';
 
 class SmsManager {
   static StreamSubscription? smsListenerSubscription;
+  static DateTime? _lastSendSmsTime;
+  static StreamController smsTimeStream = StreamController();
+  static Timer? _timer;
 
   SmsManager._();
 
@@ -24,25 +29,27 @@ class SmsManager {
       return;
     }
 
-    void parse(SmsMessage msg){
-      var n1 = msg.sender?.split('').reversed.take(10).join();
+    smsListenerSubscription = SmsService.receiveSms(_parseReceivedMessage);
+  }
 
-      for(final p in PlaceManager.places){
-        var n2 = p.simCardNumber.split('').reversed.take(10).join();
+  static void _parseReceivedMessage(SmsMessage msg){
+    /// used revers for avoid +98 if exist
+    var n1 = msg.sender?.split('').reversed.take(10).join();
 
-        if(n1 == n2){
-          p.parseUpdate(msg.body?? '');
-          EventNotifierService.notify(AppEvents.placeDataChanged);
-          break;
-        }
+    for(final p in PlaceManager.places){
+      var n2 = p.simCardNumber.split('').reversed.take(10).join();
+
+      if(n1 == n2){
+        _stopTimer();
+        p.parseSms(msg.body?? '');
+        EventNotifierService.notify(AppEvents.placeDataChanged);
+        break;
       }
     }
-
-    smsListenerSubscription = SmsService.receiveSms(parse);
   }
 
   static Future<void> sendChargeCode(String sc, PlaceModel place, BuildContext context) async {
-    final operator = detectOperator(place.simCardNumber);
+    final operator = detectOperatorForNumber(place.simCardNumber);
 
     if(operator == null){
       AppSnack.showError(context, 'متاسفانه اپراتور سیم کار شناخته نشد');
@@ -62,7 +69,7 @@ class SmsManager {
   }
 
   static Future<void> getChargeBalance(PlaceModel place, BuildContext context) async {
-    final operator = detectOperator(place.simCardNumber);
+    final operator = detectOperatorForNumber(place.simCardNumber);
 
     if(operator == null){
       AppSnack.showError(context, 'متاسفانه اپراتور سیم کار شناخته نشد');
@@ -82,6 +89,11 @@ class SmsManager {
   }
 
   static Future<bool> sendSms(String sc, PlaceModel place, BuildContext context, {bool showSmsDialog = true}) async {
+    if(isInWaitingForResponse()){
+      AppToast.showToast(context, 'حداقل 15 ثانیه بین دو درخواست باید فاصله قرار دهید');
+      return false;
+    }
+
     if(showSmsDialog && SettingsManager.localSettings.askSndSmsEveryTime){
       final can = await AppDialogIris.instance.showYesNoDialog(
           context,
@@ -106,6 +118,9 @@ class SmsManager {
       return false;
     }
 
+    _lastSendSmsTime = DateHelper.getNow();
+    _startTimer();
+
     late StreamSubscription subscribe;
     final signal = Completer<bool>();
 
@@ -114,6 +129,7 @@ class SmsManager {
 
       if(event == SmsMessageState.Fail) {
         subscribe.cancel();
+        _stopTimer();
         signal.complete(false);
       }
 
@@ -138,7 +154,46 @@ class SmsManager {
     }
   }
 
-  static SimOperator? detectOperator(String number){
+  static bool isInWaitingForResponse(){
+    if(_lastSendSmsTime == null){
+      return false;
+    }
+
+    if(DateHelper.isPastOf(_lastSendSmsTime, const Duration(seconds: 15))){
+      return false;
+    }
+
+    return true;
+  }
+
+  static void _startTimer(){
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      smsTimeStream.sink.add(15- timer.tick);
+
+      if(timer.tick >= 15){
+        _timer!.cancel();
+        _timer = null;
+        _lastSendSmsTime = null;
+        smsTimeStream.sink.add(null);
+
+        AppToast.showToast(RouteTools.materialContext!, 'متاسفانه جوابی دریافت نشد');
+      }
+    });
+  }
+
+  static void _stopTimer(){
+    if(_timer == null || !_timer!.isActive){
+      _timer = null;
+      return;
+    }
+
+    _timer!.cancel();
+    _timer = null;
+    _lastSendSmsTime = null;
+    smsTimeStream.sink.add(null);
+  }
+
+  static SimOperator? detectOperatorForNumber(String number){
     final hamrahList = [
       '0911', '0912', '0913', '0914',
       '0915', '0916', '0917', '0918',
@@ -155,6 +210,14 @@ class SmsManager {
     final rightelList = [
       '0920', '0921', '0922', '0936',
     ];
+
+    if(number.startsWith('+98')){
+      number = '0${number.substring(2)}';
+    }
+
+    if(number.startsWith('0098')){
+      number = '0${number.substring(3)}';
+    }
 
     for(final h in hamrahList) {
       if (number.startsWith(h)) {
