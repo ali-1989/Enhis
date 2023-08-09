@@ -1,10 +1,12 @@
 import 'package:app/tools/app/appDirectories.dart';
 import 'package:app/tools/app/appIcons.dart';
+import 'package:app/views/components/selectDateCalendarView.dart';
 import 'package:flutter/material.dart';
 
 import 'package:iris_notifier/iris_notifier.dart';
 import 'package:iris_tools/api/callAction/manageCallAction.dart';
 import 'package:iris_tools/api/checker.dart';
+import 'package:iris_tools/api/helpers/fileHelper.dart';
 import 'package:iris_tools/api/helpers/focusHelper.dart';
 import 'package:iris_tools/api/helpers/mathHelper.dart';
 import 'package:iris_tools/api/helpers/open_helper.dart';
@@ -48,7 +50,7 @@ class EditPlacePage extends StatefulWidget {
 ///==================================================================================
 class _EditPlacePageState extends StateBase<EditPlacePage> {
   late InputDecoration inputDecoration;
-  final ClickCounter clickCounter = ClickCounter(const Duration(seconds: 3), 5);
+  final ClickCounter clickCounter = ClickCounter(const Duration(seconds: 3), 3);
 
   @override
   void initState(){
@@ -127,6 +129,8 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
                 buildBatteryReportSection(),
 
                 buildInstallerSection(),
+
+                buildWarrantySection(),
 
                 const SizedBox(height: 14),
               ],
@@ -254,7 +258,11 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('در این بخش می توانید مخاطبین را مدیریت کنید').bold().fsR(1),
+                Flexible(
+                    child: const Text('در این بخش می توانید مخاطبین را مدیریت کنید', maxLines: 2).bold().fsR(1)
+                ),
+
+                const SizedBox(width: 5),
 
                 TextButton(
                     onPressed: onManageContactClick,
@@ -451,6 +459,7 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
                     onChanged: (v){
                       widget.place.useOfRelays = v;
                       assistCtr.updateHead();
+                      PlaceManager.updatePlaceToDb(widget.place);
                       EventNotifierService.notify(AppEvents.placeDataChanged);
                     }
                 ),
@@ -478,15 +487,11 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            GestureDetector(
-              onTap: onHiddenHelpClick,
-                behavior: HitTestBehavior.translucent,
-                child: const Text('آژیر').bold().fsR(2)
-            ),
+            const Text('آژیر').bold().fsR(2),
 
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Divider(color: Colors.grey.shade300),
+              child: Divider(color: Colors.grey.shade400),
             ),
 
             Row(
@@ -515,15 +520,11 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            GestureDetector(
-              onTap: onHiddenHelpClick,
-                behavior: HitTestBehavior.translucent,
-                child: const Text('گزارش دوره ای موجودی').bold().fsR(2)
-            ),
+            const Text('گزارش دوره ای موجودی').bold().fsR(2),
 
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Divider(color: Colors.grey.shade300),
+              child: Divider(color: Colors.grey.shade400),
             ),
 
             Row(
@@ -552,15 +553,11 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            GestureDetector(
-              onTap: onHiddenHelpClick,
-                behavior: HitTestBehavior.translucent,
-                child: const Text('گزارش دوره ای باطری').bold().fsR(2)
-            ),
+            const Text('گزارش دوره ای باطری').bold().fsR(2),
 
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Divider(color: Colors.grey.shade300),
+              child: Divider(color: Colors.grey.shade400),
             ),
 
             Row(
@@ -589,15 +586,22 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            GestureDetector(
-              onTap: onHiddenHelpClick,
-                behavior: HitTestBehavior.translucent,
-                child: const Text('اطلاعات پشتیبان').bold().fsR(2)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('اطلاعات پشتیبان').bold().fsR(2),
+
+                GestureDetector(
+                    onTap: onHiddenHelpClick,
+                    behavior: HitTestBehavior.translucent,
+                    child: const Icon(AppIcons.dotsHor)
+                ),
+              ],
             ),
 
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Divider(color: Colors.grey.shade300),
+              child: Divider(color: Colors.grey.shade400),
             ),
 
             Row(
@@ -631,6 +635,42 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
                 TextButton(
                     onPressed: onChangeInstallerMobile,
                     child: const Text('تغییر')
+                )
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildWarrantySection(){
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+      color: AppDecoration.cardSectionsColor,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('اطلاعات گارانتی').bold().fsR(2),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Divider(color: Colors.grey.shade400),
+            ),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TitleInfo(title: 'تاریخ اتمام: ', info: widget.place.getWarrantyText()),
+
+                Visibility(
+                  visible: widget.place.warrantyEndTime == null,
+                  child: TextButton(
+                      onPressed: onChangeWarranty,
+                      child: const Text('ثبت')
+                  ),
                 )
               ],
             ),
@@ -863,8 +903,12 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
 
   void onHiddenHelpClick() async {
     if(clickCounter.touch()){
-      final path = '${AppDirectories.getAppFolderInInternalStorage()}/help.pdf';
-      await AssetsManager.assetsToFile('assets/pdf/test.pdf', path);
+      final path = '${AppDirectories.getAppFolderInInternalStorage()}/help_hamkar.pdf';
+
+      if(!FileHelper.existSync(path)) {
+        await AssetsManager.assetsToFile('assets/pdf/help_hamkar.pdf', path);
+      }
+
       OpenHelper.openFile(path, type: 'application/pdf');
     }
   }
@@ -977,6 +1021,22 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
       PlaceManager.updatePlaceToDb(widget.place);
       //EventNotifierService.notify(AppEvents.placeDataChanged);
       assistCtr.updateHead();
+    }
+  }
+
+  void onChangeWarranty() async {
+    final date = await AppDialogIris.instance.showIrisDialog(
+        context,
+        descView: SelectDateCalendarView(
+          maxYearAsGregorian: 2030,
+          minYearAsGregorian: 2022,
+          title: 'توجه : فقط یک بار امکان وارد کردن تاریخ را دارید',
+        ),
+    );
+
+    if(date != null){
+      widget.place.warrantyEndTime = date!;
+      setState(() {});
     }
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:iris_notifier/iris_notifier.dart';
 import 'package:iris_tools/api/generator.dart';
+import 'package:iris_tools/api/helpers/localeHelper.dart';
 import 'package:iris_tools/api/helpers/mathHelper.dart';
 import 'package:iris_tools/dateSection/dateHelper.dart';
 import 'package:persian_needs/persian_needs.dart';
@@ -48,6 +49,7 @@ class PlaceModel {
   int batteryReportDuration = 0;
   bool? wirelessIsActive;
   String? simCardAmount;
+  DateTime? warrantyEndTime;
   List<ZoneModel> zones = [];
   List<RelayModel> relays = [];
   List<ContactModel> contacts = [];
@@ -241,6 +243,29 @@ class PlaceModel {
     }
 
     return '$batteryCharge %';
+  }
+
+  String getWarrantyText(){
+    if(warrantyEndTime == null){
+      return AppMessages.unKnow;
+    }
+
+    Duration dif;
+
+    if(DateHelper.compareDates(warrantyEndTime!, DateHelper.getNow()) > 0){
+      dif = DateHelper.difference(DateHelper.getNow(), warrantyEndTime!);
+    }
+    else {
+      dif = DateHelper.difference(warrantyEndTime!, DateHelper.getNow());
+    }
+
+    int x = 0;
+
+    if(dif.inDays > 0){
+      x = dif.inDays;
+    }
+
+    return LocaleHelper.overrideRtl('${DateTools.dateOnlyRelative(warrantyEndTime!)}   , $x روز مانده');
   }
 
   String getSpeakerStateText(){

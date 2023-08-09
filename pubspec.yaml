@@ -51,6 +51,7 @@ dependencies:
   xml: ^6.3.0
   path_drawing: ^1.0.1
   flutter_flip_card: ^0.0.4
+  numberpicker: ^2.1.2
 
 
   iris_tools:

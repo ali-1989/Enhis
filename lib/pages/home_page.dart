@@ -320,6 +320,7 @@ class _HomePageState extends StateBase<HomePage> {
   }
 
   Widget buildUpdateStatusSection() {
+    print('============= ${currentPlace!.useOfRelays}');
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
