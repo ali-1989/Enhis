@@ -1,3 +1,5 @@
+import 'package:app/pages/relay_page.dart';
+import 'package:app/pages/zone_page.dart';
 import 'package:app/tools/app/appDirectories.dart';
 import 'package:app/tools/app/appIcons.dart';
 import 'package:app/views/components/selectDateCalendarView.dart';
@@ -168,6 +170,12 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text('نام مکان').alpha().bold(),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Divider(color: Colors.grey.shade400),
+            ),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -197,6 +205,12 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text('شماره سیم کارت دستگاه').alpha().bold(),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Divider(color: Colors.grey.shade400),
+            ),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -226,6 +240,12 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text('رمز دستگاه').alpha().bold(),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Divider(color: Colors.grey.shade400),
+            ),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -255,6 +275,12 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text('مخاطبین دستگاه').alpha().bold(),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Divider(color: Colors.grey.shade400),
+            ),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -417,7 +443,11 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text('مدیریت بخش زون ها').alpha().bold(),
-            const SizedBox(height: 12),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Divider(color: Colors.grey.shade400),
+            ),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -448,21 +478,20 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text('مدیریت بخش فرمان (رله)').alpha().bold(),
-            const SizedBox(height: 12),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Divider(color: Colors.grey.shade400),
+            ),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                CheckBoxRow(
-                    value: widget.place.useOfRelays,
-                    description: const Text('استفاده از رله ها').bold(),
-                    onChanged: (v){
-                      widget.place.useOfRelays = v;
-                      assistCtr.updateHead();
-                      PlaceManager.updatePlaceToDb(widget.place);
-                      EventNotifierService.notify(AppEvents.placeDataChanged);
-                    }
+                Flexible(
+                    child: const Text('می توانید دستوراتی مثل باز شدن درب را تنظیم کنید').bold()
                 ),
+
+                const SizedBox(width: 8),
 
                 TextButton(
                   onPressed: onEditRelayClick,
@@ -852,19 +881,23 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
   }
 
   void onEditZoneClick() {
-    AppDialogIris.instance.showIrisDialog(
+    RouteTools.pushPage(context, ZonePage(place: widget.place));
+
+    /*AppDialogIris.instance.showIrisDialog(
         context,
       descView: ManageZoneDialog(place: widget.place),
       decoration: AppDialogIris.instance.dialogDecoration.copy()..widthFactor = 0.9,
-    );
+    );*/
   }
 
   void onEditRelayClick() {
-    AppDialogIris.instance.showIrisDialog(
+    RouteTools.pushPage(context, RelayPage(place: widget.place));
+
+    /*AppDialogIris.instance.showIrisDialog(
       context,
       descView: ManageRelayDialog(place: widget.place),
       decoration: AppDialogIris.instance.dialogDecoration.copy()..widthFactor = 0.9,
-    );
+    );*/
   }
 
   void onChangeInstallerName() {

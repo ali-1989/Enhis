@@ -4,6 +4,7 @@ import 'package:app/system/keys.dart';
 import 'package:app/tools/app/appCache.dart';
 import 'package:app/tools/app/appDb.dart';
 import 'package:app/tools/app/appDirectories.dart';
+import 'package:app/tools/app/appSnack.dart';
 import 'package:app/tools/app/appToast.dart';
 import 'package:app/tools/app_tools.dart';
 import 'package:app/views/dialogs/remoteManageDialog.dart';
@@ -27,7 +28,6 @@ import 'package:app/managers/place_manager.dart';
 import 'package:app/managers/sms_manager.dart';
 import 'package:app/pages/add_place_page.dart';
 import 'package:app/pages/edit_place_page.dart';
-import 'package:app/pages/relay_page.dart';
 import 'package:app/pages/settings_page.dart';
 import 'package:app/structures/abstract/stateBase.dart';
 import 'package:app/structures/enums/appEvents.dart';
@@ -65,7 +65,8 @@ class _HomePageState extends StateBase<HomePage> {
   final helpCaseKey = GlobalKey();
   final placeSettingCaseKey = GlobalKey();
   final reloadCaseKey = GlobalKey();
-  final relayCaseKey = GlobalKey();
+  final relayCaseKey1 = GlobalKey();
+  final relayCaseKey2 = GlobalKey();
   final buttons = <PathDrawModel>[];
   final pageController = FlipCardController();
 
@@ -295,63 +296,28 @@ class _HomePageState extends StateBase<HomePage> {
   Widget buildDetailPage(){
     return ListView(
       children: [
-        const SizedBox(height: 20),
-        IconButton(
-            onPressed: onFlipPageClick,
-            icon: Row(
-              textDirection: TextDirection.ltr,
-              children: [
-                const Icon(AppIcons.arrowRight),
-                const Text('برگشت').bold(),
-              ],
-            )
-        ),
-        /// Zones state
-        buildZonesStateSection(),
-        const SizedBox(height: 6),
+        const SizedBox(height: 50),
         buildZonesStatusSection(),
+
+        const SizedBox(height: 6),
+        buildZonesStateSection(),
 
         const SizedBox(height: 6),
         buildRemoteAndContactSection(),
 
-        buildAntennaSection(),
+        buildAntennaAndSpeakerSection(),
       ],
     );
   }
 
   Widget buildUpdateStatusSection() {
-    print('============= ${currentPlace!.useOfRelays}');
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        /// last update
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(AppMessages.lastUpdate),
-            const Text(':  '),
-            Text(currentPlace!.getLastUpdateDate()).color(currentPlace!.getUpdateColor())
-                .bold().fsR(2),
-          ],
-        ),
-
-        /// relay
-        Visibility(
-          visible: currentPlace!.useOfRelays,
-          child: Showcase(
-            key: relayCaseKey,
-            description: 'از اینجا دستور رله را اجرا کنید',
-            targetPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-            child: GestureDetector(
-                onTap: onRelayClick,
-                child: CustomCard(
-                  color: AppDecoration.mainColor,
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: const Text('کلید (رله)').color(Colors.white)
-                )
-            ),
-          ),
-        )
+        Text(AppMessages.lastUpdate),
+        const Text(':  '),
+        Text(currentPlace!.getLastUpdateDate()).color(currentPlace!.getUpdateColor())
+            .bold().fsR(2),
       ],
     );
   }
@@ -616,6 +582,8 @@ class _HomePageState extends StateBase<HomePage> {
               }
             ),
 
+            buildRelaysSection(),
+
             buildPowerBatterySection(),
           ],
         ),
@@ -736,7 +704,58 @@ class _HomePageState extends StateBase<HomePage> {
     );
   }
 
+  Widget buildRelaysSection(){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        /// relay 1
+        Visibility(
+          visible: currentPlace!.useOfRelay1,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(10, 4, 5, 20),
+            child: Showcase(
+              key: relayCaseKey1,
+              description: 'از اینجا دستور رله را اجرا کنید',
+              targetPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              child: GestureDetector(
+                  onTap: onRelay1CommandClick,
+                  child: CustomCard(
+                      color: AppDecoration.mainColor,
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      child: Text(currentPlace!.relays[0].name?? 'اجرای رله 1').color(Colors.white)
+                  )
+              ),
+            ),
+          ),
+        ),
+
+        /// relay 2
+        Visibility(
+          visible: currentPlace!.useOfRelay2,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(5, 4, 10, 20),
+            child: Showcase(
+              key: relayCaseKey2,
+              description: 'از اینجا دستور رله را اجرا کنید',
+              targetPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              child: GestureDetector(
+                  onTap: onRelay2CommandClick,
+                  child: CustomCard(
+                      color: AppDecoration.mainColor,
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      child: Text(currentPlace!.relays[1].name?? 'اجرای رله 2').color(Colors.white)
+                  )
+              ),
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
   Widget buildZonesStateSection() {
+    String zoneDescription = 'اگر حسگر یک زون تحریک شود، به مدت چند ثانیه وضعیت آن به حالت بسته تغییر می کند';
+
     return Card(
       color: cColor,
       margin: const EdgeInsets.symmetric(horizontal: 0),
@@ -762,7 +781,14 @@ class _HomePageState extends StateBase<HomePage> {
               ],
             ),
 
-            const SizedBox(height: 5),
+            const SizedBox(height: 20),
+            CustomCard(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
+              color: Colors.lime,
+                child: Text(zoneDescription)
+            ),
+
+            const SizedBox(height: 20),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -813,23 +839,34 @@ class _HomePageState extends StateBase<HomePage> {
   }
 
   Widget mapStateZone(ZoneModel zm){
-    return Column(
-      children: [
-        Builder(
-          builder: (context) {
-            if(zm.name != null){
-              return Text(TextHelper.subByCharCountSafe(zm.name, 8)).bold().fsR(1);
-            }
-
-            return Text('زون ${zm.number}').bold().fsR(1);
-          }
+    return CustomCard(
+      color: Colors.white,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(
+          minWidth: 60,
         ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+          child: Column(
+            children: [
+              Builder(
+                builder: (context) {
+                  if(zm.name != null){
+                    return Text(TextHelper.subByCharCountSafe(zm.name, 8)).bold().fsR(1);
+                  }
 
-        const SizedBox(height: 8),
-        Text(zm.isOpen? '${AppMessages.open} ' : '∑ ${AppMessages.close}')
-        .bold().fsR(2)
-        .color(zm.isOpen? Colors.green : Colors.red),
-      ],
+                  return Text('زون ${zm.number}').bold().fsR(1);
+                }
+              ),
+
+              const SizedBox(height: 8),
+              Text(zm.isOpen? '${AppMessages.open} ' : '∑ ${AppMessages.close}')
+              .bold().fsR(2)
+              .color(zm.isOpen? Colors.green : Colors.red),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -915,7 +952,7 @@ class _HomePageState extends StateBase<HomePage> {
     );
   }
 
-  Widget buildAntennaSection(){
+  Widget buildAntennaAndSpeakerSection(){
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -923,16 +960,37 @@ class _HomePageState extends StateBase<HomePage> {
           color: cColor,
           elevation: 0,
           margin: const EdgeInsets.only(top: 8.0, bottom: 4),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              minWidth: 110,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  const Text('آنتن دهی').bold(),
+                  const SizedBox(height: 4),
+                  Text(currentPlace!.getSimCardAntenna()).bold().color(currentPlace!.getSimCardAntennaColor()),
+                ],
+              )
+            ),
+          ),
+        ),
+
+        /*IconButton(
+            onPressed: onFlipPageClick,
+            icon: Row(
+              textDirection: TextDirection.ltr,
               children: [
-                const Text('آنتن دهی').bold(),
-                const SizedBox(height: 4),
-                Text(currentPlace!.getSimCardAntenna()).bold().color(currentPlace!.getSimCardAntennaColor()),
+                const Icon(AppIcons.arrowRight),
+                const Text('برگشت').bold(),
               ],
             )
-          ),
+        ),*/
+
+        ActionChip(
+          onPressed: onFlipPageClick,
+            label: const Text('برگشت').bold().color(Colors.white),
         ),
 
         Card(
@@ -1032,6 +1090,24 @@ class _HomePageState extends StateBase<HomePage> {
         context,
         descView: RechargeSimCardDialog(onApplyClick: onApply),
     );
+  }
+
+  void onRelay1CommandClick() {
+    if(!currentPlace!.relays[0].isActive){
+      AppSnack.showInfo(context, 'این رله فعال نیست، وارد تنظیمات شوید و آن را فعال کنید');
+      return;
+    }
+
+    SmsManager.sendSms('20*1*000002', currentPlace!, context);
+  }
+
+  void onRelay2CommandClick() {
+    if(!currentPlace!.relays[1].isActive){
+      AppSnack.showInfo(context, 'این رله فعال نیست، وارد تنظیمات شوید و آن را فعال کنید');
+      return;
+    }
+
+    SmsManager.sendSms('20*2*000002', currentPlace!, context);
   }
 
   void onSimCardHelpClick() {
@@ -1199,12 +1275,20 @@ class _HomePageState extends StateBase<HomePage> {
   void onEditPlaceClick() async {
     await RouteTools.pushPage(context, EditPlacePage(place: currentPlace!));
 
-    if(context.mounted && currentPlace != null && currentPlace!.useOfRelays){
+    if(context.mounted && currentPlace != null &&
+        (currentPlace!.useOfRelay1 || currentPlace!.useOfRelay2)){
+
       final isShowRelayCase = AppDB.fetchKv(Keys.relayCaseIsShow)?? false;
 
       if(!isShowRelayCase) {
         AppDB.setReplaceKv(Keys.relayCaseIsShow, true);
-        ShowCaseWidget.of(context).startShowCase([relayCaseKey]);
+
+        if(currentPlace!.useOfRelay1) {
+          ShowCaseWidget.of(context).startShowCase([relayCaseKey1]);
+        }
+        else {
+          ShowCaseWidget.of(context).startShowCase([relayCaseKey2]);
+        }
       }
     }
   }
@@ -1237,9 +1321,9 @@ class _HomePageState extends StateBase<HomePage> {
     OpenHelper.openFile(path, type: 'application/pdf');
   }
 
-  void onRelayClick() {
+  /*void onRelayClick() {
     RouteTools.pushPage(context, RelayPage(place: currentPlace!));
-  }
+  }*/
 
   void onChangeZoneStatusClick(ZoneModel zm, PlaceModel place) async {
     ZoneStatus? selectedZone = await AppDialogIris.instance.showIrisDialog(

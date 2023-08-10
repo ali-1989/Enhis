@@ -14,6 +14,8 @@ import 'package:app/tools/app/appDialogIris.dart';
 import 'package:app/tools/app/appIcons.dart';
 import 'package:app/tools/app/appNavigator.dart';
 
+/// this page not used now (1402-05-19)
+
 class ManageRelayDialog extends StatefulWidget {
   final PlaceModel place;
 

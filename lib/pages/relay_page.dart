@@ -1,13 +1,16 @@
 import 'package:app/managers/place_manager.dart';
 import 'package:app/structures/enums/appEvents.dart';
 import 'package:app/structures/enums/relayStatus.dart';
-import 'package:app/structures/enums/zoneStatus.dart';
+import 'package:app/structures/models/relayModel.dart';
 import 'package:app/tools/app/appDialogIris.dart';
-import 'package:app/views/dialogs/manageRelayDialog.dart';
+import 'package:app/tools/app/appNavigator.dart';
 import 'package:flutter/material.dart';
 import 'package:iris_notifier/iris_notifier.dart';
+import 'package:iris_tools/api/helpers/focusHelper.dart';
+import 'package:iris_tools/api/helpers/textHelper.dart';
 
 import 'package:iris_tools/modules/stateManagers/assist.dart';
+import 'package:iris_tools/widgets/optionsRow/checkRow.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 import 'package:app/managers/sms_manager.dart';
@@ -66,7 +69,7 @@ class _RelayPageState extends StateBase<RelayPage> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: const Text('دستورات رله').bold().fsR(4),
+              child: const Text('مدیریت رله ها').bold().fsR(4),
             ),
 
             const BackBtn(),
@@ -74,21 +77,10 @@ class _RelayPageState extends StateBase<RelayPage> {
         ),
 
         const SizedBox(height: 15),
-        Align(
-          alignment: Alignment.centerRight,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: TextButton(
-                onPressed: onEditRelayClick,
-                child: const Text('تنظیمات').bold().fsR(2),
-            ),
-          ),
-        ),
-        const SizedBox(height: 15),
 
         buildRelay1Section(),
 
-        //buildRelay2Section(),
+        buildRelay2Section(),
       ],
     );
   }
@@ -105,6 +97,30 @@ class _RelayPageState extends StateBase<RelayPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(itm.getName()).bold().fsR(3),
+
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CheckBoxRow(
+                    value: widget.place.useOfRelay1,
+                    description: const Text('استفاده از رله 1').bold(),
+                    onChanged: (v){
+                      widget.place.useOfRelay1 = v;
+                      assistCtr.updateHead();
+                      PlaceManager.updatePlaceToDb(widget.place);
+                      EventNotifierService.notify(AppEvents.placeDataChanged);
+                    }
+                ),
+
+                TextButton(
+                    onPressed: (){
+                      onChangeNameClick(itm);
+                    },
+                    child: const Text('تغییر نام')
+                )
+              ],
+            ),
 
             const SizedBox(height: 12),
 
@@ -187,6 +203,30 @@ class _RelayPageState extends StateBase<RelayPage> {
             Text(itm.getName()).bold().fsR(3),
 
             const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CheckBoxRow(
+                    value: widget.place.useOfRelay2,
+                    description: const Text('استفاده از رله 2').bold(),
+                    onChanged: (v){
+                      widget.place.useOfRelay2 = v;
+                      assistCtr.updateHead();
+                      PlaceManager.updatePlaceToDb(widget.place);
+                      EventNotifierService.notify(AppEvents.placeDataChanged);
+                    }
+                ),
+
+                TextButton(
+                    onPressed: (){
+                      onChangeNameClick(itm);
+                    },
+                    child: const Text('تغییر نام')
+                )
+              ],
+            ),
+
+            const SizedBox(height: 12),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -218,12 +258,45 @@ class _RelayPageState extends StateBase<RelayPage> {
     );
   }
 
+  void onChangeNameClick(RelayModel itm) async {
+    final res = await AppDialogIris.instance.showTextInputDialog(
+        context,
+        descView: const Text('یک نام وارد کنید'),
+        inputDecoration: AppDecoration.outlineBordersInputDecoration,
+        mainButton: (c, txt) async {
+          FocusHelper.hideKeyboardByUnFocusRoot();
+          Future.delayed(const Duration(milliseconds: 200)).then((value) {
+            AppNavigator.pop(c, result: txt);
+          });
+        }
+    );
+
+    if(res is String){
+      final name = res.trim();
+
+      if(name.isNotEmpty){
+        itm.name = TextHelper.subByCharCountSafe(name, 16);
+      }
+      else {
+        itm.name = null;
+      }
+
+      saveAndNotify();
+    }
+  }
+
+  void saveAndNotify() {
+    setState(() {});
+    PlaceManager.updatePlaceToDb(widget.place);
+    EventNotifierService.notify(AppEvents.placeDataChanged);
+  }
+
   void onChangeRelay1state(int? index) async {
     final send = await SmsManager.sendSms('20*1*${index == 0? 'ON': 'OFF'}', widget.place, context);
 
     if(send){
-      //widget.place.relays[0].isActive = index == 0;
-      //PlaceManager.updatePlaceToDb(widget.place);
+      widget.place.relays[0].isActive = index == 0;
+      PlaceManager.updatePlaceToDb(widget.place);
       assistCtr.updateHead();
     }
   }
@@ -236,22 +309,14 @@ class _RelayPageState extends StateBase<RelayPage> {
     final send = await SmsManager.sendSms('20*2*${index == 0? 'ON': 'OFF'}', widget.place, context);
 
     if(send){
-      //widget.place.relays[1].isActive = index == 0;
-      //PlaceManager.updatePlaceToDb(widget.place);
+      widget.place.relays[1].isActive = index == 0;
+      PlaceManager.updatePlaceToDb(widget.place);
       assistCtr.updateHead();
     }
   }
 
   void onRelay2CommandClick() {
     SmsManager.sendSms('20*2*000002', widget.place, context);
-  }
-
-  void onEditRelayClick() {
-    AppDialogIris.instance.showIrisDialog(
-      context,
-      descView: ManageRelayDialog(place: widget.place),
-      decoration: AppDialogIris.instance.dialogDecoration.copy()..widthFactor = 0.9,
-    );
   }
 
   void eventListener({data}) {

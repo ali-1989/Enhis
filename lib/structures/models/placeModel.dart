@@ -40,7 +40,8 @@ class PlaceModel {
   int? batteryCharge;
   bool? isConnectedPower;
   bool? speakerIsConnected;
-  bool useOfRelays = false;
+  bool useOfRelay1 = false;
+  bool useOfRelay2 = false;
   int? simCardAntennaStatus;
   int? contactCount;
   int? remoteCount;
@@ -91,7 +92,8 @@ class PlaceModel {
     simCardAntennaStatus = map['simCardAntennaStatus'];
     simCardAmount = map['simCardAmount'];
     speakerIsConnected = map['speakerIsConnected'];
-    useOfRelays = map['useOfRelays'];
+    useOfRelay1 = map['useOfRelay1']?? false;
+    useOfRelay2 = map['useOfRelay2']?? false;
     wirelessIsActive = map['wirelessState'];
     sirenDurationMinutes = map['sirenDurationMinutes'];
     smsCountReport = map['smsCountReport'];
@@ -123,7 +125,8 @@ class PlaceModel {
     map['simCardAntennaStatus'] = simCardAntennaStatus;
     map['simCardAmount'] = simCardAmount;
     map['speakerIsConnected'] = speakerIsConnected;
-    map['useOfRelays'] = useOfRelays;
+    map['useOfRelay1'] = useOfRelay1;
+    map['useOfRelay2'] = useOfRelay2;
     map['wirelessState'] = wirelessIsActive;
     map['sirenDurationMinutes'] = sirenDurationMinutes;
     map['smsCountReport'] = smsCountReport;
