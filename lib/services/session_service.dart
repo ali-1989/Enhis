@@ -280,25 +280,6 @@ class SessionService {
 		return res > 0;
 	}
 
-	static String getSexEquivalent(int? sex){
-		if(sex == null) {
-		  return AppLocale.appLocalize.translate('unknown')!;
-		}
-
-		switch(sex){
-			case 0:
-				return AppLocale.appLocalize.translate('unknown')!;
-			case 1:
-				return AppLocale.appLocalize.translate('man')!;
-			case 2:
-				return AppLocale.appLocalize.translate('woman')!;
-			case 5:
-				return AppLocale.appLocalize.translate('bisexual')!;
-		}
-
-		return AppLocale.appLocalize.translate('unknown')!;
-	}
-
 	static UserModel getGuestUser(){
 		final g = UserModel();
 		g.userId = '0';

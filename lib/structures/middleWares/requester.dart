@@ -1,5 +1,3 @@
-import 'package:app/managers/api_manager.dart';
-import 'package:app/system/commonHttpHandler.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
@@ -8,6 +6,8 @@ import 'package:iris_tools/api/helpers/jsonHelper.dart';
 import 'package:iris_tools/api/logger/logger.dart';
 import 'package:iris_tools/api/tools.dart';
 
+import 'package:app/managers/api_manager.dart';
+import 'package:app/system/commonHttpHandler.dart';
 import 'package:app/system/keys.dart';
 import 'package:app/tools/app/appHttpDio.dart';
 import 'package:app/tools/app/appSheet.dart';
@@ -133,7 +133,7 @@ class Requester {
           }
         }
 
-        Tools.verbosePrint('@@@>> [$url] [$request]  response ======= [${_httpRequester.responseData?.statusCode}] $val');
+        Tools.verbosePrint('@@@ API CALLED >>> url:[$url]  request:[$request]  response ====>>  status:[${_httpRequester.responseData?.statusCode}] data:$val');
       }
 
       /*if(_httpRequester.responseData?.statusCode == 401 && Session.getLastLoginUser() != null){

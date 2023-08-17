@@ -24,7 +24,10 @@ public class MyApplication extends FlutterApplication {
         Thread.setDefaultUncaughtExceptionHandler(this::handleUncaughtException);
 
         flutterEngine = new FlutterEngine(this);
-        flutterEngine.getDartExecutor().executeDartEntrypoint(DartExecutor.DartEntrypoint.createDefault());
+        
+        // this is call main() method in dart
+        //flutterEngine.getDartExecutor().executeDartEntrypoint(DartExecutor.DartEntrypoint.createDefault());
+        
         //FlutterEngineCache.getInstance().put("my_engine_id", flutterEngine);
         //flutterEngine.getNavigationChannel().setInitialRoute("/");
     }
@@ -62,8 +65,7 @@ public class MyApplication extends FlutterApplication {
             report.put("error", e.toString());
 
             Log.i("▄▀▄ Err >>>>>>", txt);
-            passDataToFlutter(report);
-            //System.exit(1);
+            //passDataToFlutter(report);
         }
         catch (Exception ignored) {}
     }
@@ -79,3 +81,5 @@ public class MyApplication extends FlutterApplication {
         channel.invokeMethod("report_error", data);
     }
 }
+
+//System.exit(1);

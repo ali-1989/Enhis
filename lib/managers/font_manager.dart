@@ -165,7 +165,6 @@ class FontManager {
     //------------- fa -------------------------------------------------
     final iranSans = Font.bySize()
       ..family = 'IranSans'
-      ..fileName = 'IranSans'
       ..defaultLanguage = 'fa'
       ..defaultUsage = FontUsage.normal
       ..usages = [FontUsage.sub, FontUsage.bold]

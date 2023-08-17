@@ -10,6 +10,7 @@ class AppBroadcast {
   AppBroadcast._();
 
   static final StreamController<bool> viewUpdaterStream = StreamController<bool>();
+
   //---------------------- keys
   static LocalKey materialAppKey = UniqueKey();
   static final rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
@@ -33,10 +34,5 @@ class AppBroadcast {
     }
 
     viewUpdaterStream.sink.add(true);
-  }
-
-  static void gotoSplash() {
-    mustWaitToSplashTimer = true;
-    reBuildMaterial();
   }
 }

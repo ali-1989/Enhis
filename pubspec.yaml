@@ -1,5 +1,5 @@
-# Flutter: 3.10.0      old: 3.7.2
-# Dart: 3.0.0        old: 2.19.1
+# Flutter: 3.10.0      old:
+# Dart: 3.0.0        old:
 # Java: 17
 
 name: app     		  # Enhis
@@ -52,6 +52,7 @@ dependencies:
   path_drawing: ^1.0.1
   flutter_flip_card: ^0.0.4
   numberpicker: ^2.1.2
+  snapping_sheet_2: ^3.1.5
 
 
   iris_tools:
@@ -104,7 +105,7 @@ flutter:
 
 
 flutter_icons:
-  image_path: "#Dep/app_logo.jpg"
+  image_path: "#Dep/icon.png"
   android: true
   ios: true
   remove_alpha_ios: true

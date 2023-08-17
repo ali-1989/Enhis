@@ -6,12 +6,10 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:iris_tools/api/helpers/colorHelper.dart';
 import 'package:iris_tools/features/overlayDialog.dart';
 
-import 'package:app/tools/app/appImages.dart';
 import 'package:app/tools/app/appMessages.dart';
 import 'package:app/tools/app/appOverlay.dart';
 import 'package:app/tools/app/appThemes.dart';
-import 'package:app/views/widgets/overlay/overlayContainer.dart';
-import 'package:app/views/widgets/progressBarPrompt.dart';
+import 'package:app/views/components/overlay/overlayContainer.dart';
 
 class AppLoading {
   AppLoading._();
@@ -115,28 +113,6 @@ class AppLoading {
     //AppOverlay.hideIgnoreScreen(context);
     AppOverlay.hideDialog(context);
   }
-  //---------------------------------------------------------------------------------
-  Future<void> showProgress(BuildContext context, Stream<double> stream, {
-    String? message,
-    String? buttonText,
-    VoidCallback? buttonEvent,
-  }){
-    final over = OverlayScreenView(
-      content: SizedBox.expand(
-        child: Center(
-          child: ProgressBarPrompt(
-            stream: stream,
-            message: message,
-            buttonEvent: buttonEvent,
-            buttonText: buttonText,
-          ),
-        ),
-      ),
-      backgroundColor: Colors.black26,
-    );
-
-    return AppOverlay.showDialogScreen(context, over, canBack: false);
-  }
 
   Widget _getLoadingView(){
     var lottieColor = AppThemes.instance.currentTheme.primaryColor;
@@ -149,8 +125,8 @@ class AppLoading {
 
     return BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0),
-        child: DecoratedBox(
-            decoration: const BoxDecoration(
+        child: const DecoratedBox(
+            decoration: BoxDecoration(
               gradient: RadialGradient(
                 colors: [
                   Colors.transparent,

@@ -22,6 +22,8 @@ class SmsManager {
   static StreamController smsTimeStream = StreamController();
   static Timer? _timer;
 
+  static int smsResponseTime = 20;
+
   SmsManager._();
 
   static void listenToDeviceMessage(){
@@ -90,7 +92,7 @@ class SmsManager {
 
   static Future<bool> sendSms(String sc, PlaceModel place, BuildContext context, {bool showSmsDialog = true}) async {
     if(isInWaitingForResponse()){
-      AppToast.showToast(context, 'حداقل 15 ثانیه بین دو درخواست باید فاصله قرار دهید');
+      AppToast.showToast(context, 'حداقل 20 ثانیه بین دو درخواست باید فاصله قرار دهید');
       return false;
     }
 
@@ -159,7 +161,7 @@ class SmsManager {
       return false;
     }
 
-    if(DateHelper.isPastOf(_lastSendSmsTime, const Duration(seconds: 15))){
+    if(DateHelper.isPastOf(_lastSendSmsTime, Duration(seconds: smsResponseTime))){
       return false;
     }
 
@@ -168,9 +170,9 @@ class SmsManager {
 
   static void _startTimer(){
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      smsTimeStream.sink.add(15- timer.tick);
+      smsTimeStream.sink.add(smsResponseTime - timer.tick);
 
-      if(timer.tick >= 15){
+      if(timer.tick >= smsResponseTime){
         _timer!.cancel();
         _timer = null;
         _lastSendSmsTime = null;
