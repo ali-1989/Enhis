@@ -192,7 +192,6 @@ class _ZonePageState extends StateBase<ZonePage> {
   void saveAndNotify() {
     setState(() {});
     PlaceManager.updatePlaceToDb(widget.place);
-    EventNotifierService.notify(AppEvents.placeDataChanged);
   }
 
   void eventListener({data}) {

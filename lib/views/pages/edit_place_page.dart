@@ -1,8 +1,8 @@
+import 'package:app/tools/app/appToast.dart';
 import 'package:app/views/pages/relay_page.dart';
 import 'package:app/views/pages/zone_page.dart';
 import 'package:app/tools/app/appDirectories.dart';
 import 'package:app/tools/app/appIcons.dart';
-import 'package:app/views/components/selectDateCalendarView.dart';
 import 'package:flutter/material.dart';
 
 import 'package:iris_notifier/iris_notifier.dart';
@@ -15,8 +15,8 @@ import 'package:iris_tools/api/helpers/open_helper.dart';
 import 'package:iris_tools/api/helpers/textHelper.dart';
 import 'package:iris_tools/api/managers/assetManager.dart';
 import 'package:iris_tools/api/system.dart';
+import 'package:iris_tools/dateSection/dateHelper.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
-import 'package:iris_tools/widgets/optionsRow/checkRow.dart';
 import 'package:iris_tools/widgets/text/titleInfo.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
@@ -34,8 +34,6 @@ import 'package:app/tools/app/appMessages.dart';
 import 'package:app/tools/app/appNavigator.dart';
 import 'package:app/tools/app/appSnack.dart';
 import 'package:app/tools/routeTools.dart';
-import 'package:app/views/dialogs/manageRelayDialog.dart';
-import 'package:app/views/dialogs/manageZoneDialog.dart';
 import 'package:app/views/components/backBtn.dart';
 
 class EditPlacePage extends StatefulWidget {
@@ -692,7 +690,13 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                TitleInfo(title: 'تاریخ اتمام: ', info: widget.place.getWarrantyText()),
+                Row(
+                  children: [
+                    const Text('تاریخ اتمام: ').bold(),
+                    Text('${widget.place.getWarrantyText()} ,  '),
+                    Text(widget.place.getLeftWarrantyText()),
+                  ],
+                ),
 
                 Visibility(
                   visible: widget.place.warrantyEndTime == null,
@@ -821,7 +825,6 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
 
   void saveAndNotify() {
     PlaceManager.updatePlaceToDb(widget.place);
-    EventNotifierService.notify(AppEvents.placeDataChanged);
     assistCtr.updateHead();
   }
 
@@ -910,7 +913,6 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
           FocusHelper.hideKeyboardByUnFocusRoot();
           widget.place.supportName = txt.trim();
           PlaceManager.updatePlaceToDb(widget.place);
-          EventNotifierService.notify(AppEvents.placeDataChanged);
           assistCtr.updateHead();
           AppNavigator.pop(ctx);
         }
@@ -927,7 +929,6 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
           FocusHelper.hideKeyboardByUnFocusRoot();
           widget.place.supportPhoneNumber = txt.trim();
           PlaceManager.updatePlaceToDb(widget.place);
-          EventNotifierService.notify(AppEvents.placeDataChanged);
           assistCtr.updateHead();
           AppNavigator.pop(ctx);
         }
@@ -935,7 +936,7 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
   }
 
   void onHiddenHelpClick() async {
-    if(clickCounter.touch()){
+    /*if(clickCounter.touch()){
       final path = '${AppDirectories.getAppFolderInInternalStorage()}/help_hamkar.pdf';
 
       if(!FileHelper.existSync(path)) {
@@ -943,7 +944,31 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
       }
 
       OpenHelper.openFile(path, type: 'application/pdf');
-    }
+    }*/
+
+    AppDialogIris.instance.showTextInputDialog(
+        context,
+        mainButtonText: '   ورود  ',
+        inputDecoration: AppDecoration.outlineBordersInputDecoration,
+        descView: const Text('لطفا کلید ورود را وارد کنید').bold().fsR(1),
+        mainButton: (ctx, txt) async{
+          if(txt == 'enhis.ir'){
+            final path = '${AppDirectories.getAppFolderInInternalStorage()}/help_hamkar.pdf';
+
+            if(!FileHelper.existSync(path)) {
+              await AssetsManager.assetsToFile('assets/pdf/help_hamkar.pdf', path);
+            }
+
+            OpenHelper.openFile(path, type: 'application/pdf');
+
+            RouteTools.popTopView(context: ctx);
+          }
+          else {
+            await FocusHelper.hideKeyboardByUnFocusRootWait();
+            AppToast.showToast(ctx, 'صحیح نیست');
+          }
+        },
+    );
   }
 
   void onChangeSirenDuration() {
@@ -977,8 +1002,7 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
 
     if(send){
       widget.place.sirenDurationMinutes = minutes;
-      PlaceManager.updatePlaceToDb(widget.place);
-      //EventNotifierService.notify(AppEvents.placeDataChanged);
+      PlaceManager.updatePlaceToDb(widget.place, notify: false);
       assistCtr.updateHead();
     }
   }
@@ -1014,8 +1038,7 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
 
     if(send){
       widget.place.smsCountReport = count;
-      PlaceManager.updatePlaceToDb(widget.place);
-      //EventNotifierService.notify(AppEvents.placeDataChanged);
+      PlaceManager.updatePlaceToDb(widget.place, notify: false);
       assistCtr.updateHead();
     }
   }
@@ -1051,25 +1074,33 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
 
     if(send){
       widget.place.batteryReportDuration = minutes;
-      PlaceManager.updatePlaceToDb(widget.place);
-      //EventNotifierService.notify(AppEvents.placeDataChanged);
+      PlaceManager.updatePlaceToDb(widget.place, notify: false);
       assistCtr.updateHead();
     }
   }
 
   void onChangeWarranty() async {
-    final date = await AppDialogIris.instance.showIrisDialog(
+    /*final date = await AppDialogIris.instance.showIrisDialog(
         context,
         descView: SelectDateCalendarView(
           maxYearAsGregorian: 2030,
           minYearAsGregorian: 2022,
           title: 'توجه : فقط یک بار امکان وارد کردن تاریخ را دارید',
         ),
+    );*/
+
+    AppDialogIris.instance.showYesNoDialog(
+        context,
+      desc: 'توجه : فقط یک بار امکان ثبت را دارید. الان ثبت شود؟',
+      yesFn: (ctx){
+        widget.place.warrantyEndTime = DateHelper.getNowToUtc().add(const Duration(days: 365*2));
+        setState(() {});
+      }
     );
 
-    if(date != null){
+    /*if(date != null){
       widget.place.warrantyEndTime = date!;
       setState(() {});
-    }
+    }*/
   }
 }

@@ -5,14 +5,19 @@ class RelayModel {
   late int number;
   String? name;
   bool isActive = false;
-  RelayStatus status = RelayStatus.dingDang;
+  RelayStatus status = RelayStatus.shortCommand;
+  Duration duration = const Duration(seconds: 30);
+
+  //--------- local
+  bool isInWaitingForSms = false;
 
   RelayModel();
 
   RelayModel.fromMap(Map map) {
     number = map['number'];
     name = map['name'];
-    isActive = map['isActive'];
+    isActive = map['isActive']?? false;
+    duration = Duration(seconds: map['duration']?? 30);
     status = RelayStatus.from(map['status']);
   }
 
@@ -22,6 +27,7 @@ class RelayModel {
     map['name'] = name;
     map['isActive'] = isActive;
     map['status'] = status.getNumber();
+    map['duration'] = duration.inSeconds;
 
     return map;
   }

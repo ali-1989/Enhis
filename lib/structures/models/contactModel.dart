@@ -16,6 +16,7 @@ class ContactModel {
     name = map['name']?? '';
     phoneNumber = map['phoneNumber'];
     level = ContactLevel.from(map['level']);
+    order = map['order'] ?? 1;
   }
 
   Map<String, dynamic> toMap() {
@@ -24,6 +25,7 @@ class ContactModel {
     map['name'] = name;
     map['phoneNumber'] = phoneNumber;
     map['level'] = level.getNumber();
+    map['order'] = order;
 
     return map;
   }

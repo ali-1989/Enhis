@@ -122,6 +122,5 @@ class _ManageRelayDialogState extends State<ManageRelayDialog> {
   void saveAndNotify() {
     setState(() {});
     PlaceManager.updatePlaceToDb(widget.place);
-    EventNotifierService.notify(AppEvents.placeDataChanged);
   }
 }

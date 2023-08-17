@@ -253,6 +253,14 @@ class PlaceModel {
       return AppMessages.unKnow;
     }
 
+    return DateTools.dateOnlyRelative(warrantyEndTime!);
+  }
+
+  String getLeftWarrantyText(){
+    if(warrantyEndTime == null){
+      return AppMessages.unKnow;
+    }
+
     Duration dif;
 
     if(DateHelper.compareDates(warrantyEndTime!, DateHelper.getNow()) > 0){
@@ -268,7 +276,7 @@ class PlaceModel {
       x = dif.inDays;
     }
 
-    return LocaleHelper.overrideRtl('${DateTools.dateOnlyRelative(warrantyEndTime!)}   , $x روز مانده');
+    return '$x روز مانده';
   }
 
   String getSpeakerStateText(){
@@ -287,17 +295,15 @@ class PlaceModel {
     //print('>>>> pars >>>>>> $txt');
 
     if(txt.contains('اپتکس: رله وصل شد')){
-      relays.first.isActive = true;
+      //relays.first.isActive = true;//todo.
       PlaceManager.updatePlaceToDb(this);
-      EventNotifierService.notify(AppEvents.placeDataChanged);
       AppToast.showToast(RouteTools.materialContext!, 'رله فعال شد');
       return;
     }
 
     if(txt.contains('اپتکس: رله قطع شد')){
-      relays.first.isActive = false;
+      //relays.first.isActive = false;
       PlaceManager.updatePlaceToDb(this);
-      EventNotifierService.notify(AppEvents.placeDataChanged);
       AppToast.showToast(RouteTools.materialContext!, 'رله غیر فعال شد');
       return;
     }
@@ -386,7 +392,7 @@ class PlaceModel {
       contactCount = MathHelper.clearToInt(splits[6]) + 1;
       wirelessIsActive = MathHelper.clearToInt(splits[7]) == 1;
       batteryCharge = MathHelper.clearToInt(splits[8]);
-      relays.first.isActive = MathHelper.clearToInt(splits[9]) == 1;
+      //todo. relays.first.isActive = MathHelper.clearToInt(splits[9]) == 1;
 
       for(var i =0; i < zones.length; i++){
         final z = zones[i];
@@ -406,7 +412,6 @@ class PlaceModel {
       }
     }
 
-    EventNotifierService.notify(AppEvents.placeDataChanged);
     PlaceManager.updatePlaceToDb(this);
   }
 }

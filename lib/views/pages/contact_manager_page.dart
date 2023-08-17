@@ -104,13 +104,26 @@ class _ContactManagerPageState extends StateBase<ContactManagerPage> {
                 ),
               ),
 
+              ElevatedButton(
+                  onPressed: onDeleteAll,
+                  child: const Text('حذف همه')
+              ),
+            ],
+          ),
+        ),
+
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
               TextButton(
                   onPressed: onLevelsHelpClick,
                   child: const Text('راهنمای سطوح')
               ),
 
-              ElevatedButton(
-                  onPressed: onUpdateClick,
+              TextButton(
+                  onPressed: onLevelsHelpClick,
                   child: const Text('بروز رسانی')
               ),
             ],
@@ -328,6 +341,18 @@ class _ContactManagerPageState extends StateBase<ContactManagerPage> {
 
     if(send){
       contact.level = level;
+      PlaceManager.updatePlaceToDb(widget.place);
+
+      assistCtr.updateHead();
+    }
+  }
+
+  void onDeleteAll() async {
+    final send = await SmsManager.sendSms('30*A', widget.place, context);
+
+    if(send){
+      widget.place.contacts.clear();
+      widget.place.contactCount = 0;
       PlaceManager.updatePlaceToDb(widget.place);
 
       assistCtr.updateHead();

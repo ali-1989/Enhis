@@ -161,6 +161,5 @@ class _ManageZoneDialogState extends State<ManageZoneDialog> {
   void saveAndNotify() {
     setState(() {});
     PlaceManager.updatePlaceToDb(widget.place);
-    EventNotifierService.notify(AppEvents.placeDataChanged);
   }
 }

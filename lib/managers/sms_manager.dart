@@ -134,10 +134,13 @@ class SmsManager {
         _stopTimer();
         signal.complete(false);
       }
-
-      if(event == SmsMessageState.Sent || event == SmsMessageState.Delivered) {
+      else if(event == SmsMessageState.Delivered) {
         subscribe.cancel();
         signal.complete(true);
+      }
+      else if(event == SmsMessageState.Sent){
+        subscribe.cancel();
+        signal.complete(false);
       }
     });
 

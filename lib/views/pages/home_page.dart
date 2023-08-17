@@ -1,10 +1,11 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:app/structures/enums/relayStatus.dart';
+import 'package:app/structures/models/relayModel.dart';
 import 'package:app/views/pages/contact_manager_page.dart';
 import 'package:app/system/keys.dart';
 import 'package:app/tools/app/appCache.dart';
 import 'package:app/tools/app/appDb.dart';
 import 'package:app/tools/app/appDirectories.dart';
-import 'package:app/tools/app/appSnack.dart';
 import 'package:app/tools/app/appToast.dart';
 import 'package:app/views/dialogs/remoteManageDialog.dart';
 import 'package:flutter/material.dart';
@@ -47,6 +48,7 @@ import 'package:app/views/dialogs/changeZoneStatusDialog.dart';
 import 'package:app/views/dialogs/reChargeSimCardDialog.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:snapping_sheet_2/snapping_sheet.dart';
+import 'package:toggle_switch/toggle_switch.dart';
 
 class HomePage extends StatefulWidget {
 
@@ -81,7 +83,7 @@ class _HomePageState extends StateBase<HomePage> {
   void initState(){
     super.initState();
 
-    currentPlace = PlaceManager.fetchSavedPlace();
+    currentPlace = PlaceManager.fetchFavoritePlace();
 
     if(currentPlace != null){
       SmsManager.listenToDeviceMessage();
@@ -215,7 +217,7 @@ class _HomePageState extends StateBase<HomePage> {
           visible: currentPlace!.useOfRelay1 || currentPlace!.useOfRelay2,
           child: Center(
             child: SizedBox(
-              height: currentPlace!.useOfRelay1 && currentPlace!.useOfRelay2? 280 : 140,
+              height: currentPlace!.useOfRelay1 && currentPlace!.useOfRelay2? 290 : 140,
               child: SnappingSheet.horizontal(
                 lockOverflowDrag: false,
                 controller: relaySnapController,
@@ -736,31 +738,112 @@ class _HomePageState extends StateBase<HomePage> {
                 /// relay 1
                 Visibility(
                   visible: currentPlace!.useOfRelay1,
-                  child: GestureDetector(
-                      onTap: onRelay1CommandClick,
-                      child: CustomCard(
-                          color: AppDecoration.mainColor,
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                          child: Text(currentPlace!.relays[0].name?? 'اجرای رله 1').color(Colors.white)
-                      )
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(currentPlace!.relays[0].getName(), maxLines: 1).bold().fsR(4),
+
+                        Text(currentPlace!.relays[0].status.getHumanName(), maxLines: 1),
+
+                        const SizedBox(height: 20),
+
+                        Center(
+                          child: Builder(
+                              builder: (context) {
+                                if(currentPlace!.relays[0].status != RelayStatus.twoState){
+                                  return GestureDetector(
+                                    onTap: onRelay1CommandClick,
+                                    child: CustomCard(
+                                        color: AppDecoration.mainColor,
+                                        padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 7),
+                                        child: const Text('فرمان').color(Colors.white)
+                                    ),
+                                  );
+                                }
+
+                                return ToggleSwitch(
+                                  changeOnTap: false,
+                                  multiLineText: false,
+                                  totalSwitches: 2,
+                                  initialLabelIndex: currentPlace!.relays[0].isActive? 0 : 1,
+                                  activeBgColors: const [[Colors.green], [Colors.red]],
+                                  activeFgColor: Colors.white,
+                                  inactiveFgColor: Colors.white,
+                                  labels: const [
+                                    'فعال',
+                                    'غیرفعال',
+                                  ],
+                                  onToggle: (v){
+                                    onChangeRelayStatus(currentPlace!.relays[0], v == 0);
+                                  },
+                                );
+                              }
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
 
                 Visibility(
                     visible: currentPlace!.useOfRelay1 && currentPlace!.useOfRelay2,
-                    child: const Divider(color: Colors.grey, indent: 7, endIndent: 7,),
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10.0),
+                      child: Divider(color: Colors.grey, indent: 7, endIndent: 7,),
+                    ),
                 ),
 
                 /// relay 2
                 Visibility(
                   visible: currentPlace!.useOfRelay2,
-                  child: GestureDetector(
-                      onTap: onRelay2CommandClick,
-                      child: CustomCard(
-                          color: AppDecoration.mainColor,
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                          child: Text(currentPlace!.relays[1].name?? 'اجرای رله 2').color(Colors.white)
-                      )
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(currentPlace!.relays[1].getName(), maxLines: 1).bold().fsR(4),
+
+                        Text(currentPlace!.relays[1].status.getHumanName(), maxLines: 1),
+
+                        const SizedBox(height: 20),
+
+                        Center(
+                          child: Builder(
+                            builder: (context) {
+                              if(currentPlace!.relays[1].status != RelayStatus.twoState){
+                                return GestureDetector(
+                                  onTap: onRelay2CommandClick,
+                                  child: CustomCard(
+                                      color: AppDecoration.mainColor,
+                                      padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 7),
+                                      child: const Text('فرمان').color(Colors.white)
+                                  ),
+                                );
+                              }
+
+                              return ToggleSwitch(
+                                changeOnTap: false,
+                                multiLineText: false,
+                                totalSwitches: 2,
+                                initialLabelIndex: currentPlace!.relays[1].isActive? 0 : 1,
+                                activeBgColors: const [[Colors.green], [Colors.red]],
+                                activeFgColor: Colors.white,
+                                inactiveFgColor: Colors.white,
+                                labels: const [
+                                  'فعال',
+                                  'غیرفعال',
+                                ],
+                                onToggle: (v){
+                                  onChangeRelayStatus(currentPlace!.relays[1], v == 0);
+                                },
+                              );
+                            }
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 )
               ],
@@ -1069,21 +1152,37 @@ class _HomePageState extends StateBase<HomePage> {
   }
 
   void onRelay1CommandClick() {
-    if(!currentPlace!.relays[0].isActive){
-      AppSnack.showInfo(context, 'این رله فعال نیست، وارد تنظیمات شوید و آن را فعال کنید');
-      return;
+    if(currentPlace!.relays[0].status == RelayStatus.shortCommand) {
+      SmsManager.sendSms('20*1*000001', currentPlace!, context);
     }
+    else {
+      final p1 = currentPlace!.relays[0].duration.toString().split('.');
+      final p2 = p1[0].replaceAll(':', '');
 
-    SmsManager.sendSms('20*1*000002', currentPlace!, context);
+      SmsManager.sendSms('20*1*${p2.padLeft(6, '0')}', currentPlace!, context);
+    }
   }
 
   void onRelay2CommandClick() {
-    if(!currentPlace!.relays[1].isActive){
-      AppSnack.showInfo(context, 'این رله فعال نیست، وارد تنظیمات شوید و آن را فعال کنید');
-      return;
+    if(currentPlace!.relays[0].status == RelayStatus.shortCommand) {
+      SmsManager.sendSms('20*2*000001', currentPlace!, context);
     }
+    else {
+      final p1 = currentPlace!.relays[0].duration.toString().split('.');
+      final p2 = p1[0].replaceAll(':', '');
 
-    SmsManager.sendSms('20*2*000002', currentPlace!, context);
+      SmsManager.sendSms('20*2*${p2.padLeft(6, '0')}', currentPlace!, context);
+    }
+  }
+
+  void onChangeRelayStatus(RelayModel itm, bool isActive) async {
+    final send = await SmsManager.sendSms('20*${itm.number}*${isActive? 'ON': 'OFF'}', currentPlace!, context);
+
+    if(send){
+      itm.isActive = isActive;
+      PlaceManager.updatePlaceToDb(currentPlace!);
+      //assistCtr.updateHead();
+    }
   }
 
   void onSimCardHelpClick() {
@@ -1174,7 +1273,7 @@ class _HomePageState extends StateBase<HomePage> {
           }
 
           currentPlace = itm;
-          PlaceManager.savePickedPlace(currentPlace!.id);
+          PlaceManager.saveFavoritePlace(currentPlace!.id);
           assistCtr.updateHead();
           for(final x in animList) {
             try{
@@ -1182,9 +1281,7 @@ class _HomePageState extends StateBase<HomePage> {
               x.forward();
               await Future.delayed(const Duration(milliseconds: 100));
             }
-            catch (e){
-              print(e);
-            }
+            catch (e){/**/}
           }
         },
         child: CustomCard(
@@ -1244,7 +1341,7 @@ class _HomePageState extends StateBase<HomePage> {
     if(PlaceManager.places.isNotEmpty){
       if(currentPlace == null) {
         currentPlace = PlaceManager.places.first;
-        PlaceManager.savePickedPlace(currentPlace!.id);
+        PlaceManager.saveFavoritePlace(currentPlace!.id);
       }
     }
     else {
@@ -1328,7 +1425,7 @@ class _HomePageState extends StateBase<HomePage> {
       if(sms){
         zm.status = selectedZone;
         PlaceManager.updatePlaceToDb(place);
-        assistCtr.updateHead();
+        //assistCtr.updateHead();
       }
     }
   }
@@ -1346,6 +1443,7 @@ class _HomePageState extends StateBase<HomePage> {
   }
 
   void onChangeDeviceStatusClick(int index) async {
+    print('@@@@@@@@@@1  ${currentPlace?.deviceStatus}');
     int num = 11;
     var ds = DeviceStatus.active;
 
@@ -1362,12 +1460,17 @@ class _HomePageState extends StateBase<HomePage> {
       ds = DeviceStatus.silent;
     }
 
+    if(currentPlace!.deviceStatus == ds){
+      return;
+    }
+
     final send = await SmsManager.sendSms('$num', currentPlace!, context);
 
+    // must parse receive sms
     if(send){
       currentPlace!.deviceStatus = ds;
       PlaceManager.updatePlaceToDb(currentPlace!);
-      assistCtr.updateHead();
+      //assistCtr.updateHead();
     }
   }
 

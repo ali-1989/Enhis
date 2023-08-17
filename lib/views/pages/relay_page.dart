@@ -5,15 +5,16 @@ import 'package:app/structures/models/relayModel.dart';
 import 'package:app/tools/app/appDialogIris.dart';
 import 'package:app/tools/app/appNavigator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:iris_notifier/iris_notifier.dart';
 import 'package:iris_tools/api/helpers/focusHelper.dart';
+import 'package:iris_tools/api/helpers/mathHelper.dart';
 import 'package:iris_tools/api/helpers/textHelper.dart';
 
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/optionsRow/checkRow.dart';
-import 'package:toggle_switch/toggle_switch.dart';
+import 'package:iris_tools/widgets/optionsRow/radioRow.dart';
 
-import 'package:app/managers/sms_manager.dart';
 import 'package:app/structures/abstract/stateBase.dart';
 import 'package:app/structures/models/placeModel.dart';
 import 'package:app/system/extensions.dart';
@@ -33,12 +34,29 @@ class RelayPage extends StatefulWidget {
 }
 ///==================================================================================
 class _RelayPageState extends StateBase<RelayPage> {
+  TextEditingController r1HourCtr = TextEditingController();
+  TextEditingController r1MinCtr = TextEditingController();
+  TextEditingController r1SecCtr = TextEditingController();
+  TextEditingController r2HourCtr = TextEditingController();
+  TextEditingController r2MinCtr = TextEditingController();
+  TextEditingController r2SecCtr = TextEditingController();
+
 
   @override
   void initState(){
     super.initState();
 
     EventNotifierService.addListener(AppEvents.placeDataChanged, eventListener);
+
+    final d1 = widget.place.relays[0].duration.toString().split(':');
+    final d2 = widget.place.relays[1].duration.toString().split(':');
+
+    r1HourCtr.text = d1[0].padLeft(2, '0');
+    r1MinCtr.text = d1[1];
+    r1SecCtr.text = d1[2].split('.')[0];
+    r2HourCtr.text = d2[0].padLeft(2, '0');
+    r2MinCtr.text = d2[1];
+    r2SecCtr.text = d2[2].split('.')[0];
   }
 
   @override
@@ -78,9 +96,19 @@ class _RelayPageState extends StateBase<RelayPage> {
 
         const SizedBox(height: 15),
 
-        buildRelay1Section(),
+        Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  buildRelay1Section(),
 
-        buildRelay2Section(),
+                  const SizedBox(height: 15),
+
+                  buildRelay2Section(),
+                ],
+              ),
+            )
+        )
       ],
     );
   }
@@ -96,22 +124,10 @@ class _RelayPageState extends StateBase<RelayPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(itm.getName()).bold().fsR(3),
-
-            const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                CheckBoxRow(
-                    value: widget.place.useOfRelay1,
-                    description: const Text('استفاده از رله 1').bold(),
-                    onChanged: (v){
-                      widget.place.useOfRelay1 = v;
-                      assistCtr.updateHead();
-                      PlaceManager.updatePlaceToDb(widget.place);
-                      EventNotifierService.notify(AppEvents.placeDataChanged);
-                    }
-                ),
+                Text(itm.getName()).bold().fsR(3),
 
                 TextButton(
                     onPressed: (){
@@ -124,62 +140,121 @@ class _RelayPageState extends StateBase<RelayPage> {
 
             const SizedBox(height: 12),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ToggleSwitch(
-                  changeOnTap: false,
-                  multiLineText: false,
-                  totalSwitches: 2,
-                  initialLabelIndex: itm.isActive? 0 :1,
-                  activeBgColors: const [[Colors.green], [Colors.red]],
-                  activeFgColor: Colors.white,
-                  inactiveFgColor: Colors.white,
-                  labels: const [
-                    'فعال',
-                    'غیرفعال',
-                  ],
-                  onToggle: onChangeRelay1state,
-                ),
-
-                InputChip(
-                    onPressed: onRelay1CommandClick,
-                    label: const Text('اجرا فرمان')
-                )
-              ],
+            CheckBoxRow(
+                value: widget.place.useOfRelay1,
+                description: const Text('استفاده از رله 1').bold(),
+                onChanged: (v){
+                  widget.place.useOfRelay1 = v;
+                  assistCtr.updateHead();
+                  PlaceManager.updatePlaceToDb(widget.place);
+                }
             ),
 
             const SizedBox(height: 12),
-            const Text('نوع تحریک رله:'),
 
-            const SizedBox(height: 8),
+            RadioRow(
+              description: Text(RelayStatus.shortCommand.getHumanName()),
+              groupValue: itm.status.getNumber(),
+              value: 1,
+              color: AppDecoration.mainColor,
+              onChanged: (value) {
+                itm.status = RelayStatus.from(value);
+                setState(() {});
+                PlaceManager.updatePlaceToDb(widget.place);
+              },
+            ),
+
+            RadioRow(
+              description: Text(RelayStatus.twoState.getHumanName()),
+              groupValue: itm.status.getNumber(),
+              value: 2,
+              color: AppDecoration.mainColor,
+              onChanged: (value) {
+                itm.status = RelayStatus.from(value);
+                setState(() {});
+                PlaceManager.updatePlaceToDb(widget.place);
+              },
+            ),
+
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                ColoredBox(
-                  color: AppDecoration.dropDownBackground,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4.0),
-                    child: DropdownButton<RelayStatus>(
-                        items: RelayStatus.values.map((e) => DropdownMenuItem<RelayStatus>(
-                            value: e,
-                            child: ColoredBox(
-                                color: AppDecoration.dropDownBackground,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
-                                  child: Text(e.getHumanName()),
-                                ))
-                        )
-                        ).toList(),
-                        value: itm.status,
-                        dropdownColor: AppDecoration.dropDownBackground,
-                        underline: const SizedBox(),
-                        padding: EdgeInsets.zero,
-                        isDense: true,
-                        onChanged: (s){
-                          onChangeRelay1Status(s!);
-                        }
+                RadioRow(
+                  mainAxisSize: MainAxisSize.min,
+                  description: Text(RelayStatus.customTime.getHumanName()),
+                  groupValue: itm.status.getNumber(),
+                  value: 3,
+                  color: AppDecoration.mainColor,
+                  onChanged: (value) {
+                    itm.status = RelayStatus.from(value);
+                    r1TimeChange(itm);
+                    setState(() {});
+                  },
+                ),
+
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 30,
+                      height: 40,
+                      child: TextField(
+                        controller: r1SecCtr,
+                        maxLines: 1,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [LengthLimitingTextInputFormatter(2)],
+                        decoration: AppDecoration.outlineBordersInputDecoration.copyWith(
+                            isDense: true,
+                            hintText: '30',
+                            contentPadding: const EdgeInsets.all(5)
+                        ),
+                        onChanged: (t){
+                          r1TimeChange(itm);
+                        },
+                      ),
                     ),
-                  ),
+
+                    const Text(' : '),
+
+                    SizedBox(
+                      width: 30,
+                      height: 40,
+                      child: TextField(
+                        controller: r1MinCtr,
+                        maxLines: 1,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [LengthLimitingTextInputFormatter(2)],
+                        decoration: AppDecoration.outlineBordersInputDecoration.copyWith(
+                            isDense: true,
+                            hintText: '00',
+                            contentPadding: const EdgeInsets.all(5)
+                        ),
+                        onChanged: (t){
+                          r1TimeChange(itm);
+                        },
+                      ),
+                    ),
+
+                    const Text(' : '),
+
+                    SizedBox(
+                        width: 30,
+                        height: 40,
+                        child: TextField(
+                          controller: r1HourCtr,
+                          maxLines: 1,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [LengthLimitingTextInputFormatter(2)],
+                          decoration: AppDecoration.outlineBordersInputDecoration.copyWith(
+                              isDense: true,
+                              hintText: '00',
+                              contentPadding: const EdgeInsets.all(5)
+                          ),
+                          onChanged: (t){
+                            r1TimeChange(itm);
+                          },
+                        ),
+                    )
+                  ],
                 ),
               ],
             ),
@@ -194,28 +269,16 @@ class _RelayPageState extends StateBase<RelayPage> {
 
     return Card(
       color: AppDecoration.cardSectionsColor,
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 20),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(itm.getName()).bold().fsR(3),
-
-            const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                CheckBoxRow(
-                    value: widget.place.useOfRelay2,
-                    description: const Text('استفاده از رله 2').bold(),
-                    onChanged: (v){
-                      widget.place.useOfRelay2 = v;
-                      assistCtr.updateHead();
-                      PlaceManager.updatePlaceToDb(widget.place);
-                      EventNotifierService.notify(AppEvents.placeDataChanged);
-                    }
-                ),
+                Text(itm.getName()).bold().fsR(3),
 
                 TextButton(
                     onPressed: (){
@@ -228,34 +291,149 @@ class _RelayPageState extends StateBase<RelayPage> {
 
             const SizedBox(height: 12),
 
+            CheckBoxRow(
+                value: widget.place.useOfRelay2,
+                description: const Text('استفاده از رله 2').bold(),
+                onChanged: (v){
+                  widget.place.useOfRelay2 = v;
+                  assistCtr.updateHead();
+                  PlaceManager.updatePlaceToDb(widget.place);
+                }
+            ),
+
+            const SizedBox(height: 12),
+
+            RadioRow(
+              description: Text(RelayStatus.shortCommand.getHumanName()),
+              groupValue: itm.status.getNumber(),
+              value: 1,
+              color: AppDecoration.mainColor,
+              onChanged: (value) {
+                itm.status = RelayStatus.from(value);
+                setState(() {});
+                PlaceManager.updatePlaceToDb(widget.place);
+              },
+            ),
+
+            RadioRow(
+              description: Text(RelayStatus.twoState.getHumanName()),
+              groupValue: itm.status.getNumber(),
+              value: 2,
+              color: AppDecoration.mainColor,
+              onChanged: (value) {
+                itm.status = RelayStatus.from(value);
+                setState(() {});
+                PlaceManager.updatePlaceToDb(widget.place);
+              },
+            ),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                ToggleSwitch(
-                  changeOnTap: false,
-                  multiLineText: false,
-                  totalSwitches: 2,
-                  initialLabelIndex: itm.isActive? 0 :1,
-                  activeBgColors: const [[Colors.green], [Colors.red]],
-                  activeFgColor: Colors.white,
-                  inactiveFgColor: Colors.white,
-                  labels: const [
-                    'فعال',
-                    'غیرفعال',
-                  ],
-                  onToggle: onChangeRelay2State,
+                RadioRow(
+                  mainAxisSize: MainAxisSize.min,
+                  description: Text(RelayStatus.customTime.getHumanName()),
+                  groupValue: itm.status.getNumber(),
+                  value: 3,
+                  color: AppDecoration.mainColor,
+                  onChanged: (value) {
+                    itm.status = RelayStatus.from(value);
+                    r2TimeChange(itm);
+                    setState(() {});
+                    PlaceManager.updatePlaceToDb(widget.place);
+                  },
                 ),
 
-                InputChip(
-                    onPressed: onRelay2CommandClick,
-                    label: const Text('اجرا فرمان')
-                )
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 30,
+                      height: 40,
+                      child: TextField(
+                        controller: r2SecCtr,
+                        maxLines: 1,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [LengthLimitingTextInputFormatter(2)],
+                        decoration: AppDecoration.outlineBordersInputDecoration.copyWith(
+                            isDense: true,
+                            hintText: '30',
+                            contentPadding: const EdgeInsets.all(5)
+                        ),
+                        onChanged: (t){
+                          r2TimeChange(itm);
+                        },
+                      ),
+                    ),
+
+                    const Text(' : '),
+
+                    SizedBox(
+                      width: 30,
+                      height: 40,
+                      child: TextField(
+                        controller: r2MinCtr,
+                        maxLines: 1,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [LengthLimitingTextInputFormatter(2)],
+                        decoration: AppDecoration.outlineBordersInputDecoration.copyWith(
+                            isDense: true,
+                            hintText: '00',
+                            contentPadding: const EdgeInsets.all(5)
+                        ),
+                        onChanged: (t){
+                          r2TimeChange(itm);
+                        },
+                      ),
+                    ),
+
+                    const Text(' : '),
+
+                    SizedBox(
+                      width: 30,
+                      height: 40,
+                      child: TextField(
+                        controller: r2HourCtr,
+                        maxLines: 1,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [LengthLimitingTextInputFormatter(2)],
+                        decoration: AppDecoration.outlineBordersInputDecoration.copyWith(
+                            isDense: true,
+                            hintText: '00',
+                            contentPadding: const EdgeInsets.all(5)
+                        ),
+                        onChanged: (t){
+                          r2TimeChange(itm);
+                        },
+                      ),
+                    )
+                  ],
+                ),
               ],
             ),
           ],
         ),
       ),
     );
+  }
+
+  void r1TimeChange(RelayModel itm){
+    itm.duration = Duration(
+      hours: MathHelper.clearToInt(r1HourCtr.text),
+      minutes: MathHelper.clearToInt(r1MinCtr.text),
+      seconds: MathHelper.clearToInt(r1SecCtr.text),
+    );
+
+    PlaceManager.updatePlaceToDb(widget.place);
+  }
+
+  void r2TimeChange(RelayModel itm){
+    itm.duration = Duration(
+      hours: MathHelper.clearToInt(r2HourCtr.text),
+      minutes: MathHelper.clearToInt(r2MinCtr.text),
+      seconds: MathHelper.clearToInt(r2SecCtr.text),
+    );
+    setState(() {});
+    PlaceManager.updatePlaceToDb(widget.place);
   }
 
   void onChangeNameClick(RelayModel itm) async {
@@ -288,48 +466,9 @@ class _RelayPageState extends StateBase<RelayPage> {
   void saveAndNotify() {
     setState(() {});
     PlaceManager.updatePlaceToDb(widget.place);
-    EventNotifierService.notify(AppEvents.placeDataChanged);
-  }
-
-  void onChangeRelay1state(int? index) async {
-    final send = await SmsManager.sendSms('20*1*${index == 0? 'ON': 'OFF'}', widget.place, context);
-
-    if(send){
-      widget.place.relays[0].isActive = index == 0;
-      PlaceManager.updatePlaceToDb(widget.place);
-      assistCtr.updateHead();
-    }
-  }
-
-  void onRelay1CommandClick() {
-    SmsManager.sendSms('20*1*000002', widget.place, context);
-  }
-
-  void onChangeRelay2State(int? index) async {
-    final send = await SmsManager.sendSms('20*2*${index == 0? 'ON': 'OFF'}', widget.place, context);
-
-    if(send){
-      widget.place.relays[1].isActive = index == 0;
-      PlaceManager.updatePlaceToDb(widget.place);
-      assistCtr.updateHead();
-    }
-  }
-
-  void onRelay2CommandClick() {
-    SmsManager.sendSms('20*2*000002', widget.place, context);
   }
 
   void eventListener({data}) {
     assistCtr.updateHead();
-  }
-
-  void onChangeRelay1Status(RelayStatus relayStatus) async {
-    final send = await SmsManager.sendSms('29*1*${relayStatus.getNumber()}', widget.place, context);
-
-    if(send){
-      widget.place.relays[0].status = relayStatus;
-      PlaceManager.updatePlaceToDb(widget.place);
-      assistCtr.updateHead();
-    }
   }
 }
