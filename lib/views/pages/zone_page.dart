@@ -199,7 +199,7 @@ class _ZonePageState extends StateBase<ZonePage> {
   }
 
   void onCloseZone(ZoneModel zone, bool state) async {
-    final send = await SmsManager.sendSms('Z${zone.number}T', widget.place, context);
+    final send = await SmsManager.sendSms('42*${zone.number}*${state? 1 : 9}', widget.place, context);
 
     if(send){
       zone.isActive = state;

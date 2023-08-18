@@ -163,7 +163,7 @@ class _RemoteManageDialogState extends State<RemoteManageDialog> {
   }
 
   void onDeleteRemoteClick(int index) async {
-    final sms = await SmsManager.sendSms('50*0*$index', widget.place, context);
+    final sms = await SmsManager.sendSms('50*$index', widget.place, context);
 
     if(sms){
       widget.place.remoteCount = widget.place.remoteCount! -1;

@@ -1153,25 +1153,25 @@ class _HomePageState extends StateBase<HomePage> {
 
   void onRelay1CommandClick() {
     if(currentPlace!.relays[0].status == RelayStatus.shortCommand) {
-      SmsManager.sendSms('20*1*000001', currentPlace!, context);
+      SmsManager.sendSms('20*1*T000002', currentPlace!, context);
     }
     else {
       final p1 = currentPlace!.relays[0].duration.toString().split('.');
       final p2 = p1[0].replaceAll(':', '');
 
-      SmsManager.sendSms('20*1*${p2.padLeft(6, '0')}', currentPlace!, context);
+      SmsManager.sendSms('20*1*T${p2.padLeft(6, '0')}', currentPlace!, context);
     }
   }
 
   void onRelay2CommandClick() {
     if(currentPlace!.relays[0].status == RelayStatus.shortCommand) {
-      SmsManager.sendSms('20*2*000001', currentPlace!, context);
+      SmsManager.sendSms('20*2*T000002', currentPlace!, context);
     }
     else {
       final p1 = currentPlace!.relays[0].duration.toString().split('.');
       final p2 = p1[0].replaceAll(':', '');
 
-      SmsManager.sendSms('20*2*${p2.padLeft(6, '0')}', currentPlace!, context);
+      SmsManager.sendSms('20*2*T${p2.padLeft(6, '0')}', currentPlace!, context);
     }
   }
 
