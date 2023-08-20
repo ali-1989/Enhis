@@ -1094,6 +1094,7 @@ class _EditPlacePageState extends StateBase<EditPlacePage> {
       desc: 'توجه : فقط یک بار امکان ثبت را دارید. الان ثبت شود؟',
       yesFn: (ctx){
         widget.place.warrantyEndTime = DateHelper.getNowToUtc().add(const Duration(days: 365*2));
+        PlaceManager.updatePlaceToDb(widget.place);
         setState(() {});
       }
     );

@@ -140,7 +140,8 @@ class SmsManager {
       }
       else if(event == SmsMessageState.Sent){
         subscribe.cancel();
-        signal.complete(false);
+        //signal.complete(false);
+        signal.complete(true);// todo. delete this
       }
     });
 

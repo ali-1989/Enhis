@@ -8,6 +8,7 @@ import 'package:app/tools/app/appDb.dart';
 import 'package:app/tools/app/appDirectories.dart';
 import 'package:app/tools/app/appToast.dart';
 import 'package:app/views/dialogs/remoteManageDialog.dart';
+import 'package:app/views/pages/relay_page.dart';
 import 'package:flutter/material.dart';
 
 import 'package:iris_notifier/iris_notifier.dart';
@@ -217,7 +218,7 @@ class _HomePageState extends StateBase<HomePage> {
           visible: currentPlace!.useOfRelay1 || currentPlace!.useOfRelay2,
           child: Center(
             child: SizedBox(
-              height: currentPlace!.useOfRelay1 && currentPlace!.useOfRelay2? 290 : 140,
+              height: currentPlace!.useOfRelay1 && currentPlace!.useOfRelay2? 300 : 150,
               child: SnappingSheet.horizontal(
                 lockOverflowDrag: false,
                 controller: relaySnapController,
@@ -752,7 +753,7 @@ class _HomePageState extends StateBase<HomePage> {
                         Center(
                           child: Builder(
                               builder: (context) {
-                                if(currentPlace!.relays[0].status != RelayStatus.twoState){
+                                if(currentPlace!.relays[0].status == RelayStatus.shortCommand){
                                   return GestureDetector(
                                     onTap: onRelay1CommandClick,
                                     child: CustomCard(
@@ -763,11 +764,38 @@ class _HomePageState extends StateBase<HomePage> {
                                   );
                                 }
 
+                                if(currentPlace!.relays[0].status == RelayStatus.customTime){
+                                  return Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      GestureDetector(
+                                        behavior: HitTestBehavior.translucent,
+                                        onTap: gotoRelayManager,
+                                        child: Column(
+                                          children: [
+                                            Text(currentPlace!.relays[0].duration.toString().split('.')[0]).fsR(-2.5),
+                                            Text('تغییر').color(Colors.blue).fsR(-1)
+                                          ],
+                                        ),
+                                      ),
+
+                                      GestureDetector(
+                                        onTap: onRelay2CommandClick,
+                                        child: CustomCard(
+                                            color: AppDecoration.mainColor,
+                                            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 7),
+                                            child: const Text('فرمان').color(Colors.white)
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }
+
                                 return ToggleSwitch(
                                   changeOnTap: false,
                                   multiLineText: false,
                                   totalSwitches: 2,
-                                  initialLabelIndex: currentPlace!.relays[0].isActive? 0 : 1,
+                                  initialLabelIndex: currentPlace!.relays[1].isActive? 0 : 1,
                                   activeBgColors: const [[Colors.green], [Colors.red]],
                                   activeFgColor: Colors.white,
                                   inactiveFgColor: Colors.white,
@@ -776,7 +804,7 @@ class _HomePageState extends StateBase<HomePage> {
                                     'غیرفعال',
                                   ],
                                   onToggle: (v){
-                                    onChangeRelayStatus(currentPlace!.relays[0], v == 0);
+                                    onChangeRelayStatus(currentPlace!.relays[1], v == 0);
                                   },
                                 );
                               }
@@ -812,7 +840,7 @@ class _HomePageState extends StateBase<HomePage> {
                         Center(
                           child: Builder(
                             builder: (context) {
-                              if(currentPlace!.relays[1].status != RelayStatus.twoState){
+                              if(currentPlace!.relays[1].status == RelayStatus.shortCommand){
                                 return GestureDetector(
                                   onTap: onRelay2CommandClick,
                                   child: CustomCard(
@@ -823,11 +851,38 @@ class _HomePageState extends StateBase<HomePage> {
                                 );
                               }
 
+                              if(currentPlace!.relays[1].status == RelayStatus.customTime){
+                                return Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    GestureDetector(
+                                      behavior: HitTestBehavior.translucent,
+                                      onTap: gotoRelayManager,
+                                      child: Column(
+                                        children: [
+                                          Text(currentPlace!.relays[1].duration.toString().split('.')[0]).fsR(-2.5),
+                                          Text('تغییر').color(Colors.blue).fsR(-1)
+                                        ],
+                                      ),
+                                    ),
+
+                                    GestureDetector(
+                                      onTap: onRelay2CommandClick,
+                                      child: CustomCard(
+                                          color: AppDecoration.mainColor,
+                                          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 7),
+                                          child: const Text('فرمان').color(Colors.white)
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }
+
                               return ToggleSwitch(
                                 changeOnTap: false,
                                 multiLineText: false,
                                 totalSwitches: 2,
-                                initialLabelIndex: currentPlace!.relays[1].isActive? 0 : 1,
+                                initialLabelIndex: currentPlace!.relays[0].isActive? 0 : 1,
                                 activeBgColors: const [[Colors.green], [Colors.red]],
                                 activeFgColor: Colors.white,
                                 inactiveFgColor: Colors.white,
@@ -836,7 +891,7 @@ class _HomePageState extends StateBase<HomePage> {
                                   'غیرفعال',
                                 ],
                                 onToggle: (v){
-                                  onChangeRelayStatus(currentPlace!.relays[1], v == 0);
+                                  onChangeRelayStatus(currentPlace!.relays[0], v == 0);
                                 },
                               );
                             }
@@ -1153,18 +1208,6 @@ class _HomePageState extends StateBase<HomePage> {
 
   void onRelay1CommandClick() {
     if(currentPlace!.relays[0].status == RelayStatus.shortCommand) {
-      SmsManager.sendSms('20*1*T000002', currentPlace!, context);
-    }
-    else {
-      final p1 = currentPlace!.relays[0].duration.toString().split('.');
-      final p2 = p1[0].replaceAll(':', '');
-
-      SmsManager.sendSms('20*1*T${p2.padLeft(6, '0')}', currentPlace!, context);
-    }
-  }
-
-  void onRelay2CommandClick() {
-    if(currentPlace!.relays[0].status == RelayStatus.shortCommand) {
       SmsManager.sendSms('20*2*T000002', currentPlace!, context);
     }
     else {
@@ -1172,6 +1215,18 @@ class _HomePageState extends StateBase<HomePage> {
       final p2 = p1[0].replaceAll(':', '');
 
       SmsManager.sendSms('20*2*T${p2.padLeft(6, '0')}', currentPlace!, context);
+    }
+  }
+
+  void onRelay2CommandClick() {
+    if(currentPlace!.relays[1].status == RelayStatus.shortCommand) {
+      SmsManager.sendSms('20*1*T000002', currentPlace!, context);
+    }
+    else {
+      final p1 = currentPlace!.relays[1].duration.toString().split('.');
+      final p2 = p1[0].replaceAll(':', '');
+
+      SmsManager.sendSms('20*1*T${p2.padLeft(6, '0')}', currentPlace!, context);
     }
   }
 
@@ -1494,6 +1549,10 @@ class _HomePageState extends StateBase<HomePage> {
 
   void onSendSms() {
     OpenHelper.sendSmsToByBody(currentPlace!.supportPhoneNumber, 'سلام، تکنسین محترم اینجانب درخواست پشتیبانی دارم');
+  }
+
+  void gotoRelayManager() {
+    RouteTools.pushPage(context, RelayPage(place: currentPlace!));
   }
 }
 

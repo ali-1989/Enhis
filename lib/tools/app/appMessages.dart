@@ -407,7 +407,7 @@ class AppMessages {
   }
 
   static String get remoteManageDescription {
-    return 'از این طریق می توانید عملکرد ریموت ها را فعال یا غیر فعال کنید';
+    return 'اگر ریموت ی گم شود،  می توانید از اینجا آن را مطابق شماره ی آن حذف کنید.';
   }
 
 }

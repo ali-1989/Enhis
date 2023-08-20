@@ -60,7 +60,7 @@ class _RemoteManageDialogState extends State<RemoteManageDialog> {
           Text(AppMessages.remoteManageDescription),
 
           const SizedBox(height: 30),
-          Row(
+         /* Row(
             children: [
               Expanded(
                 child: ElevatedButton(
@@ -84,7 +84,7 @@ class _RemoteManageDialogState extends State<RemoteManageDialog> {
               ),
             ],
           ),
-
+*/
           Visibility(
               visible: widget.place.remoteCount != null && widget.place.remoteCount! > 0,
               child: buildDeleteRemotesSection()

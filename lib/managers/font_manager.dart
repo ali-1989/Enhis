@@ -372,7 +372,7 @@ class Font {
       final appHeight = (isLandscape ? realPixelWidth : realPixelHeight) / pixelRatio;
       final fSize = appHeight / 52;
 
-      final minNum =  max(10.5, fSize);
+      final minNum =  max(11.0, fSize);
       return min(FontManager.maxDeviceFontSize, minNum);
     }
   }

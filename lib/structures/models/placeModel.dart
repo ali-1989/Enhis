@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 import 'package:iris_notifier/iris_notifier.dart';
 import 'package:iris_tools/api/generator.dart';
-import 'package:iris_tools/api/helpers/localeHelper.dart';
 import 'package:iris_tools/api/helpers/mathHelper.dart';
 import 'package:iris_tools/dateSection/dateHelper.dart';
 import 'package:persian_needs/persian_needs.dart';
@@ -98,6 +97,7 @@ class PlaceModel {
     sirenDurationMinutes = map['sirenDurationMinutes'];
     smsCountReport = map['smsCountReport'];
     batteryReportDuration = map['batteryReportDuration'];
+    warrantyEndTime = DateHelper.tsToSystemDate(map['warrantyEndTime']);
     zones = ZoneModel.mapToList(map['zones']);
     relays = RelayModel.mapToList(map['relays']);
     contacts = ContactModel.mapToList(map['contacts']);
@@ -131,6 +131,7 @@ class PlaceModel {
     map['sirenDurationMinutes'] = sirenDurationMinutes;
     map['smsCountReport'] = smsCountReport;
     map['batteryReportDuration'] = batteryReportDuration;
+    map['warrantyEndTime'] = DateHelper.toTimestampNullable(warrantyEndTime, isLocal: true);
     map['zones'] = zones.map((e) => e.toMap()).toList();
     map['relays'] = relays.map((e) => e.toMap()).toList();
     map['contacts'] = contacts.map((e) => e.toMap()).toList();

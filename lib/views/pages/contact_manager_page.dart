@@ -123,7 +123,7 @@ class _ContactManagerPageState extends StateBase<ContactManagerPage> {
               ),
 
               TextButton(
-                  onPressed: onLevelsHelpClick,
+                  onPressed: onUpdateClick,
                   child: const Text('بروز رسانی')
               ),
             ],

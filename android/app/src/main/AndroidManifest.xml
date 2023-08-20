@@ -17,12 +17,10 @@
     -->
 
     <!-- ..........................  not kill app -->
-    <!--
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
-    -->
 
     <!-- ..........................  shortcut -->
     <uses-permission android:name="android.permission.INSTALL_SHORTCUT"/>
@@ -140,7 +138,7 @@
             android:appCategory="productivity"
             allowBackup: for (adb backup and adb restore)
             persistent: system app flag. useful for platform developers or hardware vendors. prevents app from being automatically killed
-
+	    tools:replace="android:name"
            -->
 
     <application
