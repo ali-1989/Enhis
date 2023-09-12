@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:app/structures/enums/zoneStatus.dart';
-import 'package:app/structures/models/zoneModel.dart';
+import 'package:app/structures/enums/zone_status.dart';
+import 'package:app/structures/models/zone_model.dart';
 import 'package:app/system/extensions.dart';
-import 'package:app/tools/app/appIcons.dart';
-import 'package:app/tools/app/appNavigator.dart';
+import 'package:app/tools/app/app_icons.dart';
+import 'package:app/tools/app/app_navigator.dart';
 
 class ChangeZoneStatusDialog extends StatefulWidget {
   final ZoneModel zone;

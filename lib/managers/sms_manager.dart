@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:app/tools/routeTools.dart';
+import 'package:app/tools/route_tools.dart';
 import 'package:flutter/material.dart';
 
 import 'package:iris_notifier/iris_notifier.dart';
@@ -10,11 +10,11 @@ import 'package:sms_advanced/sms_advanced.dart';
 import 'package:app/managers/place_manager.dart';
 import 'package:app/managers/settings_manager.dart';
 import 'package:app/services/sms_service.dart';
-import 'package:app/structures/enums/appEvents.dart';
-import 'package:app/structures/models/placeModel.dart';
-import 'package:app/tools/app/appDialogIris.dart';
-import 'package:app/tools/app/appSnack.dart';
-import 'package:app/tools/app/appToast.dart';
+import 'package:app/structures/enums/app_events.dart';
+import 'package:app/structures/models/place_model.dart';
+import 'package:app/tools/app/app_dialog_iris.dart';
+import 'package:app/tools/app/app_snack.dart';
+import 'package:app/tools/app/app_toast.dart';
 
 class SmsManager {
   static StreamSubscription? smsListenerSubscription;
@@ -112,6 +112,7 @@ class SmsManager {
 
     listenToDeviceMessage();
     final code = '*${place.currentPassword}*$sc#';
+    print('!!!!!!!!!!!!!!!!!!!!!!!! $code');
     final result = SmsService.sendSms(code, [place.simCardNumber]);
 
     final sms = await result.first;

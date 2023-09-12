@@ -6,18 +6,18 @@ import 'package:iris_tools/modules/stateManagers/assist.dart';
 
 import 'package:app/managers/place_manager.dart';
 import 'package:app/managers/sms_manager.dart';
-import 'package:app/structures/abstract/stateBase.dart';
-import 'package:app/structures/enums/appEvents.dart';
-import 'package:app/structures/enums/contactLevel.dart';
-import 'package:app/structures/models/contactModel.dart';
-import 'package:app/structures/models/placeModel.dart';
+import 'package:app/structures/abstract/state_super.dart';
+import 'package:app/structures/enums/app_events.dart';
+import 'package:app/structures/enums/contact_level.dart';
+import 'package:app/structures/models/contact_model.dart';
+import 'package:app/structures/models/place_model.dart';
 import 'package:app/system/extensions.dart';
-import 'package:app/tools/app/appDecoration.dart';
-import 'package:app/tools/app/appDialogIris.dart';
-import 'package:app/tools/app/appIcons.dart';
-import 'package:app/tools/app/appSheet.dart';
+import 'package:app/tools/app/app_decoration.dart';
+import 'package:app/tools/app/app_dialog_iris.dart';
+import 'package:app/tools/app/app_icons.dart';
+import 'package:app/tools/app/app_sheet.dart';
 import 'package:app/views/dialogs/addContactDialog.dart';
-import 'package:app/views/components/backBtn.dart';
+import 'package:app/views/components/back_btn.dart';
 
 class ContactManagerPage extends StatefulWidget {
   final PlaceModel place;
@@ -31,7 +31,7 @@ class ContactManagerPage extends StatefulWidget {
   State<ContactManagerPage> createState() => _ContactManagerPageState();
 }
 ///==================================================================================
-class _ContactManagerPageState extends StateBase<ContactManagerPage> {
+class _ContactManagerPageState extends StateSuper<ContactManagerPage> {
 
   @override
   void initState(){

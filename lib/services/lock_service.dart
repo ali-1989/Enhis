@@ -9,8 +9,8 @@ import 'package:iris_tools/api/system.dart';
 import 'package:iris_tools/dateSection/dateHelper.dart';
 
 import 'package:app/managers/settings_manager.dart';
-import 'package:app/structures/enums/appEvents.dart';
-import 'package:app/tools/routeTools.dart';
+import 'package:app/structures/enums/app_events.dart';
+import 'package:app/tools/route_tools.dart';
 import 'package:app/views/components/number_lock_screen.dart';
 
 ///*** Limit: some function need android SDK 23 (6)

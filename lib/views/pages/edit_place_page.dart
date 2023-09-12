@@ -1,8 +1,8 @@
-import 'package:app/tools/app/appToast.dart';
+import 'package:app/tools/app/app_toast.dart';
 import 'package:app/views/pages/relay_page.dart';
 import 'package:app/views/pages/zone_page.dart';
-import 'package:app/tools/app/appDirectories.dart';
-import 'package:app/tools/app/appIcons.dart';
+import 'package:app/tools/app/app_directories.dart';
+import 'package:app/tools/app/app_icons.dart';
 import 'package:flutter/material.dart';
 
 import 'package:iris_notifier/iris_notifier.dart';
@@ -17,24 +17,24 @@ import 'package:iris_tools/api/managers/assetManager.dart';
 import 'package:iris_tools/api/system.dart';
 import 'package:iris_tools/dateSection/dateHelper.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
-import 'package:iris_tools/widgets/text/titleInfo.dart';
+import 'package:iris_tools/widgets/text/title_info.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 import 'package:app/managers/place_manager.dart';
 import 'package:app/managers/sms_manager.dart';
 import 'package:app/views/pages/contact_manager_page.dart';
-import 'package:app/structures/abstract/stateBase.dart';
-import 'package:app/structures/enums/appEvents.dart';
-import 'package:app/structures/enums/notifyToContactStatus.dart';
-import 'package:app/structures/models/placeModel.dart';
+import 'package:app/structures/abstract/state_super.dart';
+import 'package:app/structures/enums/app_events.dart';
+import 'package:app/structures/enums/notify_to_contact_status.dart';
+import 'package:app/structures/models/place_model.dart';
 import 'package:app/system/extensions.dart';
-import 'package:app/tools/app/appDecoration.dart';
-import 'package:app/tools/app/appDialogIris.dart';
-import 'package:app/tools/app/appMessages.dart';
-import 'package:app/tools/app/appNavigator.dart';
-import 'package:app/tools/app/appSnack.dart';
-import 'package:app/tools/routeTools.dart';
-import 'package:app/views/components/backBtn.dart';
+import 'package:app/tools/app/app_decoration.dart';
+import 'package:app/tools/app/app_dialog_iris.dart';
+import 'package:app/tools/app/app_messages.dart';
+import 'package:app/tools/app/app_navigator.dart';
+import 'package:app/tools/app/app_snack.dart';
+import 'package:app/tools/route_tools.dart';
+import 'package:app/views/components/back_btn.dart';
 
 class EditPlacePage extends StatefulWidget {
   final PlaceModel place;
@@ -48,7 +48,7 @@ class EditPlacePage extends StatefulWidget {
   State<EditPlacePage> createState() => _EditPlacePageState();
 }
 ///==================================================================================
-class _EditPlacePageState extends StateBase<EditPlacePage> {
+class _EditPlacePageState extends StateSuper<EditPlacePage> {
   late InputDecoration inputDecoration;
   final ClickCounter clickCounter = ClickCounter(const Duration(seconds: 3), 3);
 

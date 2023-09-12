@@ -1,5 +1,5 @@
-import 'package:app/tools/app/appCache.dart';
-import 'package:app/tools/app/appToast.dart';
+import 'package:app/tools/app/app_cache.dart';
+import 'package:app/tools/app/app_toast.dart';
 import 'package:flutter/material.dart';
 
 import 'package:iris_notifier/iris_notifier.dart';
@@ -11,18 +11,18 @@ import 'package:iris_tools/api/system.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 
 import 'package:app/managers/place_manager.dart';
-import 'package:app/structures/abstract/stateBase.dart';
-import 'package:app/structures/enums/appEvents.dart';
-import 'package:app/structures/enums/contactLevel.dart';
-import 'package:app/structures/models/contactModel.dart';
-import 'package:app/structures/models/placeModel.dart';
+import 'package:app/structures/abstract/state_super.dart';
+import 'package:app/structures/enums/app_events.dart';
+import 'package:app/structures/enums/contact_level.dart';
+import 'package:app/structures/models/contact_model.dart';
+import 'package:app/structures/models/place_model.dart';
 import 'package:app/system/extensions.dart';
-import 'package:app/tools/app/appDb.dart';
-import 'package:app/tools/app/appMessages.dart';
-import 'package:app/tools/app/appSheet.dart';
-import 'package:app/tools/app/appSnack.dart';
-import 'package:app/tools/routeTools.dart';
-import 'package:app/views/components/backBtn.dart';
+import 'package:app/tools/app/app_db.dart';
+import 'package:app/tools/app/app_messages.dart';
+import 'package:app/tools/app/app_sheet.dart';
+import 'package:app/tools/app/app_snack.dart';
+import 'package:app/tools/route_tools.dart';
+import 'package:app/views/components/back_btn.dart';
 
 class AddPlacePage extends StatefulWidget {
 
@@ -34,7 +34,7 @@ class AddPlacePage extends StatefulWidget {
   State<AddPlacePage> createState() => _AddPlacePageState();
 }
 ///==================================================================================
-class _AddPlacePageState extends StateBase<AddPlacePage> {
+class _AddPlacePageState extends StateSuper<AddPlacePage> {
   TextEditingController nameCtr = TextEditingController();
   TextEditingController numberCtr = TextEditingController();
   TextEditingController adminNumberCtr = TextEditingController();

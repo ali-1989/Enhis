@@ -1,14 +1,14 @@
 import 'package:app/managers/place_manager.dart';
 import 'package:app/managers/sms_manager.dart';
-import 'package:app/structures/models/placeModel.dart';
-import 'package:app/tools/app/appDecoration.dart';
-import 'package:app/tools/app/appMessages.dart';
-import 'package:app/tools/routeTools.dart';
+import 'package:app/structures/models/place_model.dart';
+import 'package:app/tools/app/app_decoration.dart';
+import 'package:app/tools/app/app_messages.dart';
+import 'package:app/tools/route_tools.dart';
 import 'package:flutter/material.dart';
 
 import 'package:app/system/extensions.dart';
-import 'package:app/tools/app/appIcons.dart';
-import 'package:app/tools/app/appNavigator.dart';
+import 'package:app/tools/app/app_icons.dart';
+import 'package:app/tools/app/app_navigator.dart';
 import 'package:iris_tools/api/helpers/colorHelper.dart';
 
 class RemoteManageDialog extends StatefulWidget {

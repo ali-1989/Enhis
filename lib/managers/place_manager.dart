@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:app/structures/enums/appEvents.dart';
+import 'package:app/structures/enums/app_events.dart';
 import 'package:iris_db/iris_db.dart';
 
-import 'package:app/structures/models/placeModel.dart';
+import 'package:app/structures/models/place_model.dart';
 import 'package:app/system/extensions.dart';
 import 'package:app/system/keys.dart';
-import 'package:app/tools/app/appDb.dart';
+import 'package:app/tools/app/app_db.dart';
 import 'package:iris_notifier/iris_notifier.dart';
 
 class PlaceManager {

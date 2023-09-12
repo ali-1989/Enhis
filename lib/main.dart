@@ -6,24 +6,24 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:iris_route/iris_route.dart';
-import 'package:iris_tools/api/system.dart';
 import 'package:iris_tools/widgets/maxWidth.dart';
 
-import 'package:app/constants.dart';
+import 'package:app/system/constants.dart';
 import 'package:app/managers/font_manager.dart';
 import 'package:app/managers/settings_manager.dart';
 import 'package:app/managers/splash_manager.dart';
-import 'package:app/structures/models/settingsModel.dart';
-import 'package:app/tools/app/appBroadcast.dart';
-import 'package:app/tools/app/appDirectories.dart';
-import 'package:app/tools/app/appLocale.dart';
-import 'package:app/tools/app/appSizes.dart';
-import 'package:app/tools/app/appThemes.dart';
-import 'package:app/tools/app/appToast.dart';
-import 'package:app/tools/deviceInfoTools.dart';
+import 'package:app/services/native_call_service.dart';
+import 'package:app/structures/models/settings_model.dart';
+import 'package:app/tools/app/app_broadcast.dart';
+import 'package:app/tools/app/app_directories.dart';
+import 'package:app/tools/app/app_locale.dart';
+import 'package:app/tools/app/app_sizes.dart';
+import 'package:app/tools/app/app_themes.dart';
+import 'package:app/tools/app/app_toast.dart';
+import 'package:app/tools/device_info_tools.dart';
 import 'package:app/tools/log_tools.dart';
-import 'package:app/tools/routeTools.dart';
-import 'package:app/views/baseComponents/splashPage.dart';
+import 'package:app/tools/route_tools.dart';
+import 'package:app/views/baseComponents/splash_page.dart';
 
 ///================ call on any hot restart
 void main() {
@@ -81,12 +81,16 @@ void main() {
 Future<void> mainInitialize() async {
   
   usePathUrlStrategy();
-
-  if(System.isAndroid()) {
-    LogTools.assistanceBridge!.invokeMethod('setAppIsRun');
-  }
 }
 
+@pragma('vm:entry-point')
+void dartFunction() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await prepareDirectoriesAndLogger();
+  NativeCallService.init();
+}
+
+@pragma('vm:entry-point')
 Future<(bool, String?)> prepareDirectoriesAndLogger() async {
   try {
     if (!kIsWeb) {

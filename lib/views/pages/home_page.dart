@@ -1,12 +1,12 @@
 import 'package:animate_do/animate_do.dart';
-import 'package:app/structures/enums/relayStatus.dart';
-import 'package:app/structures/models/relayModel.dart';
+import 'package:app/structures/enums/relay_status.dart';
+import 'package:app/structures/models/relay_model.dart';
 import 'package:app/views/pages/contact_manager_page.dart';
 import 'package:app/system/keys.dart';
-import 'package:app/tools/app/appCache.dart';
-import 'package:app/tools/app/appDb.dart';
-import 'package:app/tools/app/appDirectories.dart';
-import 'package:app/tools/app/appToast.dart';
+import 'package:app/tools/app/app_cache.dart';
+import 'package:app/tools/app/app_db.dart';
+import 'package:app/tools/app/app_directories.dart';
+import 'package:app/tools/app/app_toast.dart';
 import 'package:app/views/dialogs/remoteManageDialog.dart';
 import 'package:app/views/pages/relay_page.dart';
 import 'package:flutter/material.dart';
@@ -30,21 +30,21 @@ import 'package:app/managers/sms_manager.dart';
 import 'package:app/views/pages/add_place_page.dart';
 import 'package:app/views/pages/edit_place_page.dart';
 import 'package:app/views/pages/settings_page.dart';
-import 'package:app/structures/abstract/stateBase.dart';
-import 'package:app/structures/enums/appEvents.dart';
-import 'package:app/structures/enums/deviceStatus.dart';
-import 'package:app/structures/enums/zoneStatus.dart';
-import 'package:app/structures/models/placeModel.dart';
-import 'package:app/structures/models/zoneModel.dart';
+import 'package:app/structures/abstract/state_super.dart';
+import 'package:app/structures/enums/app_events.dart';
+import 'package:app/structures/enums/device_status.dart';
+import 'package:app/structures/enums/zone_status.dart';
+import 'package:app/structures/models/place_model.dart';
+import 'package:app/structures/models/zone_model.dart';
 import 'package:app/system/extensions.dart';
-import 'package:app/tools/app/appDecoration.dart';
-import 'package:app/tools/app/appDialogIris.dart';
-import 'package:app/tools/app/appIcons.dart';
-import 'package:app/tools/app/appImages.dart';
-import 'package:app/tools/app/appMessages.dart';
-import 'package:app/tools/app/appNavigator.dart';
-import 'package:app/tools/app/appThemes.dart';
-import 'package:app/tools/routeTools.dart';
+import 'package:app/tools/app/app_decoration.dart';
+import 'package:app/tools/app/app_dialog_iris.dart';
+import 'package:app/tools/app/app_icons.dart';
+import 'package:app/tools/app/app_images.dart';
+import 'package:app/tools/app/app_messages.dart';
+import 'package:app/tools/app/app_navigator.dart';
+import 'package:app/tools/app/app_themes.dart';
+import 'package:app/tools/route_tools.dart';
 import 'package:app/views/dialogs/changeZoneStatusDialog.dart';
 import 'package:app/views/dialogs/reChargeSimCardDialog.dart';
 import 'package:showcaseview/showcaseview.dart';
@@ -61,7 +61,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 ///==================================================================================
-class _HomePageState extends StateBase<HomePage> {
+class _HomePageState extends StateSuper<HomePage> {
   PlaceModel? currentPlace;
   Color cColor = AppDecoration.secondColor;
   final settingCaseKey = GlobalKey();
@@ -780,7 +780,7 @@ class _HomePageState extends StateBase<HomePage> {
                                       ),
 
                                       GestureDetector(
-                                        onTap: onRelay2CommandClick,
+                                        onTap: onRelay1CommandClick,
                                         child: CustomCard(
                                             color: AppDecoration.mainColor,
                                             padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 7),

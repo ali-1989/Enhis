@@ -7,11 +7,9 @@ import 'package:iris_tools/api/logger/logger.dart';
 import 'package:iris_tools/api/tools.dart';
 
 import 'package:app/managers/api_manager.dart';
-import 'package:app/system/commonHttpHandler.dart';
 import 'package:app/system/keys.dart';
-import 'package:app/tools/app/appHttpDio.dart';
-import 'package:app/tools/app/appSheet.dart';
-import 'package:app/tools/deviceInfoTools.dart';
+import 'package:app/tools/app/app_http_dio.dart';
+import 'package:app/tools/device_info_tools.dart';
 
 ///=============================================================================================
 enum MethodType {
@@ -189,12 +187,6 @@ class Requester {
       }
       else {
         await httpRequestEvents.onFailState?.call(_httpRequester, val);
-
-        if(context != null && context.mounted) {
-          if (promptErrors && !CommonHttpHandler.handler(context, js)) {
-            await AppSheet.showSheet$ServerNotRespondProperly(context);
-          }
-        }
       }
 
       return null;

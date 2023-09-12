@@ -6,14 +6,14 @@ import 'package:iris_tools/api/helpers/textHelper.dart';
 import 'package:iris_tools/widgets/optionsRow/checkRow.dart';
 
 import 'package:app/managers/place_manager.dart';
-import 'package:app/structures/enums/appEvents.dart';
-import 'package:app/structures/models/placeModel.dart';
-import 'package:app/structures/models/zoneModel.dart';
+import 'package:app/structures/enums/app_events.dart';
+import 'package:app/structures/models/place_model.dart';
+import 'package:app/structures/models/zone_model.dart';
 import 'package:app/system/extensions.dart';
-import 'package:app/tools/app/appDecoration.dart';
-import 'package:app/tools/app/appDialogIris.dart';
-import 'package:app/tools/app/appIcons.dart';
-import 'package:app/tools/app/appNavigator.dart';
+import 'package:app/tools/app/app_decoration.dart';
+import 'package:app/tools/app/app_dialog_iris.dart';
+import 'package:app/tools/app/app_icons.dart';
+import 'package:app/tools/app/app_navigator.dart';
 
 class ManageZoneDialog extends StatefulWidget {
   final PlaceModel place;

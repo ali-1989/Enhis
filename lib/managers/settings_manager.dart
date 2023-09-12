@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:app/structures/middleWares/requester.dart';
-import 'package:app/structures/models/globalSettingsModel.dart';
-import 'package:app/structures/models/settingsModel.dart';
-import 'package:app/tools/app/appCache.dart';
-import 'package:app/tools/app/appDb.dart';
+import 'package:app/structures/models/global_settings_model.dart';
+import 'package:app/structures/models/settings_model.dart';
+import 'package:app/tools/app/app_cache.dart';
+import 'package:app/tools/app/app_db.dart';
 import '/system/keys.dart';
 
 class SettingsManager {

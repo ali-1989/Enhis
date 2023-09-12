@@ -10,14 +10,14 @@ import 'package:app/managers/settings_manager.dart';
 import 'package:app/views/pages/add_place_page.dart';
 import 'package:app/services/lock_service.dart';
 import 'package:app/services/sms_service.dart';
-import 'package:app/structures/abstract/stateBase.dart';
+import 'package:app/structures/abstract/state_super.dart';
 import 'package:app/system/extensions.dart';
-import 'package:app/tools/app/appDecoration.dart';
-import 'package:app/tools/app/appIcons.dart';
-import 'package:app/tools/app/appSheet.dart';
-import 'package:app/tools/routeTools.dart';
+import 'package:app/tools/app/app_decoration.dart';
+import 'package:app/tools/app/app_icons.dart';
+import 'package:app/tools/app/app_sheet.dart';
+import 'package:app/tools/route_tools.dart';
 import 'package:app/views/components/number_lock_screen.dart';
-import 'package:app/views/components/backBtn.dart';
+import 'package:app/views/components/back_btn.dart';
 
 class SettingsPage extends StatefulWidget {
 
@@ -29,7 +29,7 @@ class SettingsPage extends StatefulWidget {
   State<SettingsPage> createState() => _SettingsPageState();
 }
 ///==================================================================================
-class _SettingsPageState extends StateBase<SettingsPage> {
+class _SettingsPageState extends StateSuper<SettingsPage> {
   List<SimCard> simCards = [];
   bool canUseBiometric = false;
 

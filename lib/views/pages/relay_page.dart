@@ -1,9 +1,9 @@
 import 'package:app/managers/place_manager.dart';
-import 'package:app/structures/enums/appEvents.dart';
-import 'package:app/structures/enums/relayStatus.dart';
-import 'package:app/structures/models/relayModel.dart';
-import 'package:app/tools/app/appDialogIris.dart';
-import 'package:app/tools/app/appNavigator.dart';
+import 'package:app/structures/enums/app_events.dart';
+import 'package:app/structures/enums/relay_status.dart';
+import 'package:app/structures/models/relay_model.dart';
+import 'package:app/tools/app/app_dialog_iris.dart';
+import 'package:app/tools/app/app_navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iris_notifier/iris_notifier.dart';
@@ -15,11 +15,11 @@ import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/optionsRow/checkRow.dart';
 import 'package:iris_tools/widgets/optionsRow/radioRow.dart';
 
-import 'package:app/structures/abstract/stateBase.dart';
-import 'package:app/structures/models/placeModel.dart';
+import 'package:app/structures/abstract/state_super.dart';
+import 'package:app/structures/models/place_model.dart';
 import 'package:app/system/extensions.dart';
-import 'package:app/tools/app/appDecoration.dart';
-import 'package:app/views/components/backBtn.dart';
+import 'package:app/tools/app/app_decoration.dart';
+import 'package:app/views/components/back_btn.dart';
 
 class RelayPage extends StatefulWidget {
   final PlaceModel place;
@@ -33,7 +33,7 @@ class RelayPage extends StatefulWidget {
   State<RelayPage> createState() => _RelayPageState();
 }
 ///==================================================================================
-class _RelayPageState extends StateBase<RelayPage> {
+class _RelayPageState extends StateSuper<RelayPage> {
   TextEditingController r1HourCtr = TextEditingController();
   TextEditingController r1MinCtr = TextEditingController();
   TextEditingController r1SecCtr = TextEditingController();

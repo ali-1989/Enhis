@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:iris_tools/api/system.dart';
 import 'package:iris_tools/widgets/number_pad.dart';
 
-import 'package:app/tools/app/appMessages.dart';
-import 'package:app/tools/app/appSnack.dart';
-import 'package:app/tools/app/appThemes.dart';
+import 'package:app/tools/app/app_messages.dart';
+import 'package:app/tools/app/app_snack.dart';
+import 'package:app/tools/app/app_themes.dart';
 
 typedef OnNewPassword = void Function(String pass);
 typedef OnCorrectPassword = void Function(String pass);
