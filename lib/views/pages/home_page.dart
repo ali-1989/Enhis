@@ -1,16 +1,6 @@
-import 'package:animate_do/animate_do.dart';
-import 'package:app/structures/enums/relay_status.dart';
-import 'package:app/structures/models/relay_model.dart';
-import 'package:app/views/pages/contact_manager_page.dart';
-import 'package:app/system/keys.dart';
-import 'package:app/tools/app/app_cache.dart';
-import 'package:app/tools/app/app_db.dart';
-import 'package:app/tools/app/app_directories.dart';
-import 'package:app/tools/app/app_toast.dart';
-import 'package:app/views/dialogs/remoteManageDialog.dart';
-import 'package:app/views/pages/relay_page.dart';
 import 'package:flutter/material.dart';
 
+import 'package:animate_do/animate_do.dart';
 import 'package:iris_notifier/iris_notifier.dart';
 import 'package:iris_route/iris_route.dart';
 import 'package:iris_tools/api/helpers/colorHelper.dart';
@@ -23,33 +13,43 @@ import 'package:iris_tools/api/system.dart';
 import 'package:iris_tools/features/overlayDialog.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/circle_container.dart';
-import 'package:iris_tools/widgets/customCard.dart';
+import 'package:iris_tools/widgets/custom_card.dart';
+import 'package:showcaseview/showcaseview.dart';
+import 'package:snapping_sheet_2/snapping_sheet.dart';
+import 'package:toggle_switch/toggle_switch.dart';
 
 import 'package:app/managers/place_manager.dart';
 import 'package:app/managers/sms_manager.dart';
-import 'package:app/views/pages/add_place_page.dart';
-import 'package:app/views/pages/edit_place_page.dart';
-import 'package:app/views/pages/settings_page.dart';
 import 'package:app/structures/abstract/state_super.dart';
 import 'package:app/structures/enums/app_events.dart';
 import 'package:app/structures/enums/device_status.dart';
+import 'package:app/structures/enums/relay_status.dart';
 import 'package:app/structures/enums/zone_status.dart';
 import 'package:app/structures/models/place_model.dart';
+import 'package:app/structures/models/relay_model.dart';
 import 'package:app/structures/models/zone_model.dart';
 import 'package:app/system/extensions.dart';
+import 'package:app/system/keys.dart';
+import 'package:app/tools/app/app_cache.dart';
+import 'package:app/tools/app/app_db.dart';
 import 'package:app/tools/app/app_decoration.dart';
 import 'package:app/tools/app/app_dialog_iris.dart';
+import 'package:app/tools/app/app_directories.dart';
 import 'package:app/tools/app/app_icons.dart';
 import 'package:app/tools/app/app_images.dart';
 import 'package:app/tools/app/app_messages.dart';
 import 'package:app/tools/app/app_navigator.dart';
 import 'package:app/tools/app/app_themes.dart';
+import 'package:app/tools/app/app_toast.dart';
 import 'package:app/tools/route_tools.dart';
 import 'package:app/views/dialogs/changeZoneStatusDialog.dart';
 import 'package:app/views/dialogs/reChargeSimCardDialog.dart';
-import 'package:showcaseview/showcaseview.dart';
-import 'package:snapping_sheet_2/snapping_sheet.dart';
-import 'package:toggle_switch/toggle_switch.dart';
+import 'package:app/views/dialogs/remoteManageDialog.dart';
+import 'package:app/views/pages/add_place_page.dart';
+import 'package:app/views/pages/contact_manager_page.dart';
+import 'package:app/views/pages/edit_place_page.dart';
+import 'package:app/views/pages/relay_page.dart';
+import 'package:app/views/pages/settings_page.dart';
 
 class HomePage extends StatefulWidget {
 
@@ -383,7 +383,7 @@ class _HomePageState extends StateSuper<HomePage> {
 
                 GestureDetector(
                     onTap: onDeviceStatusHelpClick,
-                    child: Icon(AppIcons.questionMarkCircle, size: 25*pw, color: Colors.orange)
+                    child: Icon(AppIcons.questionMarkCircle, size: 25*hr, color: Colors.orange)
                 ),
               ],
             ),
@@ -403,7 +403,7 @@ class _HomePageState extends StateSuper<HomePage> {
 
   Widget buildButtons(){
     const defaultColor = Colors.grey;
-    final bWidth = sw/3 - 30;
+    final bWidth = ws/3 - 30;
 
     return SizedBox(
       height: 170,
@@ -639,7 +639,7 @@ class _HomePageState extends StateSuper<HomePage> {
 
                   GestureDetector(
                       onTap: onSimCardHelpClick,
-                      child: Icon(AppIcons.questionMarkCircle, size: 25*pw, color: Colors.orange)
+                      child: Icon(AppIcons.questionMarkCircle, size: 25*hr, color: Colors.orange)
                   ),
                 ],
               ),
@@ -678,7 +678,7 @@ class _HomePageState extends StateSuper<HomePage> {
     return Center(
       child: GestureDetector(
         onTap: (){
-          if(relaySnapController.currentPosition > sw/2) {
+          if(relaySnapController.currentPosition > ws/2) {
             relaySnapController.snapToPosition(openPosition);
           }
           else {

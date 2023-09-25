@@ -1,23 +1,23 @@
-import 'package:app/managers/place_manager.dart';
-import 'package:app/structures/enums/app_events.dart';
-import 'package:app/structures/models/zone_model.dart';
-import 'package:app/tools/app/app_dialog_iris.dart';
-import 'package:app/tools/app/app_navigator.dart';
 import 'package:flutter/material.dart';
+
 import 'package:iris_notifier/iris_notifier.dart';
 import 'package:iris_tools/api/helpers/focusHelper.dart';
 import 'package:iris_tools/api/helpers/textHelper.dart';
-
 import 'package:iris_tools/modules/stateManagers/assist.dart';
-import 'package:iris_tools/widgets/customCard.dart';
+import 'package:iris_tools/widgets/custom_card.dart';
 import 'package:iris_tools/widgets/optionsRow/checkRow.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
+import 'package:app/managers/place_manager.dart';
 import 'package:app/managers/sms_manager.dart';
 import 'package:app/structures/abstract/state_super.dart';
+import 'package:app/structures/enums/app_events.dart';
 import 'package:app/structures/models/place_model.dart';
+import 'package:app/structures/models/zone_model.dart';
 import 'package:app/system/extensions.dart';
 import 'package:app/tools/app/app_decoration.dart';
+import 'package:app/tools/app/app_dialog_iris.dart';
+import 'package:app/tools/app/app_navigator.dart';
 import 'package:app/views/components/back_btn.dart';
 
 class ZonePage extends StatefulWidget {

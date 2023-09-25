@@ -8,13 +8,14 @@ import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:iris_route/iris_route.dart';
 import 'package:iris_tools/widgets/maxWidth.dart';
 
-import 'package:app/system/constants.dart';
 import 'package:app/managers/font_manager.dart';
 import 'package:app/managers/settings_manager.dart';
 import 'package:app/managers/splash_manager.dart';
 import 'package:app/services/native_call_service.dart';
 import 'package:app/structures/models/settings_model.dart';
+import 'package:app/system/constants.dart';
 import 'package:app/tools/app/app_broadcast.dart';
+import 'package:app/tools/app/app_cache.dart';
 import 'package:app/tools/app/app_directories.dart';
 import 'package:app/tools/app/app_locale.dart';
 import 'package:app/tools/app/app_sizes.dart';
@@ -185,6 +186,20 @@ class MyApp extends StatelessWidget {
 
   Future<void> testCodes(BuildContext context) async {
     //await AppDB.db.clearTable(AppDB.tbKv);
+    if(!AppCache.canCallMethodAgain('testCodes')){
+      return;
+    }
+
+    /*Future.delayed(Duration(seconds: 4), (){
+      print('test code');
+      NativeCallService.assistanceBridge!.invokeMethod('echo').then((value) => print(value));
+      NativeCallService.androidAppBridge!.invokeMethod('echo').then((value) => print(value));
+    });*/
+
+    Future.delayed(Duration(seconds: 6), (){
+      print('test code 2');
+      NativeCallService.assistanceBridge!.invokeMethodByArgs( 'throw_error', [{'delay': 5000}]).then((value) => print(value));
+    });
   }
 }
 ///==============================================================================================

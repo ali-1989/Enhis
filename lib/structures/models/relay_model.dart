@@ -1,4 +1,3 @@
-
 import 'package:app/structures/enums/relay_status.dart';
 
 class RelayModel {

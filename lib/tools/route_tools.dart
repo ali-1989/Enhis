@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:iris_route/iris_route.dart';
-
-import 'package:app/views/pages/home_page.dart';
-import 'package:app/tools/app/app_navigator.dart';
 import 'package:iris_tools/api/stack_list.dart';
+
+import 'package:app/tools/app/app_navigator.dart';
+import 'package:app/views/pages/home_page.dart';
 
 class RouteTools {
   static BuildContext? materialContext;
@@ -62,6 +62,12 @@ class RouteTools {
   static void backRoute() {
     final lastCtx = getTopContext()!;
     AppNavigator.backRoute(lastCtx);
+  }
+
+  static void popIfCan(BuildContext context) {
+    if(canPop(context)){
+      popTopView(context: context);
+    }
   }
 
   static void backToRoot(BuildContext context) {

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+
+import 'package:iris_tools/api/helpers/colorHelper.dart';
+
 import 'package:app/managers/font_manager.dart';
 import 'package:app/tools/app/app_messages.dart';
 import 'package:app/tools/app/app_sizes.dart';
 import 'package:app/tools/app/app_themes.dart';
-import 'package:iris_tools/api/helpers/colorHelper.dart';
 
 class AppDecoration {
   AppDecoration._();

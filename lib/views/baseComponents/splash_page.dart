@@ -1,8 +1,5 @@
 import 'dart:async';
 
-import 'package:app/managers/splash_manager.dart';
-import 'package:app/services/native_call_service.dart';
-import 'package:app/services/wakeup_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -10,8 +7,11 @@ import 'package:iris_tools/net/trustSsl.dart';
 
 import 'package:app/managers/place_manager.dart';
 import 'package:app/managers/settings_manager.dart';
+import 'package:app/managers/splash_manager.dart';
 import 'package:app/managers/version_manager.dart';
 import 'package:app/services/lock_service.dart';
+import 'package:app/services/native_call_service.dart';
+import 'package:app/services/wakeup_service.dart';
 import 'package:app/structures/abstract/state_super.dart';
 import 'package:app/system/application_signal.dart';
 import 'package:app/tools/app/app_broadcast.dart';

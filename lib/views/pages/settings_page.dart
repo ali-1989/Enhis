@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:iris_tools/api/helpers/open_helper.dart';
 
+import 'package:iris_tools/api/helpers/open_helper.dart';
 import 'package:iris_tools/features/overlayDialog.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/optionsRow/checkRow.dart';
 import 'package:sms_advanced/sms_advanced.dart';
 
 import 'package:app/managers/settings_manager.dart';
-import 'package:app/views/pages/add_place_page.dart';
 import 'package:app/services/lock_service.dart';
 import 'package:app/services/sms_service.dart';
 import 'package:app/structures/abstract/state_super.dart';
@@ -16,8 +15,9 @@ import 'package:app/tools/app/app_decoration.dart';
 import 'package:app/tools/app/app_icons.dart';
 import 'package:app/tools/app/app_sheet.dart';
 import 'package:app/tools/route_tools.dart';
-import 'package:app/views/components/number_lock_screen.dart';
 import 'package:app/views/components/back_btn.dart';
+import 'package:app/views/components/number_lock_screen.dart';
+import 'package:app/views/pages/add_place_page.dart';
 
 class SettingsPage extends StatefulWidget {
 

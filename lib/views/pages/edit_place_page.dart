@@ -1,8 +1,3 @@
-import 'package:app/tools/app/app_toast.dart';
-import 'package:app/views/pages/relay_page.dart';
-import 'package:app/views/pages/zone_page.dart';
-import 'package:app/tools/app/app_directories.dart';
-import 'package:app/tools/app/app_icons.dart';
 import 'package:flutter/material.dart';
 
 import 'package:iris_notifier/iris_notifier.dart';
@@ -22,7 +17,6 @@ import 'package:toggle_switch/toggle_switch.dart';
 
 import 'package:app/managers/place_manager.dart';
 import 'package:app/managers/sms_manager.dart';
-import 'package:app/views/pages/contact_manager_page.dart';
 import 'package:app/structures/abstract/state_super.dart';
 import 'package:app/structures/enums/app_events.dart';
 import 'package:app/structures/enums/notify_to_contact_status.dart';
@@ -30,11 +24,17 @@ import 'package:app/structures/models/place_model.dart';
 import 'package:app/system/extensions.dart';
 import 'package:app/tools/app/app_decoration.dart';
 import 'package:app/tools/app/app_dialog_iris.dart';
+import 'package:app/tools/app/app_directories.dart';
+import 'package:app/tools/app/app_icons.dart';
 import 'package:app/tools/app/app_messages.dart';
 import 'package:app/tools/app/app_navigator.dart';
 import 'package:app/tools/app/app_snack.dart';
+import 'package:app/tools/app/app_toast.dart';
 import 'package:app/tools/route_tools.dart';
 import 'package:app/views/components/back_btn.dart';
+import 'package:app/views/pages/contact_manager_page.dart';
+import 'package:app/views/pages/relay_page.dart';
+import 'package:app/views/pages/zone_page.dart';
 
 class EditPlacePage extends StatefulWidget {
   final PlaceModel place;

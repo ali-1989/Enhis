@@ -20,6 +20,18 @@ class AppMessages {
     return _getContext().tInMap('httpCodes', cause)?? errorOccur;
   }
 
+  static String operationMessage(String key) {
+    return _getContext().tInMap('operationSection', key)?? _noText;
+  }
+
+  static String loginMessage(String key) {
+    return _getContext().tInMap('loginSection', key)?? _noText;
+  }
+
+  static String registerMessage(String key) {
+    return _getContext().tInMap('registerSection', key)?? _noText;
+  }
+
   static String get ok {
     return _getContext().tC('ok')?? _noText;
   }
@@ -68,6 +80,10 @@ class AppMessages {
     return _getContext().t('send')?? _noText;
   }
 
+  static String get next {
+    return _getContext().t('next')?? _noText;
+  }
+
   static String get home {
     return _getContext().t('home')?? _noText;
   }
@@ -91,13 +107,9 @@ class AppMessages {
   static String get pay {
     return _getContext().t('pay')?? _noText;
   }
-
-  static String get payWitIran {
-    return _getContext().t('payWitIran')?? _noText;
-  }
-
-  static String get payWitPaypal {
-    return _getContext().t('payWitPaypal')?? _noText;
+  
+  static String get register {
+    return _getContext().t('register')?? _noText;
   }
 
   static String get logout {
@@ -106,6 +118,10 @@ class AppMessages {
 
   static String get exit {
     return _getContext().t('exit')?? _noText;
+  }
+
+  static String get back {
+    return _getContext().t('back')?? _noText;
   }
 
   static String get search {
@@ -120,16 +136,8 @@ class AppMessages {
     return _getContext().t('update')?? _noText;
   }
 
-  static String get register {
-    return _getContext().t('register')?? _noText;
-  }
-
   static String get save {
     return _getContext().t('save')?? _noText;
-  }
-
-  static String get next {
-    return _getContext().t('next')?? _noText;
   }
 
   static String get downloadNewVersion {
@@ -141,39 +149,43 @@ class AppMessages {
   }
 
   static String get validation {
-    return _getContext().tInMap('loginSection', 'validation')?? _noText;
+    return loginMessage('validation');
   }
 
   static String get resendOtpCode {
-    return _getContext().tInMap('loginSection', 'resendOtpCode')?? _noText;
+    return loginMessage('resendOtpCode');
   }
 
   static String get otpCodeIsResend {
-    return _getContext().tInMap('loginSection', 'otpCodeIsResend')?? _noText;
+    return loginMessage('otpCodeIsResend');
   }
 
   static String get otpCodeIsInvalid {
-    return _getContext().tInMap('loginSection', 'otpCodeIsInvalid')?? _noText;
+    return loginMessage('otpCodeIsInvalid');
   }
 
-  static String get pleaseWait {
-    return _getContext().t('pleaseWait')?? _noText;
+  static String get doYouWantLogoutYourAccount {
+    return loginMessage('doYouWantLogoutYourAccount');
+  }
+
+  static String get loginWithGoogle {
+    return loginMessage('loginWithGoogle');
   }
 
   static String get countrySelection {
     return _getContext().tInMap('countrySection', 'countrySelection')?? _noText;
   }
 
-  static String get doYouWantLogoutYourAccount {
-    return _getContext().tInMap('loginSection', 'doYouWantLogoutYourAccount')?? _noText;
-  }
-
   static String get newAppVersionIsOk {
     return _getContext().t('newAppVersionIsOk')?? _noText;
   }
 
-  static String get terms {
-    return 'سیاست حفظ حریم خصوصی';//todo
+  static String get pleaseWait {
+    return _getContext().t('pleaseWait')?? _noText;
+  }
+
+  static String get termPolice {
+    return _getContext().t('termPolice')?? _noText;
   }
 
   static String get mobileNumber {
@@ -184,20 +196,16 @@ class AppMessages {
     return _getContext().t('login')?? _noText;
   }
 
-  static String get loginWithGoogle {
-    return 'ورود با گوگل';//todo
+  static String get otherNumber {
+    return registerMessage('otherNumber');
   }
 
-  static String get changeNumber {
-    return 'شماره ی دیگر';//todo
+  static String get enterVerifyCodeDesc {
+    return registerMessage('validationDescription');
   }
 
-  static String get enterVerifyCode {
-    return 'کد ارسال شده به شماره ی # را وارد کنید';//todo
-  }
-
-  static String get pleaseEnterMobileToSendCode {
-    return 'لطفا شماره موبایل خود را جهت ارسال کد وارد کنید';//todo
+ static String get pleaseEnterAPassword {
+    return registerMessage('selectPassword');
   }
 
   static String get errorOccur {
@@ -220,80 +228,72 @@ class AppMessages {
     return _getContext().t('tryAgain')?? _noText;
   }
 
-  static String get requestKeyNotExist {
-    return "'request' key not exist";
-  }
-
-  static String get requestDataIsNotJson {
-    return 'request data is not a json';
-  }
-
   static String get tokenIsIncorrectOrExpire {
-    return _getContext().tInMap('httpCodes', 'tokenIsIncorrectOrExpire')?? _noText;
+    return httpMessage('tokenIsIncorrectOrExpire');
   }
 
   static String get databaseError {
-    return _getContext().tInMap('httpCodes', 'databaseError')?? _noText;
+    return httpMessage('databaseError');
   }
 
   static String get userNameOrPasswordIncorrect {
-    return _getContext().tInMap('httpCodes', 'userNameOrPasswordIncorrect')?? _noText;
+    return httpMessage('userNameOrPasswordIncorrect');
   }
 
   static String get errorOccurredInSubmittedParameters {
-    return _getContext().tInMap('httpCodes', 'errorOccurredInSubmittedParameters')?? _noText;
+    return httpMessage('errorOccurredInSubmittedParameters');
   }
 
   static String get dataNotFound {
-    return _getContext().tInMap('httpCodes', 'dataNotFound')?? _noText;
+    return httpMessage('dataNotFound');
   }
 
   static String get thisRequestNotDefined {
-    return _getContext().tInMap('httpCodes', 'thisRequestNotDefined')?? _noText;
+    return httpMessage('thisRequestNotDefined');
   }
 
   static String get informationWasSend {
-    return _getContext().tInMap('httpCodes', 'informationWasSend')?? _noText;
+    return httpMessage('informationWasSend');
   }
 
   static String get errorUploadingData {
-    return _getContext().tInMap('httpCodes', 'errorUploadingData')?? _noText;
+    return httpMessage('errorUploadingData');
   }
 
   static String get netConnectionIsDisconnect {
-    return _getContext().tInMap('httpCodes', 'netConnectionIsDisconnect')?? _noText;
+    return httpMessage('netConnectionIsDisconnect');
   }
 
   static String get errorCommunicatingServer {
-    return _getContext().tInMap('httpCodes', 'errorCommunicatingServer')?? _noText;
+    return httpMessage('errorCommunicatingServer');
   }
 
   static String get serverNotRespondProperly {
-    return _getContext().tInMap('httpCodes', 'serverNotRespondProperly')?? _noText;
+    return httpMessage('serverNotRespondProperly');
   }
 
   static String get accountIsBlock {
-    return _getContext().tInMap('httpCodes', 'accountIsBlock')?? _noText;
+    return httpMessage('accountIsBlock');
   }
 
   static String get operationCannotBePerformed {
-    return _getContext().tInMap('operationSection', 'operationCannotBePerformed')?? _noText;
+    return operationMessage('operationCannotBePerformed');
   }
 
   static String get operationSuccess {
-    return _getContext().tInMap('operationSection', 'successOperation')?? _noText;
+    return operationMessage('successOperation');
   }
 
   static String get operationFailed {
-    return _getContext().tInMap('operationSection', 'operationFailed')?? _noText;
+    return operationMessage('operationFailed');
   }
 
   static String get operationFailedTryAgain {
-    return _getContext().tInMap('operationSection','operationFailedTryAgain')?? _noText;
+    return operationMessage('operationFailedTryAgain');
   }
 
   static String get operationCanceled {
-    return _getContext().tInMap('operationSection', 'operationCanceled')?? _noText;
+    return operationMessage('operationCanceled');
   }
 
   static String get sorryYouDoNotHaveAccess {
@@ -306,6 +306,31 @@ class AppMessages {
 
   static String get thereAreNoResults {
     return _getContext().tC('thereAreNoResults')?? _noText;
+  }
+  
+  static String get requestDataIsNotJson {
+    return 'request data is not a json';
+  }
+  
+  static String get requestKeyNotExist {
+    return "'request' key not exist";
+  }
+
+  static String get unKnow {
+    return _getContext().t('unknown')?? _noText;
+  }
+
+  static String get open {
+    return _getContext().t('open')?? _noText;
+  }
+
+  static String get close {
+    return _getContext().t('close')?? _noText;
+  }
+
+  ///-----------------------------------------------------------------------------------
+  static String get appName {
+    return 'وسعت ذهن';
   }
 
   static String get profileTitle {
@@ -320,22 +345,8 @@ class AppMessages {
     return 'لطفا یک سیم کارت انتخاب کنید';//todo
   }
 
-  static String get unKnow {
-    return 'نا مشخص';//todo
-  }
-
   static String get bePatient {
     return 'صبور باشید';
-  }
-
-  //============================================================================
-
-  static String get open {
-    return 'باز';
-  }
-
-  static String get close {
-    return 'بسته';
   }
 
   static String get lastUpdate {

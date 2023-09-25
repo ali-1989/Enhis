@@ -68,6 +68,16 @@ class AppSnack {
     return AppDecoration.buildBanner(message);
   }
   ///---------------------------------------------------------------------------------------------------------
+  static void showSnack(BuildContext context, Widget message){
+    final snack = buildSnackBar('', replaceContent: message);
+    showFlutterSnackBar(snack);
+  }
+
+  static void showSnackText(BuildContext context, String message){
+    final snack = buildSnackBar(message);
+    showFlutterSnackBar(snack);
+  }
+
   static void showError(BuildContext context, String message){
     final v = Row(
       children: [

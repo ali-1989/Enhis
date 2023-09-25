@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:app/tools/route_tools.dart';
 import 'package:flutter/material.dart';
 
 import 'package:iris_notifier/iris_notifier.dart';
@@ -15,6 +14,7 @@ import 'package:app/structures/models/place_model.dart';
 import 'package:app/tools/app/app_dialog_iris.dart';
 import 'package:app/tools/app/app_snack.dart';
 import 'package:app/tools/app/app_toast.dart';
+import 'package:app/tools/route_tools.dart';
 
 class SmsManager {
   static StreamSubscription? smsListenerSubscription;
