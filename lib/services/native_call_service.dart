@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:iris_tools/api/system.dart';
-import 'package:iris_tools/api/tools.dart';
 import 'package:iris_tools/plugins/javaBridge.dart';
 
 import 'package:app/tools/log_tools.dart';

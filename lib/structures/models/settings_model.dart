@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:iris_tools/dateSection/calendarTools.dart';
 
-import 'package:app/managers/font_manager.dart';
 import 'package:app/system/keys.dart';
-import 'package:app/tools/app/app_themes.dart';
 import 'package:app/tools/date_tools.dart';
 
 class SettingsModel {
@@ -12,6 +10,12 @@ class SettingsModel {
   static const Locale defaultAppLocale = Locale('fa', 'IR');
   static const CalendarType defaultCalendarType = CalendarType.solarHijri;
   static final defaultDateFormat = DateFormat.yyyyMmDd.format();
+
+  /// must for any record ,create a file in assets/locales directory
+  static List<Locale> locals = [
+    SettingsModel.defaultAppLocale,
+    //const Locale('fa', 'IR'),
+  ];
 
   String? lastUserId;
   Locale appLocale = defaultAppLocale;
@@ -57,8 +61,6 @@ class SettingsModel {
       appNumberLock = map[Keys.setting$numberLock];
       lastToBackgroundTs = map[Keys.setting$toBackgroundTs];
     }
-
-    _prepareSettings();
   }
 
   Map<String, dynamic> toMap(){
@@ -106,22 +108,6 @@ class SettingsModel {
       unLockByNumber = other.unLockByNumber;
       appNumberLock = other.appNumberLock;
       lastToBackgroundTs = other.lastToBackgroundTs;
-    }
-  }
-
-  void _prepareSettings() {
-    //final locale = System.getCurrentLocalizationsLocale(context);
-    colorTheme ??= AppThemes.instance.currentTheme.themeName;
-
-    FontManager.fetchFontThemeData(appLocale.languageCode);
-
-    if(AppThemes.instance.currentTheme.themeName != colorTheme) {
-      for (var t in AppThemes.instance.themeList.entries) {
-        if (t.key == colorTheme) {
-          AppThemes.applyTheme(t.value);
-          break;
-        }
-      }
     }
   }
 

@@ -138,13 +138,13 @@ class LockService {
   }
 
   static void _onPause({data}) async {
-    SettingsManager.localSettings.lastToBackgroundTs = DateHelper.getNowTimestamp();
-    await SettingsManager.saveSettings();
+    SettingsManager.localSettings.lastToBackgroundTs = DateHelper.nowMinusUtcOffsetToTimestamp();
+    await SettingsManager.saveLocalSettingsAndNotify();
   }
 
   static void _onDetach({data}) async {
-    SettingsManager.localSettings.lastToBackgroundTs = DateHelper.getNowTimestamp();
-    await SettingsManager.saveSettings();
+    SettingsManager.localSettings.lastToBackgroundTs = DateHelper.nowMinusUtcOffsetToTimestamp();
+    await SettingsManager.saveLocalSettingsAndNotify();
   }
 
   static void _onResume({data}) async {
@@ -165,7 +165,7 @@ class LockService {
     final lastForegroundTs = SettingsManager.localSettings.lastToBackgroundTs;
 
     if (lastForegroundTs != null) {
-      var lastForeground = DateHelper.tsToSystemDate(lastForegroundTs)!;
+      var lastForeground = DateHelper.timestampToSystemToLocale(lastForegroundTs)!;
       lastForeground = lastForeground.add(const Duration(seconds: 30));
 
       if (lastForeground.isBefore(DateTime.now())) {
@@ -178,7 +178,7 @@ class LockService {
 
   static void showLockScreen(){
     SettingsManager.localSettings.lastToBackgroundTs = null;
-    SettingsManager.saveSettings();
+    SettingsManager.saveLocalSettingsAndNotify();
 
     if(SettingsManager.localSettings.unLockByBiometric){
       authenticate().then((value) {

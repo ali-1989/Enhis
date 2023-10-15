@@ -79,7 +79,7 @@ class PlaceModel {
     adminPhoneNumber = map['adminPhoneNumber'];
     currentPassword = map['currentPassword'];
     newPassword = map['newPassword'];
-    lastUpdateTimeUTC = DateHelper.tsToSystemDate(map['lastUpdateTimeUTC']);
+    lastUpdateTimeUTC = DateHelper.timestampToSystem(map['lastUpdateTimeUTC']);
     deviceStatus = DeviceStatus.from(map['deviceStatus']);
     notifyToContactStatus = NotifyToContactStatus.from(map['notifyToContactStatus']);
     batteryCharge = map['batteryCharge'];
@@ -97,7 +97,7 @@ class PlaceModel {
     sirenDurationMinutes = map['sirenDurationMinutes'];
     smsCountReport = map['smsCountReport'];
     batteryReportDuration = map['batteryReportDuration'];
-    warrantyEndTime = DateHelper.tsToSystemDate(map['warrantyEndTime']);
+    warrantyEndTime = DateHelper.timestampToSystem(map['warrantyEndTime']);
     zones = ZoneModel.mapToList(map['zones']);
     relays = RelayModel.mapToList(map['relays']);
     contacts = ContactModel.mapToList(map['contacts']);
@@ -131,7 +131,7 @@ class PlaceModel {
     map['sirenDurationMinutes'] = sirenDurationMinutes;
     map['smsCountReport'] = smsCountReport;
     map['batteryReportDuration'] = batteryReportDuration;
-    map['warrantyEndTime'] = DateHelper.toTimestampNullable(warrantyEndTime, isLocal: true);
+    map['warrantyEndTime'] = DateHelper.toTimestampNullable(warrantyEndTime, withTZ: false);
     map['zones'] = zones.map((e) => e.toMap()).toList();
     map['relays'] = relays.map((e) => e.toMap()).toList();
     map['contacts'] = contacts.map((e) => e.toMap()).toList();
@@ -164,7 +164,7 @@ class PlaceModel {
       return Colors.red;
     }
 
-    final dif = DateHelper.difference(lastUpdateTimeUTC!, DateHelper.getNowToUtc());
+    final dif = DateHelper.difference(lastUpdateTimeUTC!, DateHelper.nowMinusUtcOffset());
 
     if(dif.inHours < 1){
       return Colors.green;
@@ -264,11 +264,11 @@ class PlaceModel {
 
     Duration dif;
 
-    if(DateHelper.compareDates(warrantyEndTime!, DateHelper.getNow()) > 0){
-      dif = DateHelper.difference(DateHelper.getNow(), warrantyEndTime!);
+    if(DateHelper.compareDates(warrantyEndTime!, DateHelper.now()) > 0){
+      dif = DateHelper.difference(DateHelper.now(), warrantyEndTime!);
     }
     else {
-      dif = DateHelper.difference(warrantyEndTime!, DateHelper.getNow());
+      dif = DateHelper.difference(warrantyEndTime!, DateHelper.now());
     }
 
     int x = 0;
@@ -381,7 +381,7 @@ class PlaceModel {
 
     /// update info
     else if(txt.endsWith(';')) {
-      lastUpdateTimeUTC = DateHelper.getNowToUtc();
+      lastUpdateTimeUTC = DateHelper.nowMinusUtcOffset();
       final splits = txt.split(',');
 
       deviceStatus = DeviceStatus.from(MathHelper.clearToInt(splits[0]));

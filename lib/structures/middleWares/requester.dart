@@ -11,14 +11,14 @@ import 'package:app/system/keys.dart';
 import 'package:app/tools/app/app_http_dio.dart';
 import 'package:app/tools/device_info_tools.dart';
 
-///=============================================================================================
+///=============================================================================
 enum MethodType {
   post,
   get,
   put,
   delete,
 }
-///=============================================================================================
+///=============================================================================
 class Requester {
   Map<String, dynamic>? _bodyJs;
   MethodType methodType = MethodType.post;
@@ -50,7 +50,7 @@ class Requester {
   void _prepareHttp(){
     _http = HttpItem();
     _http.setResponseIsPlain();
-    _http.fullUrl = ApiManager.graphApi;
+    _http.fullUrl = ApiManager.serverApi;
   }
 
   void prepareUrl({String? fullUrl, String? pathUrl}){
@@ -61,7 +61,7 @@ class Requester {
 
     pathUrl ??= '';
 
-    _http.fullUrl = ApiManager.graphApi + pathUrl;
+    _http.fullUrl = ApiManager.serverApi + pathUrl;
   }
 
   void request([BuildContext? context, bool promptErrors = true]){
@@ -116,14 +116,6 @@ class Requester {
         var request = '';
 
         if(_http.method != 'GET') {
-          /*if (_httpRequester.requestOptions?.data is String){
-            final str = _httpRequester.requestOptions!.data as String;
-
-            if(str.contains(Keys.requestZone)) {
-              int start = str.indexOf(Keys.requestZone)+15;
-            }
-          }todo.*/
-	    
           if (_http.body is String) {
             request = _http.body as String;
           }
@@ -140,7 +132,7 @@ class Requester {
           request = 'GET';
         }
 
-        Tools.verboseLog('@@@@@ API CALLED >>> url:[$url]\n\trequest:[$request]\n\tresponse ====>>  status:[${_httpRequester.responseData?.statusCode}] data:$val \n');
+        Tools.verboseLog('@@@@@ API CALLED >>> url:[$url]\n\nrequest:[$request]\n\nresponse ====>>  status:[${_httpRequester.responseData?.statusCode}] data:$val \n');
       }
 
       /*if(_httpRequester.responseData?.statusCode == 401 && SessionService.getLastLoginUser() != null){
@@ -207,7 +199,7 @@ class Requester {
     AppHttpDio.cancelAndClose(_httpRequester);
   }
 }
-///================================================================================================
+///=============================================================================
 class HttpRequestEvents {
   Future Function(HttpRequester)? onAnyState;
   Future Function(HttpRequester requester, Response? response)? onFailState;

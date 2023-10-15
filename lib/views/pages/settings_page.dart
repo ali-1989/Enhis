@@ -198,7 +198,7 @@ class _SettingsPageState extends StateSuper<SettingsPage> {
                       else {
                         SettingsManager.localSettings.unLockByNumber = false;
                         SettingsManager.localSettings.appNumberLock = null;
-                        SettingsManager.saveSettings(context: context);
+                        SettingsManager.saveLocalSettingsAndNotify();
                         assistCtr.updateHead();
                       }
                     }
@@ -234,7 +234,7 @@ class _SettingsPageState extends StateSuper<SettingsPage> {
                           }
                           else {
                             SettingsManager.localSettings.unLockByBiometric = false;
-                            SettingsManager.saveSettings(context: context);
+                            SettingsManager.saveLocalSettingsAndNotify();
                             assistCtr.updateHead();
                           }
                         }
@@ -279,7 +279,7 @@ class _SettingsPageState extends StateSuper<SettingsPage> {
                 description: const Text('قبل از ارسال پیامک، تایید گرفته شود'),
                 onChanged: (v){
                   SettingsManager.localSettings.askSndSmsEveryTime = v;
-                  SettingsManager.saveSettings(context: context);
+                  SettingsManager.saveLocalSettingsAndNotify();
                   assistCtr.updateHead();
                 }
             ),
@@ -320,7 +320,7 @@ class _SettingsPageState extends StateSuper<SettingsPage> {
                                 isDense: true,
                                 onChanged: (sim){
                                   SettingsManager.localSettings.defaultSimSlot = sim?.slot?? 1;
-                                  SettingsManager.saveSettings(context: context);
+                                  SettingsManager.saveLocalSettingsAndNotify();
                                   assistCtr.updateHead();
                                 }
                             ),
@@ -356,7 +356,7 @@ class _SettingsPageState extends StateSuper<SettingsPage> {
     final page = NumberLockScreen(
       onNewPassword: (p){
         SettingsManager.localSettings.appNumberLock = p;
-        SettingsManager.saveSettings(context: context);
+        SettingsManager.saveLocalSettingsAndNotify();
 
       },
       createCodeDescription: 'لطفا یک رمز وارد کنید',
@@ -370,7 +370,7 @@ class _SettingsPageState extends StateSuper<SettingsPage> {
       LockService.init();
 
       if(mounted) {
-        SettingsManager.saveSettings(context: context);
+        SettingsManager.saveLocalSettingsAndNotify();
         assistCtr.updateHead();
       }
     }
@@ -400,7 +400,7 @@ class _SettingsPageState extends StateSuper<SettingsPage> {
 
     SettingsManager.localSettings.unLockByBiometric = true;
     LockService.init();
-    SettingsManager.saveSettings();
+    SettingsManager.saveLocalSettingsAndNotify();
     assistCtr.updateHead();
   }
 

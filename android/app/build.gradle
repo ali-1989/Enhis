@@ -40,11 +40,12 @@ if (targetSdkVersionVal == null) {
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+//apply plugin: 'com.google.gms.google-services'
 
 android {
     namespace "ir.iris.enhis"
     compileSdkVersion compileSdkVersionVal.toInteger()
-    //ndkVersion flutter.ndkVersion
+    ndkVersion flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -127,6 +128,6 @@ flutter {
 }
 
 dependencies {
-    //implementation platform('com.google.firebase:firebase-bom:31.2.2')
+    //implementation platform('com.google.firebase:firebase-bom:32.3.1')
     //implementation fileTree(dir: 'E:\\Programming\\.gradle\\caches\\modules-2\\files-2.1\\io.flutter\\flutter_embedding_debug\\1.0.0-d44b5a94c976fbb65815374f61ab5392a220b084\\5ad0fb193f143c1352aef2c48ca10a99b3eadd1e', include: ['*.aar', '*.jar'], exclude: [])
 }

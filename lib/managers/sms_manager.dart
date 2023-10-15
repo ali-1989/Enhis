@@ -121,7 +121,7 @@ class SmsManager {
       return false;
     }
 
-    _lastSendSmsTime = DateHelper.getNow();
+    _lastSendSmsTime = DateHelper.now();
     _startTimer();
 
     late StreamSubscription subscribe;

@@ -6,7 +6,6 @@ import 'package:iris_tools/dateSection/dateHelper.dart';
 import 'package:app/structures/enums/app_events.dart';
 import 'package:app/structures/models/user_model.dart';
 import 'package:app/tools/app/app_db.dart';
-import 'package:app/tools/app/app_locale.dart';
 import '/managers/settings_manager.dart';
 import '/system/extensions.dart';
 import '/system/keys.dart';
@@ -76,7 +75,7 @@ class SessionService {
 		_lastLoginUser = newUser;
 		SettingsManager.localSettings.lastUserId = newUser?.userId;
 
-		SettingsManager.saveSettings();
+		SettingsManager.saveLocalSettingsAndNotify();
 	}
 
 	static Future<UserModel?> login$newProfileData(Map json) async {
@@ -90,7 +89,7 @@ class SessionService {
 
 		//newUser.token?.refreshToken = json['refreshToken'];
 
-		newUser.loginDate = DateHelper.getNow().toUtc();
+		newUser.loginDate = DateHelper.now().toUtc();
 
 		final wasLoginUser = getExistLoginUserById(userId);
 		var oldDbUser = wasLoginUser;

@@ -33,7 +33,7 @@ class SplashPage extends StatefulWidget {
   @override
   SplashPageState createState() => SplashPageState();
 }
-///======================================================================================================
+///=============================================================================
 class SplashPageState extends StateSuper<SplashPage> {
   Timer? timer;
 
@@ -75,7 +75,7 @@ class SplashPageState extends StateSuper<SplashPage> {
         SplashManager.mustWaitToSplashTimer = false;
         timer = null;
 
-        if(context.mounted){
+        if(mounted){
           callState();
         }
       });
@@ -90,17 +90,16 @@ class SplashPageState extends StateSuper<SplashPage> {
     SplashManager.isFirstInitOk = true;
 
     await appInitial(context);
-    final settingsLoad = SettingsManager.loadSettings();
+    SettingsManager.init();
+    appLazyInit();
+    await PlaceManager.fetchPlaces();
+    await VersionManager.checkVersionOnLaunch();
+    connectToServer();
 
-    if (settingsLoad) {
-      appLazyInit();
-      await PlaceManager.fetchPlaces();
-      await VersionManager.checkVersionOnLaunch();
-      connectToServer();
+    SplashManager.isInLoadingSettings = false;
+    AppThemes.instance.textDirection = AppLocale.detectLocaleDirection(SettingsManager.localSettings.appLocale);
 
-      SplashManager.isInLoadingSettings = false;
-      AppBroadcast.reBuildMaterialBySetTheme();
-    }
+    AppBroadcast.reBuildMaterialBySetTheme();
   }
 
   void connectToServer() async {
@@ -133,7 +132,7 @@ class SplashPageState extends StateSuper<SplashPage> {
     try {
       await AppDB.init();
       AppThemes.init();
-      await AppLocale.init();
+      await AppLocale.setFallBack();
       await DeviceInfoTools.prepareDeviceInfo();
       await DeviceInfoTools.prepareDeviceId();
       TrustSsl.acceptBadCertificate();
@@ -180,11 +179,11 @@ class SplashPageState extends StateSuper<SplashPage> {
 
   static Future<void> _lazyInitCommands() async {
     try {
+      ApplicationSignal.start();
       WakeupService.init();
       NativeCallService.init();
-
-      ApplicationSignal.start();
-      SettingsManager.init();
+      NativeCallService.assistanceBridge?.invokeMethod('setAppIsRun');
+      
       LockService.init();
 
 
