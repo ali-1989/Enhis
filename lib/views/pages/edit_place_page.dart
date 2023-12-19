@@ -11,7 +11,6 @@ import 'package:iris_tools/api/helpers/textHelper.dart';
 import 'package:iris_tools/api/managers/assetManager.dart';
 import 'package:iris_tools/api/system.dart';
 import 'package:iris_tools/dateSection/dateHelper.dart';
-import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/text/title_info.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
@@ -40,9 +39,9 @@ class EditPlacePage extends StatefulWidget {
   final PlaceModel place;
 
   const EditPlacePage({
-    Key? key,
+    super.key,
     required this.place,
-  }) : super(key: key);
+  });
 
   @override
   State<EditPlacePage> createState() => _EditPlacePageState();
@@ -72,15 +71,10 @@ class _EditPlacePageState extends StateSuper<EditPlacePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Assist(
-        controller: assistCtr,
-        builder: (context, ctr, data) {
-          return Scaffold(
-            body: SafeArea(
-                child: buildBody()
-            ),
-          );
-        }
+    return Scaffold(
+      body: SafeArea(
+          child: buildBody()
+      ),
     );
   }
 
@@ -825,7 +819,7 @@ class _EditPlacePageState extends StateSuper<EditPlacePage> {
 
   void saveAndNotify() {
     PlaceManager.updatePlaceToDb(widget.place);
-    assistCtr.updateHead();
+    callState();
   }
 
   void onDeleteDeviceClick() async {
@@ -855,7 +849,7 @@ class _EditPlacePageState extends StateSuper<EditPlacePage> {
     if(send){
       widget.place.simLanguage = index;
       PlaceManager.updatePlaceToDb(widget.place);
-      assistCtr.updateHead();
+      callState();
     }
   }
 
@@ -869,7 +863,7 @@ class _EditPlacePageState extends StateSuper<EditPlacePage> {
     if(send){
       widget.place.notifyOnDisPower = index;
       PlaceManager.updatePlaceToDb(widget.place);
-      assistCtr.updateHead();
+      callState();
     }
   }
 
@@ -879,7 +873,7 @@ class _EditPlacePageState extends StateSuper<EditPlacePage> {
     if(sms){
       widget.place.notifyToContactStatus = state;
       PlaceManager.updatePlaceToDb(widget.place);
-      assistCtr.updateHead();
+      callState();
     }
   }
 
@@ -913,7 +907,7 @@ class _EditPlacePageState extends StateSuper<EditPlacePage> {
           FocusHelper.hideKeyboardByUnFocusRoot();
           widget.place.supportName = txt.trim();
           PlaceManager.updatePlaceToDb(widget.place);
-          assistCtr.updateHead();
+          callState();
           AppNavigator.pop(ctx);
         }
     );
@@ -929,7 +923,7 @@ class _EditPlacePageState extends StateSuper<EditPlacePage> {
           FocusHelper.hideKeyboardByUnFocusRoot();
           widget.place.supportPhoneNumber = txt.trim();
           PlaceManager.updatePlaceToDb(widget.place);
-          assistCtr.updateHead();
+          callState();
           AppNavigator.pop(ctx);
         }
     );
@@ -1003,7 +997,7 @@ class _EditPlacePageState extends StateSuper<EditPlacePage> {
     if(send){
       widget.place.sirenDurationMinutes = minutes;
       PlaceManager.updatePlaceToDb(widget.place, notify: false);
-      assistCtr.updateHead();
+      callState();
     }
   }
 
@@ -1039,7 +1033,7 @@ class _EditPlacePageState extends StateSuper<EditPlacePage> {
     if(send){
       widget.place.smsCountReport = count;
       PlaceManager.updatePlaceToDb(widget.place, notify: false);
-      assistCtr.updateHead();
+      callState();
     }
   }
 
@@ -1075,7 +1069,7 @@ class _EditPlacePageState extends StateSuper<EditPlacePage> {
     if(send){
       widget.place.batteryReportDuration = minutes;
       PlaceManager.updatePlaceToDb(widget.place, notify: false);
-      assistCtr.updateHead();
+      callState();
     }
   }
 

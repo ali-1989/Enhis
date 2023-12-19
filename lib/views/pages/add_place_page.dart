@@ -6,7 +6,6 @@ import 'package:iris_tools/api/helpers/focusHelper.dart';
 import 'package:iris_tools/api/helpers/inputFormatter.dart';
 import 'package:iris_tools/api/helpers/textHelper.dart';
 import 'package:iris_tools/api/system.dart';
-import 'package:iris_tools/modules/stateManagers/assist.dart';
 
 import 'package:app/managers/place_manager.dart';
 import 'package:app/structures/abstract/state_super.dart';
@@ -55,7 +54,7 @@ class _AddPlacePageState extends StateSuper<AddPlacePage> {
     );
 
     currentPasswordCtr.addListener(() {
-      assistCtr.updateHead();
+      callState();
     });
   }
 
@@ -72,15 +71,10 @@ class _AddPlacePageState extends StateSuper<AddPlacePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Assist(
-        controller: assistCtr,
-        builder: (context, ctr, data) {
-          return Scaffold(
-            body: SafeArea(
-                child: buildBody()
-            ),
-          );
-        }
+    return Scaffold(
+      body: SafeArea(
+          child: buildBody()
+      ),
     );
   }
 

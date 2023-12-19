@@ -11,7 +11,6 @@ import 'package:iris_tools/api/helpers/textHelper.dart';
 import 'package:iris_tools/api/managers/assetManager.dart';
 import 'package:iris_tools/api/system.dart';
 import 'package:iris_tools/features/overlayDialog.dart';
-import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/circle_container.dart';
 import 'package:iris_tools/widgets/custom_card.dart';
 import 'package:showcaseview/showcaseview.dart';
@@ -54,8 +53,8 @@ import 'package:app/views/pages/settings_page.dart';
 class HomePage extends StatefulWidget {
 
   const HomePage({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -103,15 +102,10 @@ class _HomePageState extends StateSuper<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Assist(
-        controller: assistCtr,
-        builder: (context, ctr, data) {
-          return Scaffold(
-            body: SafeArea(
-                child: buildBody()
-            ),
-          );
-        }
+    return Scaffold(
+      body: SafeArea(
+          child: buildBody()
+      ),
     );
   }
 
@@ -383,7 +377,7 @@ class _HomePageState extends StateSuper<HomePage> {
 
                 GestureDetector(
                     onTap: onDeviceStatusHelpClick,
-                    child: Icon(AppIcons.questionMarkCircle, size: 25*hr, color: Colors.orange)
+                    child: Icon(AppIcons.questionMarkCircle, size: 25*hRel, color: Colors.orange)
                 ),
               ],
             ),
@@ -639,7 +633,7 @@ class _HomePageState extends StateSuper<HomePage> {
 
                   GestureDetector(
                       onTap: onSimCardHelpClick,
-                      child: Icon(AppIcons.questionMarkCircle, size: 25*hr, color: Colors.orange)
+                      child: Icon(AppIcons.questionMarkCircle, size: 25*hRel, color: Colors.orange)
                   ),
                 ],
               ),
@@ -774,7 +768,7 @@ class _HomePageState extends StateSuper<HomePage> {
                                         child: Column(
                                           children: [
                                             Text(currentPlace!.relays[0].duration.toString().split('.')[0]).fsR(-2.5),
-                                            Text('تغییر').color(Colors.blue).fsR(-1)
+                                            const Text('تغییر').color(Colors.blue).fsR(-1)
                                           ],
                                         ),
                                       ),
@@ -861,7 +855,7 @@ class _HomePageState extends StateSuper<HomePage> {
                                       child: Column(
                                         children: [
                                           Text(currentPlace!.relays[1].duration.toString().split('.')[0]).fsR(-2.5),
-                                          Text('تغییر').color(Colors.blue).fsR(-1)
+                                          const Text('تغییر').color(Colors.blue).fsR(-1)
                                         ],
                                       ),
                                     ),
@@ -1236,7 +1230,7 @@ class _HomePageState extends StateSuper<HomePage> {
     if(send){
       itm.isActive = isActive;
       PlaceManager.updatePlaceToDb(currentPlace!);
-      //assistCtr.updateHead();
+      //callState();
     }
   }
 
@@ -1329,7 +1323,7 @@ class _HomePageState extends StateSuper<HomePage> {
 
           currentPlace = itm;
           PlaceManager.saveFavoritePlace(currentPlace!.id);
-          assistCtr.updateHead();
+          callState();
           for(final x in animList) {
             try{
               x.reset();
@@ -1403,7 +1397,7 @@ class _HomePageState extends StateSuper<HomePage> {
       currentPlace = null;
     }
 
-    assistCtr.updateHead();
+    callState();
   }
 
   void onAddNewPlaceClick() {
@@ -1420,7 +1414,7 @@ class _HomePageState extends StateSuper<HomePage> {
 
       if(!isShowRelayCase) {
         AppDB.setReplaceKv(Keys.relayCaseIsShow, true);
-        assistCtr.updateHead();
+        callState();
         ShowCaseWidget.of(context).startShowCase([relayCaseKey1]);
         relaySnapController.snapToPosition(openPosition);
       }
@@ -1480,7 +1474,7 @@ class _HomePageState extends StateSuper<HomePage> {
       if(sms){
         zm.status = selectedZone;
         PlaceManager.updatePlaceToDb(place);
-        //assistCtr.updateHead();
+        //callState();
       }
     }
   }
@@ -1498,7 +1492,6 @@ class _HomePageState extends StateSuper<HomePage> {
   }
 
   void onChangeDeviceStatusClick(int index) async {
-    print('@@@@@@@@@@1  ${currentPlace?.deviceStatus}');
     int num = 11;
     var ds = DeviceStatus.active;
 
@@ -1525,7 +1518,7 @@ class _HomePageState extends StateSuper<HomePage> {
     if(send){
       currentPlace!.deviceStatus = ds;
       PlaceManager.updatePlaceToDb(currentPlace!);
-      //assistCtr.updateHead();
+      //callState();
     }
   }
 

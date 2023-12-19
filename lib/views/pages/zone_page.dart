@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:iris_notifier/iris_notifier.dart';
 import 'package:iris_tools/api/helpers/focusHelper.dart';
 import 'package:iris_tools/api/helpers/textHelper.dart';
-import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/custom_card.dart';
 import 'package:iris_tools/widgets/optionsRow/checkRow.dart';
 import 'package:toggle_switch/toggle_switch.dart';
@@ -49,15 +48,10 @@ class _ZonePageState extends StateSuper<ZonePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Assist(
-        controller: assistCtr,
-        builder: (context, ctr, data) {
-          return Scaffold(
-            body: SafeArea(
-                child: buildBody()
-            ),
-          );
-        }
+    return Scaffold(
+      body: SafeArea(
+          child: buildBody()
+      ),
     );
   }
 
@@ -195,7 +189,7 @@ class _ZonePageState extends StateSuper<ZonePage> {
   }
 
   void eventListener({data}) {
-    assistCtr.updateHead();
+    callState();
   }
 
   void onCloseZone(ZoneModel zone, bool state) async {

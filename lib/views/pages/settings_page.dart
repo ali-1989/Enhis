@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:iris_tools/api/helpers/open_helper.dart';
 import 'package:iris_tools/features/overlayDialog.dart';
-import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/optionsRow/checkRow.dart';
 import 'package:sms_advanced/sms_advanced.dart';
 
@@ -22,8 +21,8 @@ import 'package:app/views/pages/add_place_page.dart';
 class SettingsPage extends StatefulWidget {
 
   const SettingsPage({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
@@ -40,13 +39,13 @@ class _SettingsPageState extends StateSuper<SettingsPage> {
     addPostOrCall(fn:(){
       SmsService.getSimCards().then((value){
         simCards = value;
-        assistCtr.updateHead();
+        callState();
       });
 
       LockService.hasBiometrics().then((value){
         if(value){
           canUseBiometric = true;
-          assistCtr.updateHead();
+          callState();
         }
       });
     });
@@ -54,15 +53,10 @@ class _SettingsPageState extends StateSuper<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Assist(
-        controller: assistCtr,
-        builder: (context, ctr, data) {
-          return Scaffold(
-            body: SafeArea(
-                child: buildBody()
-            ),
-          );
-        }
+    return Scaffold(
+      body: SafeArea(
+          child: buildBody()
+      ),
     );
   }
 
@@ -199,7 +193,7 @@ class _SettingsPageState extends StateSuper<SettingsPage> {
                         SettingsManager.localSettings.unLockByNumber = false;
                         SettingsManager.localSettings.appNumberLock = null;
                         SettingsManager.saveLocalSettingsAndNotify();
-                        assistCtr.updateHead();
+                        callState();
                       }
                     }
                 ),
@@ -235,7 +229,7 @@ class _SettingsPageState extends StateSuper<SettingsPage> {
                           else {
                             SettingsManager.localSettings.unLockByBiometric = false;
                             SettingsManager.saveLocalSettingsAndNotify();
-                            assistCtr.updateHead();
+                            callState();
                           }
                         }
                     ),
@@ -280,7 +274,7 @@ class _SettingsPageState extends StateSuper<SettingsPage> {
                 onChanged: (v){
                   SettingsManager.localSettings.askSndSmsEveryTime = v;
                   SettingsManager.saveLocalSettingsAndNotify();
-                  assistCtr.updateHead();
+                  callState();
                 }
             ),
 
@@ -321,7 +315,7 @@ class _SettingsPageState extends StateSuper<SettingsPage> {
                                 onChanged: (sim){
                                   SettingsManager.localSettings.defaultSimSlot = sim?.slot?? 1;
                                   SettingsManager.saveLocalSettingsAndNotify();
-                                  assistCtr.updateHead();
+                                  callState();
                                 }
                             ),
                           ),
@@ -371,7 +365,7 @@ class _SettingsPageState extends StateSuper<SettingsPage> {
 
       if(mounted) {
         SettingsManager.saveLocalSettingsAndNotify();
-        assistCtr.updateHead();
+        callState();
       }
     }
   }
@@ -401,7 +395,7 @@ class _SettingsPageState extends StateSuper<SettingsPage> {
     SettingsManager.localSettings.unLockByBiometric = true;
     LockService.init();
     SettingsManager.saveLocalSettingsAndNotify();
-    assistCtr.updateHead();
+    callState();
   }
 
   void onBiometricHelpClick(BuildContext anchor) {

@@ -5,7 +5,6 @@ import 'package:iris_notifier/iris_notifier.dart';
 import 'package:iris_tools/api/helpers/focusHelper.dart';
 import 'package:iris_tools/api/helpers/mathHelper.dart';
 import 'package:iris_tools/api/helpers/textHelper.dart';
-import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/optionsRow/checkRow.dart';
 import 'package:iris_tools/widgets/optionsRow/radioRow.dart';
 
@@ -25,14 +24,14 @@ class RelayPage extends StatefulWidget {
   final PlaceModel place;
 
   const RelayPage({
-    Key? key,
+    super.key,
     required this.place,
-  }) : super(key: key);
+  });
 
   @override
   State<RelayPage> createState() => _RelayPageState();
 }
-///==================================================================================
+///=============================================================================
 class _RelayPageState extends StateSuper<RelayPage> {
   TextEditingController r1HourCtr = TextEditingController();
   TextEditingController r1MinCtr = TextEditingController();
@@ -67,15 +66,10 @@ class _RelayPageState extends StateSuper<RelayPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Assist(
-        controller: assistCtr,
-        builder: (context, ctr, data) {
-          return Scaffold(
-            body: SafeArea(
-                child: buildBody()
-            ),
-          );
-        }
+    return Scaffold(
+      body: SafeArea(
+          child: buildBody()
+      ),
     );
   }
 
@@ -145,7 +139,7 @@ class _RelayPageState extends StateSuper<RelayPage> {
                 description: const Text('استفاده از رله 1').bold(),
                 onChanged: (v){
                   widget.place.useOfRelay1 = v;
-                  assistCtr.updateHead();
+                  callState();
                   PlaceManager.updatePlaceToDb(widget.place);
                 }
             ),
@@ -296,7 +290,7 @@ class _RelayPageState extends StateSuper<RelayPage> {
                 description: const Text('استفاده از رله 2').bold(),
                 onChanged: (v){
                   widget.place.useOfRelay2 = v;
-                  assistCtr.updateHead();
+                  callState();
                   PlaceManager.updatePlaceToDb(widget.place);
                 }
             ),
@@ -469,6 +463,6 @@ class _RelayPageState extends StateSuper<RelayPage> {
   }
 
   void eventListener({data}) {
-    assistCtr.updateHead();
+    callState();
   }
 }

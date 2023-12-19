@@ -43,7 +43,7 @@ class Requester {
     _bodyJs = js;
 
     if(js != null) {
-      DeviceInfoTools.attachDeviceInfo(_bodyJs!);
+      DeviceInfoTools.attachDeviceAndTokenInfo(_bodyJs!);
     }
   }
 
@@ -64,7 +64,7 @@ class Requester {
     _http.fullUrl = ApiManager.serverApi + pathUrl;
   }
 
-  void request([BuildContext? context, bool promptErrors = true]){
+  void request(){
     _http.debugMode = debug;
 
     switch(methodType){
@@ -110,7 +110,7 @@ class Requester {
       return null;
     });
 
-    f = f.then((val) async {
+    f = f.then((response) async {
       if(kDebugMode && !kIsWeb) {
         final url = _httpRequester.requestOptions?.uri;
         var request = '';
@@ -132,10 +132,18 @@ class Requester {
           request = 'GET';
         }
 
-        Tools.verboseLog('@@@@@ API CALLED >>> url:[$url]\n\nrequest:[$request]\n\nresponse ====>>  status:[${_httpRequester.responseData?.statusCode}] data:$val \n');
+        var pr = '>_._._._._._._.__._._._._._._._ API CALLED >>>'
+            '\nurl:[$url]'
+            '\n\nrequest:[$request]'
+            '\n\nresponse ====>>  status:[${_httpRequester.responseData?.statusCode}]'
+            '\ndata:$response'
+            '\n<_._._._._._._.__._._._._._._.__._._._._._._._ End';
+
+        Tools.verboseLog(pr);
       }
 
-      /*if(_httpRequester.responseData?.statusCode == 401 && SessionService.getLastLoginUser() != null){
+      /* refresh token
+       if(_httpRequester.responseData?.statusCode == 401 && SessionService.getLastLoginUser() != null){
         JwtService.stopRefreshService();
         final getNewToken = await JwtService.requestNewToken(SessionService.getLastLoginUser()!);
 
@@ -145,7 +153,7 @@ class Requester {
         }
         else {
           await httpRequestEvents.onAnyState?.call(_httpRequester);
-          await httpRequestEvents.onFailState?.call(_httpRequester, val);
+          await httpRequestEvents.onFailState?.call(_httpRequester, response);
         }
 
         return;
@@ -155,21 +163,22 @@ class Requester {
 
       if(!_httpRequester.isOk){
         if(debug){
-          Logger.L.logToScreen('>> Response receive, but is not ok | $val');
+          Logger.L.logToScreen('>> Response receive, but is not ok | $response');
         }
 
-        await httpRequestEvents.onFailState?.call(_httpRequester, val);
+        await httpRequestEvents.onFailState?.call(_httpRequester, response);
         return;
       }
 
+      //WebsocketService.connect();
       final Map? js = _httpRequester.getBodyAsJson();
 
       if (js == null) {
         if(debug){
-          Logger.L.logToScreen('>> Response receive, but is not json | $val');
+          Logger.L.logToScreen('>> Response receive, but is not json | $response');
         }
 
-        await httpRequestEvents.onFailState?.call(_httpRequester, val);
+        await httpRequestEvents.onFailState?.call(_httpRequester, response);
         return;
       }
 
@@ -188,7 +197,7 @@ class Requester {
         await httpRequestEvents.onStatusOk?.call(_httpRequester, js);
       }
       else {
-        await httpRequestEvents.onFailState?.call(_httpRequester, val);
+        await httpRequestEvents.onFailState?.call(_httpRequester, response);
       }
 
       return null;
@@ -200,12 +209,13 @@ class Requester {
   }
 }
 ///=============================================================================
+/// HttpTools.handler(RouteTools.getTopContext()!, req.getBodyAsJson()?? {});
 class HttpRequestEvents {
-  Future Function(HttpRequester)? onAnyState;
-  Future Function(HttpRequester requester, Response? response)? onFailState;
-  Future Function(HttpRequester)? onNetworkError;
-  Future Function(HttpRequester, Map)? manageResponse;
-  Future Function(HttpRequester, Map)? onStatusOk;
+  Future Function(HttpRequester req)? onAnyState;
+  Future Function(HttpRequester req, Response? response)? onFailState;
+  Future Function(HttpRequester req)? onNetworkError;
+  Future Function(HttpRequester req, Map response)? manageResponse;
+  Future Function(HttpRequester req, Map response)? onStatusOk;
   
   void clear(){
     onAnyState = null;

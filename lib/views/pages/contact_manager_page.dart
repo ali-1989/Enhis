@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:iris_notifier/iris_notifier.dart';
 import 'package:iris_tools/features/overlayDialog.dart';
-import 'package:iris_tools/modules/stateManagers/assist.dart';
 
 import 'package:app/managers/place_manager.dart';
 import 'package:app/managers/sms_manager.dart';
@@ -50,15 +49,10 @@ class _ContactManagerPageState extends StateSuper<ContactManagerPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Assist(
-        controller: assistCtr,
-        builder: (context, ctr, data) {
-          return Scaffold(
-            body: SafeArea(
-                child: buildBody()
-            ),
-          );
-        }
+    return Scaffold(
+      body: SafeArea(
+          child: buildBody()
+      ),
     );
   }
 
@@ -260,7 +254,7 @@ class _ContactManagerPageState extends StateSuper<ContactManagerPage> {
 
       widget.place.contacts.add(c);
       PlaceManager.updatePlaceToDb(widget.place);
-      assistCtr.updateHead();
+      callState();
     }
   }
 
@@ -276,7 +270,7 @@ class _ContactManagerPageState extends StateSuper<ContactManagerPage> {
 
   void listenToContactChange({data}){
     sort();
-    assistCtr.updateHead();
+    callState();
   }
 
   void onDeleteContactClick(ContactModel itm) async {
@@ -300,7 +294,7 @@ class _ContactManagerPageState extends StateSuper<ContactManagerPage> {
       widget.place.contacts.removeWhere((element) => element.order == cm.order);
       PlaceManager.updatePlaceToDb(widget.place);
       sort();
-      assistCtr.updateHead();
+      callState();
     }
   }
 
@@ -343,7 +337,7 @@ class _ContactManagerPageState extends StateSuper<ContactManagerPage> {
       contact.level = level;
       PlaceManager.updatePlaceToDb(widget.place);
 
-      assistCtr.updateHead();
+      callState();
     }
   }
 
@@ -355,7 +349,7 @@ class _ContactManagerPageState extends StateSuper<ContactManagerPage> {
       widget.place.contactCount = 0;
       PlaceManager.updatePlaceToDb(widget.place);
 
-      assistCtr.updateHead();
+      callState();
     }
   }
 }
