@@ -15,6 +15,7 @@ class AppDecoration {
   static Color mainColor = const Color(0xff444893);
   static Color secondColor = const Color(0xffd9dcff);
   static Color differentColor = const Color(0xFF65422d);
+  static Color redColor = const Color(0xffbe0000);
 
   static Color get dropDownBackground {
     return ColorHelper.changeHue(AppThemes.instance.currentTheme.accentColor);

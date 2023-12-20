@@ -427,7 +427,7 @@ class AppMessages {
   }
 
   static String get lastUpdate {
-    return 'آخرین بروز رسانی';
+    return ' بروز رسانی';//آخرین
   }
 
   static String get deviceStatus {
@@ -492,6 +492,14 @@ class AppMessages {
 
   static String get manage {
     return 'مدیریت';
+  }
+
+  static String get openState {
+    return 'باز';
+  }
+
+  static String get closeState {
+    return 'بسته';
   }
 
   static String get remoteManageDescription {

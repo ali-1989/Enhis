@@ -149,7 +149,7 @@ class PlaceModel {
 
   String getLastUpdateDate(){
     if(!hasUpdate()){
-      return AppMessages.needToUpdate;
+      return '--';//AppMessages.needToUpdate;
     }
 
     if(DateHelper.isToday(lastUpdateTimeUTC!)){
