@@ -1,10 +1,8 @@
 import 'package:app/views/components/emboss.dart';
 import 'package:flutter/material.dart';
 
-import 'package:animate_do/animate_do.dart';
 import 'package:iris_notifier/iris_notifier.dart';
 import 'package:iris_route/iris_route.dart';
-import 'package:iris_tools/api/helpers/colorHelper.dart';
 import 'package:iris_tools/api/helpers/fileHelper.dart';
 import 'package:iris_tools/api/helpers/focusHelper.dart';
 import 'package:iris_tools/api/helpers/open_helper.dart';
@@ -12,8 +10,10 @@ import 'package:iris_tools/api/helpers/textHelper.dart';
 import 'package:iris_tools/api/managers/assetManager.dart';
 import 'package:iris_tools/api/system.dart';
 import 'package:iris_tools/features/overlayDialog.dart';
+import 'package:iris_tools/widgets/border/keep_shadow_bound.dart';
 import 'package:iris_tools/widgets/circle_container.dart';
 import 'package:iris_tools/widgets/custom_card.dart';
+import 'package:iris_tools/widgets/overflow_touchable.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:snapping_sheet_2/snapping_sheet.dart';
 import 'package:toggle_switch/toggle_switch.dart';
@@ -60,15 +60,18 @@ class HomePage extends StatefulWidget {
   @override
   State<HomePage> createState() => _HomePageState();
 }
-///==================================================================================
+///=============================================================================
 class _HomePageState extends StateSuper<HomePage> {
   PlaceModel? currentPlace;
   Color cColor = AppDecoration.secondColor;
   final settingCaseKey = GlobalKey();
   final helpCaseKey = GlobalKey();
   final placeSettingCaseKey = GlobalKey();
+  final ScrollController scrollController = ScrollController();
+
   final reloadCaseKey = GlobalKey();
   final relayCaseKey1 = GlobalKey();
+  final listViewKey = GlobalKey();
   final Set<AnimationController> animList = {};
   SnappingSheetController relaySnapController = SnappingSheetController();
   final SnappingPosition closePosition = const SnappingPosition.factor(positionFactor: 1,
@@ -78,6 +81,7 @@ class _HomePageState extends StateSuper<HomePage> {
   final SnappingPosition openPosition = const SnappingPosition.factor(positionFactor: 0.5,
     grabbingContentOffset: GrabbingContentOffset.bottom,
   );
+
 
 
   @override
@@ -118,20 +122,17 @@ class _HomePageState extends StateSuper<HomePage> {
 
     return Stack(
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Column(
-            children: [
-              buildTopSection(),
+        Column(
+          children: [
+            buildTopSection(),
 
-              const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-              /// center section
-              Expanded(
-                  child: buildFrontPage()
-              ),
-            ],
-          ),
+            /// center section
+            Expanded(
+                child: buildFrontPage()
+            ),
+          ],
         ),
 
         Visibility(
@@ -173,8 +174,9 @@ class _HomePageState extends StateSuper<HomePage> {
                 key: settingCaseKey,
                 description: 'تنظیمات برنامه اینجاست',
                 child: Emboss(
+                  deBoss: true,
                   borderRadius: BorderRadius.circular(25),
-                  backgroundColor: Colors.grey.shade200,
+                  backgroundColor: AppDecoration.cardSectionsColor,
                   child: IconButton(
                       style: IconButton.styleFrom(
                         visualDensity: const VisualDensity(vertical: -4, horizontal: -4),
@@ -208,7 +210,7 @@ class _HomePageState extends StateSuper<HomePage> {
         /// timer-sms-view
         Positioned(
             top: 20,
-            right: 16,
+            right: 50,
             child: StreamBuilder(
               stream: SmsManager.smsTimeStream.stream,
               builder: (_, data){
@@ -232,204 +234,238 @@ class _HomePageState extends StateSuper<HomePage> {
 
   Widget buildFrontPage(){
     return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      key: listViewKey,
+      controller: scrollController,
       children: [
-        /// place and update info
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Column(
+            children: [
+              /// place and update info
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
 
-            /// place name
-            Expanded(
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: onEditPlaceClick,
-                child: Transform.translate(
-                  offset: const Offset(0,2),
-                  child: Stack(
-                    children: [
-                      Emboss(
-                        backgroundColor: Colors.grey.shade200,
-                        borderRadius: BorderRadius.circular(17),
-                        shadows: const [
-                          BoxShadow(
-                            offset: Offset(0, -1),
-                            color: Colors.grey,
-                          )
-                        ],
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 34.0, bottom: 4),
-                          child: Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: Text(currentPlace!.name,
-                                style: const TextStyle(height: 0, inherit: false), maxLines: 1,)
-                              .bold().fsR(2).color(Colors.black),
-                            ),
-                        ),
-                      ),
-
-                      /// place settings icon
-                      Transform.translate(
-                        offset: const Offset(0, -2),
-                        child: Showcase(
-                          key: placeSettingCaseKey,
-                          description: 'تنظیمات دستگاه اینجاست',
-                          targetPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                          child: Emboss(
-                              borderRadius: BorderRadius.circular(25),
+                  /// place name
+                  Expanded(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: onEditPlaceClick,
+                      child: Transform.translate(
+                        offset: const Offset(0,2),
+                        child: Stack(
+                          children: [
+                            Emboss(
                               backgroundColor: AppDecoration.cardSectionsColor,
-                              offset: const Offset(1,1),
-                              child: const Padding(
-                                padding: EdgeInsets.all(1.0),
-                                child: Icon(AppIcons.settings, size: 23),
-                              )
-                          ),
+                              borderRadius: BorderRadius.circular(17),
+                              deBoss: true,
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 34.0, bottom: 4),
+                                child: Padding(
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: Text(currentPlace!.name,
+                                      style: const TextStyle(height: 0, inherit: false), maxLines: 1,)
+                                    .bold().fsR(2).color(Colors.black),
+                                  ),
+                              ),
+                            ),
+
+                            /// place settings icon
+                            Transform.translate(
+                              offset: const Offset(0, -2),
+                              child: Showcase(
+                                key: placeSettingCaseKey,
+                                description: 'تنظیمات دستگاه اینجاست',
+                                targetPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                                child: Emboss(
+                                    borderRadius: BorderRadius.circular(25),
+                                    backgroundColor: AppDecoration.cardSectionsColor,
+                                    child: const Padding(
+                                      padding: EdgeInsets.all(1.0),
+                                      child: Icon(AppIcons.settings, size: 23),
+                                    )
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                ),
+
+                  /// last update text
+                  Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(AppMessages.lastUpdate),
+                          const Text(':  '),
+                          Text(currentPlace!.getLastUpdateDate())
+                              .color(currentPlace!.getUpdateColor())
+                              .bold(),
+                        ],
+                      )
+                  ),
+                ],
               ),
-            ),
 
-            /// last update text
-            Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(AppMessages.lastUpdate),
-                    const Text(':  '),
-                    Text(currentPlace!.getLastUpdateDate())
-                        .color(currentPlace!.getUpdateColor())
-                        .bold(),
-                  ],
-                )
-            ),
-          ],
-        ),
+              /// device state
+              const SizedBox(height: 14),
+              buildButtonsSection(),
 
-        /// device state
-        const SizedBox(height: 14),
-        buildButtonsSection(),
+              const SizedBox(height: 20),
+              buildPowerSpeakerAntennaBatterySection(),
 
-        const SizedBox(height: 20),
-        buildPowerSpeakerAntennaBatterySection(),
+              const SizedBox(height: 15),
+              buildZonesStateSection(),
 
-        const SizedBox(height: 15),
-        buildZonesStatusSection(),
+              const SizedBox(height: 15),
+              buildZonesStatusSection(),
 
-        const SizedBox(height: 15),
-        buildZonesStateSection(),
+              /// sim card state
+              const SizedBox(height: 20),
+              buildSimCardSection(),
 
-        /// sim card state
-        const SizedBox(height: 8),
-        buildSimCardSection(),
-
-        const SizedBox(height: 6),
-        buildRemoteAndContactSection(),
-
-        Visibility(
-            visible: currentPlace!.supportPhoneNumber.isNotEmpty,
-            child: buildContactWithInstaller()
+              const SizedBox(height: 15),
+              buildRemoteAndContactSection(),
+            ],
+          ),
         ),
 
         /// bottom section (places)
-        Builder(
-            builder: (_){
-              if(PlaceManager.places.length < 2){
-                return const SizedBox();
-              }
-
-              return buildLocationsSection();
-            }
-        ),
+        const SizedBox(height: 25),
+        buildLocationsSection(),
       ],
     );
   }
 
   Widget buildButtonsSection() {
-    return Emboss(
-      backgroundColor: AppDecoration.cardSectionsColor,
-      offset: const Offset(1,1),
-      shadows: const [
-        BoxShadow(
-          offset: Offset(-1, -1),
-          color: Colors.white70,
-        )
-      ],
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.center,
+      children: [
+        Emboss(
+          backgroundColor: AppDecoration.cardSectionsColor,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal :14, vertical: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () => onButtonsClick(1),
-                    behavior: HitTestBehavior.translucent,
-                    child: buildButton(
-                      'فعال',
-                      AppIcons.power,
-                      currentPlace!.deviceStatus != DeviceStatus.active,
-                      1,
+                Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => onButtonsClick(1),
+                        behavior: HitTestBehavior.translucent,
+                        child: buildButton(
+                          'فعال',
+                          AppIcons.power,
+                          currentPlace!.deviceStatus == DeviceStatus.active,
+                          1,
+                        ),
+                      ),
                     ),
-                  ),
+
+                    const SizedBox(width: 50),
+
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => onButtonsClick(2),
+                        behavior: HitTestBehavior.translucent,
+                        child: buildButton(
+                          'غیر فعال',
+                          AppIcons.block,
+                            currentPlace!.deviceStatus == DeviceStatus.inActive,
+                          2,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
 
-                const SizedBox(width: 40),
+                const SizedBox(height: 15),
 
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () => onButtonsClick(2),
-                    behavior: HitTestBehavior.translucent,
-                    child: buildButton(
-                      'غیر فعال',
-                      AppIcons.block,
-                        currentPlace!.deviceStatus != DeviceStatus.inActive,
-                      2,
+                Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => onButtonsClick(4),
+                        behavior: HitTestBehavior.translucent,
+                        child: buildButton(
+                          'نیمه فعال',
+                          AppIcons.semiActive,
+                          currentPlace!.deviceStatus == DeviceStatus.semiActive,
+                          4,
+                        ),
+                      ),
                     ),
-                  ),
+
+                    const SizedBox(width: 50),
+
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => onButtonsClick(3),
+                        behavior: HitTestBehavior.translucent,
+                        child: buildButton(
+                          'بی صدا',
+                          AppIcons.speakerOff,
+                          currentPlace!.deviceStatus == DeviceStatus.silent,
+                          3,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-
-            const SizedBox(height: 10),
-
-            Row(
-              children: [
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () => onButtonsClick(3),
-                    behavior: HitTestBehavior.translucent,
-                    child: buildButton(
-                      'بی صدا',
-                      AppIcons.speakerOff,
-                      currentPlace!.deviceStatus != DeviceStatus.silent,
-                      3,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(width: 40),
-
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () => onButtonsClick(4),
-                    behavior: HitTestBehavior.translucent,
-                    child: buildButton(
-                      'نیمه فعال',
-                      AppIcons.semiActive,
-                      currentPlace!.deviceStatus != DeviceStatus.semiActive,
-                      4,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
+          ),
         ),
-      ),
+
+        GestureDetector(
+          onTap: onListeningClick,
+          child: Column(
+            children: [
+              Emboss(
+                backgroundColor: AppDecoration.cardSectionsColor,
+                offset: const Offset(1.1, 1.1),
+                child: const Padding(
+                  padding: EdgeInsets.all(1.0),
+                  child: Icon(
+                    Icons.headphones,
+                    color: Colors.blue,
+                  ),
+                ),
+              ),
+
+              const Text('شنود').color(Colors.blue)
+            ],
+          ),
+        ),
+
+        Positioned(
+          top: 0,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: OverflowTouchable(
+                scrollController: scrollController,
+                scrollWidgetKey: listViewKey,
+                child: GestureDetector(
+                  onTap: onUpdateInfoClick,
+                  behavior: HitTestBehavior.translucent,
+                  child: KeepShadowBound(
+                    child: Emboss(
+                      backgroundColor: AppDecoration.cardSectionsColor,
+                      child: Text('  ${AppMessages.update}  ',
+                          style: TextStyle(inherit: false, color: AppDecoration.redColor)
+                      ).fsR(-1).bold(),
+                    ),
+                  ),
+                ),
+              ),
+            )
+        ),
+      ],
     );
   }
 
@@ -452,23 +488,17 @@ class _HomePageState extends StateSuper<HomePage> {
           break;
       }
     }
-    // onListeningClick
+
     return Emboss(
       backgroundColor: AppDecoration.cardSectionsColor,
-      shadows: const [
-        BoxShadow(
-          offset: Offset(1,1),
-          color: Colors.white,
-          blurStyle: BlurStyle.inner,
-          blurRadius: 2,
-          spreadRadius: .5,
-        )
-      ],
+      deBoss: true,
       child: Padding(
         padding: const EdgeInsets.all(6.0),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            const SizedBox(width: 4),
+
             DecoratedBox(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(25),
@@ -484,9 +514,10 @@ class _HomePageState extends StateSuper<HomePage> {
                   ]
                 ),
               child: Padding(
-                padding: const EdgeInsets.all(2.0),
+                padding: const EdgeInsets.all(3.0),
                 child: Icon(
                   icon, color: isActive? Colors.white: Colors.black,
+                  size: 36,
                 ),
               ),
             ),
@@ -502,13 +533,6 @@ class _HomePageState extends StateSuper<HomePage> {
   Widget buildPowerSpeakerAntennaBatterySection() {
     return Emboss(
       backgroundColor: AppDecoration.cardSectionsColor,
-      offset: const Offset(1,1),
-      shadows: const [
-        BoxShadow(
-          offset: Offset(-1, -1),
-          color: Colors.white70,
-        )
-      ],
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
         child: Row(
@@ -556,7 +580,8 @@ class _HomePageState extends StateSuper<HomePage> {
         const SizedBox(height: 5),
         icon,
         const SizedBox(height: 5),
-        Center(child: Text(text).color(Colors.black)),
+        Center(child: Text(text)
+            .color(Colors.black).bold().fsR(-1)),
         const SizedBox(height: 8),
 
         SizedBox(
@@ -571,51 +596,57 @@ class _HomePageState extends StateSuper<HomePage> {
   }
 
   Widget buildZonesStatusSection() {
-    return Emboss(
-      backgroundColor: AppDecoration.cardSectionsColor,
-      offset: const Offset(1,1),
-      shadows: const [
-        BoxShadow(
-          offset: Offset(-1, -1),
-          color: Colors.white70,
-        )
-      ],
-      child: Padding(
-        padding: const EdgeInsets.all(6),
-        child: Column(
-          children: [
-            const Text('حالت مناطق (زون ها)')
-            .bold(weight: FontWeight.w900).fsR(2),
+    return Stack(
+      children: [
+        Emboss(
+          backgroundColor: AppDecoration.cardSectionsColor,
+          child: Padding(
+            padding: const EdgeInsets.all(6),
+            child: Column(
+              children: [
+                const Text('حالت مناطق (زون ها)')
+                .bold(weight: FontWeight.w900).fsR(2),
 
-            const SizedBox(height: 4),
+                const SizedBox(height: 4),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: currentPlace!.zones.where((element) => element.show)
-                  .map(mapStatusZone).toList(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: currentPlace!.zones.where((element) => element.show)
+                      .map(mapStatusZone).toList(),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
-      ),
+
+        Positioned(
+            left: 5,
+            top: 5,
+            child: GestureDetector(
+              onTap: onZoneUpdateClick,
+              behavior: HitTestBehavior.translucent,
+              child: Emboss(
+                backgroundColor: AppDecoration.cardSectionsColor,
+                child: Text('  ${AppMessages.update}  ',
+                    style: TextStyle(inherit: false, color: AppDecoration.redColor)
+                ).fsR(-1).bold(),
+              ),
+            )
+        ),
+      ],
     );
   }
 
   Widget buildZonesStateSection() {
     return Emboss(
       backgroundColor: AppDecoration.cardSectionsColor,
-      offset: const Offset(1,1),
-      shadows: const [
-        BoxShadow(
-          offset: Offset(-1, -1),
-          color: Colors.white70,
-        )
-      ],
+      //offset: const Offset(1,1),
       child: Padding(
         padding: const EdgeInsets.all(6),
         child: Column(
           children: [
             const Text('وضعیت مناطق (زون ها)')
-            .bold(weight: FontWeight.w900).fsR(2),
+                .bold(weight: FontWeight.w900).fsR(2),
 
             const SizedBox(height: 4),
 
@@ -631,88 +662,379 @@ class _HomePageState extends StateSuper<HomePage> {
   }
 
   Widget buildSimCardSection() {
-    return Emboss(
-      backgroundColor: AppDecoration.cardSectionsColor,
-      offset: const Offset(1,1),
-      shadows: const [
-        BoxShadow(
-          offset: Offset(-1, -1),
-          color: Colors.white70,
-        )
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Emboss(
+          backgroundColor: AppDecoration.cardSectionsColor,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 18),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.sim_card_outlined),
+                    const SizedBox(width: 4),
+                    const Text('شارژ سیم کارت:').bold(),
+                  ],
+                ),
+                Text(currentPlace!.getSimCardCharge()).bold().color(AppDecoration.redColor),
+              ],
+            ),
+          ),
+        ),
+
+        Positioned(
+          top: -0,
+            left: 30,
+            child: OverflowTouchable(
+              child: GestureDetector(
+                onTap: onSimCardHelpClick,
+                behavior: HitTestBehavior.translucent,
+                child: Image.asset(AppImages.helpIco2, width: 28, height: 28,),
+              ),
+            )
+        ),
+
+        Positioned(
+            bottom: 0,
+            right: 55,
+            child: OverflowTouchable(
+              child: GestureDetector(
+                onTap: onGetSimCardBalance,
+                behavior: HitTestBehavior.translucent,
+                child: Emboss(
+                  backgroundColor: AppDecoration.cardSectionsColor,
+                  child: Text('  ${AppMessages.update}  ',
+                          style: TextStyle(
+                              inherit: false, color: AppDecoration.redColor))
+                      .fsR(-1)
+                      .bold(),
+                ),
+              ),
+            )),
+
+        Positioned(
+            bottom: 0,
+            left: 55,
+            child: OverflowTouchable(
+              child: GestureDetector(
+                onTap: onReChargeSimCardClick,
+                behavior: HitTestBehavior.translucent,
+                child: Emboss(
+                  backgroundColor: AppDecoration.cardSectionsColor,
+                  child: const Text('  افزایش شارژ  ',
+                      style: TextStyle(inherit: false, color: Colors.black)
+                  ).fsR(-1).bold(),
+                ),
+              ),
+            )
+        ),
       ],
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text('شارژ سیم کارت:').bold(),
-            Text(currentPlace!.getSimCardCharge()).bold().color(AppDecoration.redColor),
-          ],
+    );
+  }
+
+  Widget mapStatusZone(ZoneModel zm){
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 2),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: IntrinsicWidth(
+          child: Column(
+            children: [
+              ColoredBox(
+                color: Colors.blueAccent,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    minWidth: 60,
+                      maxWidth: double.infinity
+                  ),
+                  child: Center(
+                    child: Builder(
+                      builder: (context) {
+                        if(zm.name != null){
+                          return Text(' ${TextHelper.subByCharCountSafe(zm.name, 12)} ', maxLines: 1)
+                              .bold().fsR(1).color(Colors.white);
+                        }
+
+                        return Text('زون ${zm.number} ')
+                            .bold().fsR(1).color(Colors.white);
+                      }
+                    ),
+                  ),
+                ),
+              ),
+
+              GestureDetector(
+                onTap: (){
+                  onChangeZoneStatusClick(zm, currentPlace!);
+                },
+                  child: ColoredBox(
+                    color: Colors.black,
+                      child: ConstrainedBox(
+                          constraints: const BoxConstraints(
+                            minWidth: 60,
+                            maxWidth: double.infinity
+                          ),
+                          child: Center(
+                            child: Text(' ${zm.status.getHumanName()} ')
+                                .color(Colors.white),
+                          ))
+                  )
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget buildSimCardSection2() {
-    return FadeInLeft(
-      delay: const Duration(milliseconds: 200),
-      controller: (ctr){
-        animList.add(ctr);
-      },
-      child: Card(
-        color: Colors.pink.shade100,
-        margin: const EdgeInsets.symmetric(horizontal: 0),
-        elevation: 0,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  //Text(AppMessages.simCardStatus),
+  Widget mapStateZone(ZoneModel zm){
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 2),
+      child: Emboss(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: IntrinsicWidth(
+            child: Column(
+              children: [
+                ColoredBox(
+                  color: Colors.black,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      minWidth: 60,
+                        maxWidth: double.infinity
+                    ),
+                    child: Center(
+                      child: Builder(
+                        builder: (context) {
+                          if(zm.name != null){
+                            return Text(' ${TextHelper.subByCharCountSafe(zm.name, 12)} ', maxLines: 1)
+                                .bold().fsR(1).color(Colors.white);
+                          }
 
-                  TextButton(
-                      style: TextButton.styleFrom(
-                        visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          return Text('زون ${zm.number} ')
+                              .bold().fsR(1).color(Colors.white);
+                        }
                       ),
-                      onPressed: onGetSimCardBalance,
-                      child: const Text('بروز رسانی')
+                    ),
                   ),
+                ),
 
-                  GestureDetector(
-                      onTap: onSimCardHelpClick,
-                      child: Icon(AppIcons.questionMarkCircle, size: 25*hRel, color: Colors.orange)
+                ColoredBox(
+                  color: AppDecoration.cardSectionsColor,
+                    child: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          minWidth: 60,
+                          maxWidth: double.infinity
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 6, left: 6, right: 6, bottom: 5),
+                          child: Emboss(
+                            backgroundColor: AppDecoration.cardSectionsColor,
+                            borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(12),
+                              bottomRight: Radius.circular(12),
+                            ),
+                            deBoss: true,
+                            child: SizedBox(
+                              height: 25,
+                              child: ColoredBox(
+                                color: zm.isOpen? Colors.green : Colors.red,
+                                child: Center(
+                                  child: Text(zm.isOpen? '${AppMessages.openState} ' : AppMessages.closeState)
+                                  .color(Colors.white),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ))
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildRemoteAndContactSection() {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Emboss(
+          backgroundColor: AppDecoration.cardSectionsColor,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: GestureDetector(
+                    onTap: onRemoteManageClick,
+                    child: Emboss(
+                      deBoss: true,
+                      backgroundColor: AppDecoration.cardSectionsColor,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Icon(AppIcons.remote, color: AppThemes.instance.themeData.chipTheme.backgroundColor),
+                            const SizedBox(width: 4),
+                            Text('تعداد ریموت ها: ${currentPlace!.remoteCount?? 0}').bold(),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(width: 20),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: (){
+                      RouteTools.pushPage(context, ContactManagerPage(place: currentPlace!));
+                    },
+                    child: Emboss(
+                      deBoss: true,
+                      backgroundColor: AppDecoration.cardSectionsColor,
+                      child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Icon(AppIcons.accountCircle,
+                                  color: AppThemes.instance.themeData.chipTheme.backgroundColor),
+                              const SizedBox(width: 4),
+                              Text('تعداد مخاطبین: ${currentPlace!.contactCount?? 0}').bold(),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildLocationsSection() {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        /// place list
+        DecoratedBox(
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(16),
+                topLeft: Radius.circular(16),
               ),
-
-              const SizedBox(height: 4),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      const Text('شارژ سیم کارت:').bold(),
-                      const SizedBox(width: 8),
-                      Text(currentPlace!.getSimCardCharge()).bold(),
-                    ],
-                  ),
-
-                  Column(
-                    children: [
-                      ActionChip(
-                        label: const Text('افزایش شارژ'),
-                        onPressed: onReChargeSimCardClick,
-                      )
-                    ],
-                  ),
-                ],
+              gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xff21218d),
+                    Color(0xff1c1c81),
+                    Color(0xff10104d),
+                  ],
+                  stops: [
+                    0.3,
+                    0.6,
+                    0.9
+                  ]
+              )
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 4),
+            child: SizedBox(
+              height: 50,
+              child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: PlaceManager.places.length,
+                  itemBuilder: itemBuilderForLocations
               ),
-            ],
+            ),
+          ),
+        ),
+
+        /// add
+        Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: OverflowTouchable(
+                child: GestureDetector(
+                    onTap: onAddNewPlaceClick,
+                    child: Image.asset(AppImages.addIco, width: 40, height: 40,)
+                ),
+              ),
+            )
+        ),
+
+        /// support
+        Positioned(
+          top: 0,
+          left: 15,
+          child: Theme(
+            data: AppThemes.instance.themeData.copyWith(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+            ),
+            child: OverflowTouchable(
+              offset: const Offset(15, 0),
+              child: PopupMenuButton(
+                  itemBuilder: supportMenuItemBuilder,
+                  color: Colors.transparent,
+                  elevation: 0,
+                  child: Image.asset(AppImages.supportIco, width: 40, height: 40)
+              ),
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget itemBuilderForLocations(_, idx){
+    final itm = PlaceManager.places[idx];
+
+    return UnconstrainedBox(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 6.0),
+        child: GestureDetector(
+          onTap: () async {
+            if(isCurrentPlaceThis(itm)){
+              return;
+            }
+      
+            currentPlace = itm;
+            PlaceManager.saveFavoritePlace(currentPlace!.id);
+            callState();
+            for(final x in animList) {
+              try{
+                x.reset();
+                x.forward();
+                await Future.delayed(const Duration(milliseconds: 100));
+              }
+              catch (e){/**/}
+            }
+          },
+          child: CustomCard(
+            color: isCurrentPlaceThis(itm) ? AppThemes.instance.currentTheme.accentColor : Colors.grey.shade300,
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+            child: Row(
+              children: [
+                const Icon(AppIcons.home),
+                const SizedBox(width: 5),
+                Text(itm.name).bold(),
+              ],
+            ),
           ),
         ),
       ),
@@ -771,8 +1093,8 @@ class _HomePageState extends StateSuper<HomePage> {
       targetPadding: const EdgeInsets.fromLTRB(40, 10, 0, 10),
       child: ClipRRect(
         borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(15),
-            bottomLeft: Radius.circular(15),
+          topLeft: Radius.circular(15),
+          bottomLeft: Radius.circular(15),
         ),
         child: ColoredBox(
           color: Colors.white,
@@ -849,7 +1171,7 @@ class _HomePageState extends StateSuper<HomePage> {
                                     'غیرفعال',
                                   ],
                                   onToggle: (v){
-                                    onChangeRelayStatus(currentPlace!.relays[1], v == 0);
+                                    onChangeRelayStatus(currentPlace!.relays[0], v == 0);
                                   },
                                 );
                               }
@@ -861,11 +1183,11 @@ class _HomePageState extends StateSuper<HomePage> {
                 ),
 
                 Visibility(
-                    visible: currentPlace!.useOfRelay1 && currentPlace!.useOfRelay2,
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.0),
-                      child: Divider(color: Colors.grey, indent: 7, endIndent: 7,),
-                    ),
+                  visible: currentPlace!.useOfRelay1 && currentPlace!.useOfRelay2,
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10.0),
+                    child: Divider(color: Colors.grey, indent: 7, endIndent: 7,),
+                  ),
                 ),
 
                 /// relay 2
@@ -884,62 +1206,62 @@ class _HomePageState extends StateSuper<HomePage> {
 
                         Center(
                           child: Builder(
-                            builder: (context) {
-                              if(currentPlace!.relays[1].status == RelayStatus.shortCommand){
-                                return GestureDetector(
-                                  onTap: onRelay2CommandClick,
-                                  child: CustomCard(
-                                      color: AppDecoration.mainColor,
-                                      padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 7),
-                                      child: const Text('فرمان').color(Colors.white)
-                                  ),
-                                );
-                              }
-
-                              if(currentPlace!.relays[1].status == RelayStatus.customTime){
-                                return Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    GestureDetector(
-                                      behavior: HitTestBehavior.translucent,
-                                      onTap: gotoRelayManager,
-                                      child: Column(
-                                        children: [
-                                          Text(currentPlace!.relays[1].duration.toString().split('.')[0]).fsR(-2.5),
-                                          const Text('تغییر').color(Colors.blue).fsR(-1)
-                                        ],
-                                      ),
+                              builder: (context) {
+                                if(currentPlace!.relays[1].status == RelayStatus.shortCommand){
+                                  return GestureDetector(
+                                    onTap: onRelay2CommandClick,
+                                    child: CustomCard(
+                                        color: AppDecoration.mainColor,
+                                        padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 7),
+                                        child: const Text('فرمان').color(Colors.white)
                                     ),
+                                  );
+                                }
 
-                                    GestureDetector(
-                                      onTap: onRelay2CommandClick,
-                                      child: CustomCard(
-                                          color: AppDecoration.mainColor,
-                                          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 7),
-                                          child: const Text('فرمان').color(Colors.white)
+                                if(currentPlace!.relays[1].status == RelayStatus.customTime){
+                                  return Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      GestureDetector(
+                                        behavior: HitTestBehavior.translucent,
+                                        onTap: gotoRelayManager,
+                                        child: Column(
+                                          children: [
+                                            Text(currentPlace!.relays[1].duration.toString().split('.')[0]).fsR(-2.5),
+                                            const Text('تغییر').color(Colors.blue).fsR(-1)
+                                          ],
+                                        ),
                                       ),
-                                    ),
+
+                                      GestureDetector(
+                                        onTap: onRelay2CommandClick,
+                                        child: CustomCard(
+                                            color: AppDecoration.mainColor,
+                                            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 7),
+                                            child: const Text('فرمان').color(Colors.white)
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }
+
+                                return ToggleSwitch(
+                                  changeOnTap: false,
+                                  multiLineText: false,
+                                  totalSwitches: 2,
+                                  initialLabelIndex: currentPlace!.relays[0].isActive? 0 : 1,
+                                  activeBgColors: const [[Colors.green], [Colors.red]],
+                                  activeFgColor: Colors.white,
+                                  inactiveFgColor: Colors.white,
+                                  labels: const [
+                                    'فعال',
+                                    'غیرفعال',
                                   ],
+                                  onToggle: (v){
+                                    onChangeRelayStatus(currentPlace!.relays[1], v == 0);
+                                  },
                                 );
                               }
-
-                              return ToggleSwitch(
-                                changeOnTap: false,
-                                multiLineText: false,
-                                totalSwitches: 2,
-                                initialLabelIndex: currentPlace!.relays[0].isActive? 0 : 1,
-                                activeBgColors: const [[Colors.green], [Colors.red]],
-                                activeFgColor: Colors.white,
-                                inactiveFgColor: Colors.white,
-                                labels: const [
-                                  'فعال',
-                                  'غیرفعال',
-                                ],
-                                onToggle: (v){
-                                  onChangeRelayStatus(currentPlace!.relays[0], v == 0);
-                                },
-                              );
-                            }
                           ),
                         ),
                       ],
@@ -949,219 +1271,6 @@ class _HomePageState extends StateSuper<HomePage> {
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget mapStatusZone(ZoneModel zm){
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 2),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: IntrinsicWidth(
-          child: Column(
-            children: [
-              ColoredBox(
-                color: AppDecoration.redColor,
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    minWidth: 60,
-                      maxWidth: double.infinity
-                  ),
-                  child: Center(
-                    child: Builder(
-                      builder: (context) {
-                        if(zm.name != null){
-                          return Text(' ${TextHelper.subByCharCountSafe(zm.name, 12)} ', maxLines: 1)
-                              .bold().fsR(1).color(Colors.white);
-                        }
-
-                        return Text('زون ${zm.number} ')
-                            .bold().fsR(1).color(Colors.white);
-                      }
-                    ),
-                  ),
-                ),
-              ),
-
-              GestureDetector(
-                onTap: (){
-                  onChangeZoneStatusClick(zm, currentPlace!);
-                },
-                  child: ColoredBox(
-                    color: Colors.black,
-                      child: ConstrainedBox(
-                          constraints: const BoxConstraints(
-                            minWidth: 60,
-                            maxWidth: double.infinity
-                          ),
-                          child: Center(
-                            child: Text(' ${zm.status.getHumanName()} ')
-                                .color(Colors.white),
-                          ))
-                  )
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget mapStateZone(ZoneModel zm){
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 2),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: IntrinsicWidth(
-          child: Column(
-            children: [
-              ColoredBox(
-                color: AppDecoration.redColor,
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    minWidth: 60,
-                      maxWidth: double.infinity
-                  ),
-                  child: Center(
-                    child: Builder(
-                      builder: (context) {
-                        if(zm.name != null){
-                          return Text(' ${TextHelper.subByCharCountSafe(zm.name, 12)} ', maxLines: 1)
-                              .bold().fsR(1).color(Colors.white);
-                        }
-
-                        return Text('زون ${zm.number} ')
-                            .bold().fsR(1).color(Colors.white);
-                      }
-                    ),
-                  ),
-                ),
-              ),
-
-              ColoredBox(
-                color: Colors.black,
-                  child: ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        minWidth: 60,
-                        maxWidth: double.infinity
-                      ),
-                      child: Center(
-                        child: Text(zm.isOpen? '${AppMessages.openState} ' : '∑ ${AppMessages.closeState}')
-                            .bold().fsR(2)
-                            .color(zm.isOpen? Colors.white : Colors.red),
-                      ))
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildRemoteAndContactSection(){
-    return FadeInLeft(
-      delay: const Duration(milliseconds: 800),
-      controller: (ctr){
-        animList.add(ctr);
-      },
-      child: Row(
-        children: [
-          Expanded(
-            child: GestureDetector(
-              onTap: onRemoteManageClick,
-              child: Card(
-                color: cColor,
-                elevation: 0,
-                margin: const EdgeInsets.only(top: 8.0, bottom: 4),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('تعداد ریموت ها: ${currentPlace!.remoteCount?? 0}').bold(),
-
-                      Icon(AppIcons.remote, color: AppThemes.instance.themeData.chipTheme.backgroundColor),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          const SizedBox(width: 6),
-          Expanded(
-            child: GestureDetector(
-              onTap: (){
-                RouteTools.pushPage(context, ContactManagerPage(place: currentPlace!));
-              },
-              child: Card(
-                color: cColor,
-                elevation: 0,
-                margin: const EdgeInsets.only(top: 8.0, bottom: 4),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('تعداد مخاطبین: ${currentPlace!.contactCount?? 0}').bold(),
-
-                      Icon(AppIcons.accountDoubleCircle, color: AppThemes.instance.themeData.chipTheme.backgroundColor),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildContactWithInstaller(){
-    return Card(
-      color: ColorHelper.changeHue(AppDecoration.secondColor),
-      elevation: 0,
-      margin: const EdgeInsets.only(top: 8.0, bottom: 4),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            GestureDetector(
-              onTap: (){
-                OpenHelper.makePhoneCall(currentPlace!.supportPhoneNumber);
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('تماس با پشتیبان').color(Colors.white).bold(),
-
-                  const Icon(AppIcons.callPhone, color: Colors.pink),
-                ],
-              ),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: SizedBox(
-                  width: 200,
-                child: Divider(color: Colors.grey.shade50),
-              ),
-            ),
-
-            GestureDetector(
-              onTap: onSendSms,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('پیامک به پشتیبان').color(Colors.white).bold(),
-
-                  const Icon(AppIcons.email, color: Colors.pink),
-                ],
-              ),
-            ),
-          ],
         ),
       ),
     );
@@ -1201,25 +1310,25 @@ class _HomePageState extends StateSuper<HomePage> {
 
   void onRelay1CommandClick() {
     if(currentPlace!.relays[0].status == RelayStatus.shortCommand) {
-      SmsManager.sendSms('20*2*T000002', currentPlace!, context);
+      SmsManager.sendSms('20*1*T000002', currentPlace!, context);
     }
     else {
       final p1 = currentPlace!.relays[0].duration.toString().split('.');
       final p2 = p1[0].replaceAll(':', '');
 
-      SmsManager.sendSms('20*2*T${p2.padLeft(6, '0')}', currentPlace!, context);
+      SmsManager.sendSms('20*1*T${p2.padLeft(6, '0')}', currentPlace!, context);
     }
   }
 
   void onRelay2CommandClick() {
     if(currentPlace!.relays[1].status == RelayStatus.shortCommand) {
-      SmsManager.sendSms('20*1*T000002', currentPlace!, context);
+      SmsManager.sendSms('20*2*T000002', currentPlace!, context);
     }
     else {
       final p1 = currentPlace!.relays[1].duration.toString().split('.');
       final p2 = p1[0].replaceAll(':', '');
 
-      SmsManager.sendSms('20*1*T${p2.padLeft(6, '0')}', currentPlace!, context);
+      SmsManager.sendSms('20*2*T${p2.padLeft(6, '0')}', currentPlace!, context);
     }
   }
 
@@ -1252,71 +1361,6 @@ class _HomePageState extends StateSuper<HomePage> {
 
   bool isCurrentPlaceThis(PlaceModel itm){
     return currentPlace!.id == itm.id;
-  }
-
-  Widget buildLocationsSection() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 4),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              const Text('مکان ها (دستگاه ها)').bold(),
-            ],
-          ),
-
-          const SizedBox(height: 5),
-
-          SizedBox(
-            height: 50,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-                itemCount: PlaceManager.places.length,
-                itemBuilder: itemBuilderForLocations
-            ),
-          ),
-
-          const SizedBox(height: 5),
-        ],
-      ),
-    );
-  }
-
-  Widget itemBuilderForLocations(_, idx){
-    final itm = PlaceManager.places[idx];
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: GestureDetector(
-        onTap: () async {
-          if(isCurrentPlaceThis(itm)){
-            return;
-          }
-
-          currentPlace = itm;
-          PlaceManager.saveFavoritePlace(currentPlace!.id);
-          callState();
-          for(final x in animList) {
-            try{
-              x.reset();
-              x.forward();
-              await Future.delayed(const Duration(milliseconds: 100));
-            }
-            catch (e){/**/}
-          }
-        },
-        child: CustomCard(
-          color: isCurrentPlaceThis(itm) ? AppThemes.instance.currentTheme.accentColor : Colors.grey.shade300,
-          padding: const EdgeInsets.symmetric(horizontal: 6),
-          child: Column(
-            children: [
-              const Icon(AppIcons.home),
-              Text(itm.name).bold(),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 
   Widget buildEmptyPlaces() {
@@ -1425,10 +1469,6 @@ class _HomePageState extends StateSuper<HomePage> {
     OpenHelper.openFile(path, type: 'application/pdf');
   }
 
-  /*void onRelayClick() {
-    RouteTools.pushPage(context, RelayPage(place: currentPlace!));
-  }*/
-
   void onChangeZoneStatusClick(ZoneModel zm, PlaceModel place) async {
     ZoneStatus? selectedZone = await AppDialogIris.instance.showIrisDialog(
         context,
@@ -1480,9 +1520,10 @@ class _HomePageState extends StateSuper<HomePage> {
       ds = DeviceStatus.silent;
     }
 
+    /* aga mehdi goft ke besh tekrari ham befreste
     if(currentPlace!.deviceStatus == ds){
       return;
-    }
+    }*/
 
     final send = await SmsManager.sendSms('$num', currentPlace!, context);
 
@@ -1513,44 +1554,68 @@ class _HomePageState extends StateSuper<HomePage> {
   }
 
   void onSendSms() {
+    if(currentPlace!.supportPhoneNumber.isEmpty){
+      AppToast.showToast(context, 'شماره ی پشتیبان ثبت نشده');
+      return;
+    }
+
     OpenHelper.sendSmsToByBody(currentPlace!.supportPhoneNumber, 'سلام، تکنسین محترم اینجانب درخواست پشتیبانی دارم');
+  }
+
+  void onMakeCall() {
+    if(currentPlace!.supportPhoneNumber.isEmpty){
+      AppToast.showToast(context, 'شماره ی پشتیبان ثبت نشده');
+      return;
+    }
+
+    OpenHelper.makePhoneCall(currentPlace!.supportPhoneNumber);
   }
 
   void gotoRelayManager() {
     RouteTools.pushPage(context, RelayPage(place: currentPlace!));
+  }
+
+  List<PopupMenuEntry> supportMenuItemBuilder(BuildContext ctx) {
+    return [
+      PopupMenuItem(
+        child: UnconstrainedBox(
+          alignment: Alignment.topCenter,
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        onSendSms();
+                      },
+                      child: const Text('ارسال پیامک به پشتیبان')
+                  ),
+
+                  GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: (){
+                      Navigator.of(context).pop();
+                      onMakeCall();
+                    },
+                    child: const Text('تماس با پشتیبان'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+
+      )
+
+    ];
   }
 }
 
 
 /// antenna signal
 //SmsManager.sendSms('61', currentPlace!, context);
-
-/*
-void onDeviceStatusHelpClick() {
-    const txt1 = 'چهار حالت ممکن:';
-    const txt2 = '* حالت فعال: دزدگیر فعال می باشد';
-    const txt3 = '* حالت غیرفعال: دزدگیر غیر فعال می باشد';
-    const txt4 = '* حالت بی صدا: در این حالت فقط بلندگوی داخلی کار می کند';
-    const txt5 = '* حالت نیمه فعال: در این حالت فقط مناطق (زون) 1 و 2 کار می کند';
-
-    OverlayDialog.showMiniInfo(context,
-      builder: (_, c){
-        return c;
-      },
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(txt1).bold(),
-          const SizedBox(height: 10),
-
-          const Text(txt2),
-          const Text(txt3),
-          const Text(txt4),
-          const Text(txt5),
-        ],
-      ),
-    );
-  }
-
- */

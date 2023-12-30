@@ -289,7 +289,7 @@ class PlaceModel {
       return 'متصل';
     }
 
-    return 'بذون بلندگو';
+    return 'بدون بلندگو';
   }
 
   void parseSms(String txt){
