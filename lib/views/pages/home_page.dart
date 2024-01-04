@@ -53,7 +53,8 @@ import 'package:app/views/pages/settings_page.dart';
 
 class HomePage extends StatefulWidget {
 
-  const HomePage({
+  // ignore: prefer_const_constructors_in_immutables
+  HomePage({
     super.key,
   });
 
@@ -67,11 +68,10 @@ class _HomePageState extends StateSuper<HomePage> {
   final settingCaseKey = GlobalKey();
   final helpCaseKey = GlobalKey();
   final placeSettingCaseKey = GlobalKey();
-  final ScrollController scrollController = ScrollController();
-
   final reloadCaseKey = GlobalKey();
   final relayCaseKey1 = GlobalKey();
   final listViewKey = GlobalKey();
+  final ScrollController scrollController = ScrollController();
   final Set<AnimationController> animList = {};
   SnappingSheetController relaySnapController = SnappingSheetController();
   final SnappingPosition closePosition = const SnappingPosition.factor(positionFactor: 1,
@@ -450,15 +450,19 @@ class _HomePageState extends StateSuper<HomePage> {
               child: OverflowTouchable(
                 scrollController: scrollController,
                 scrollWidgetKey: listViewKey,
-                child: GestureDetector(
-                  onTap: onUpdateInfoClick,
-                  behavior: HitTestBehavior.translucent,
-                  child: KeepShadowBound(
-                    child: Emboss(
-                      backgroundColor: AppDecoration.cardSectionsColor,
-                      child: Text('  ${AppMessages.update}  ',
-                          style: TextStyle(inherit: false, color: AppDecoration.redColor)
-                      ).fsR(-1).bold(),
+                child: Showcase(
+                  key: reloadCaseKey,
+                  description: 'با لمس این دکمه آخرین وضعیت را دارید.',
+                  child: GestureDetector(
+                    onTap: onUpdateInfoClick,
+                    behavior: HitTestBehavior.translucent,
+                    child: KeepShadowBound(
+                      child: Emboss(
+                        backgroundColor: AppDecoration.cardSectionsColor,
+                        child: Text('  ${AppMessages.update}  ',
+                            style: TextStyle(inherit: false, color: AppDecoration.redColor)
+                        ).fsR(-1).bold(),
+                      ),
                     ),
                   ),
                 ),
@@ -1438,9 +1442,10 @@ class _HomePageState extends StateSuper<HomePage> {
   }
 
   void navigateState(Route? route, NavigateState state) async {
-    await System.wait(const Duration(milliseconds: 900));
+    await System.wait(const Duration(milliseconds: 800));
+    final state = RouteTools.getTopWidgetState();
 
-    if(RouteTools.getTopWidgetState() == this){
+    if(state == this){
       final isShowCase = AppDB.fetchKv(Keys.homeCaseIsShow)?? false;
 
       if(context.mounted && currentPlace != null && !isShowCase) {

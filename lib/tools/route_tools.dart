@@ -8,7 +8,8 @@ import 'package:app/views/pages/home_page.dart';
 
 class RouteTools {
   static BuildContext? materialContext;
-  static final StackList<State> widgetStateStack = StackList();
+  //static final StackList<State> widgetStateStack = StackList();
+  static final List<State> widgetStateStack = [];
 
   RouteTools._();
 
@@ -22,15 +23,15 @@ class RouteTools {
   }
 
   static void addWidgetState(State state){
-    return widgetStateStack.push(state);
+    return widgetStateStack.add(state);
   }
 
-  static State removeWidgetState(){
-    return widgetStateStack.pop();
+  static void removeWidgetState(State state){
+    widgetStateStack.remove(state);
   }
 
   static State getTopWidgetState(){
-    return widgetStateStack.top();
+    return widgetStateStack.last;
   }
 
   static BuildContext? getTopContext() {

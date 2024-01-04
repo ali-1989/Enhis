@@ -63,16 +63,20 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"/>
-    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED "/>
+    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED"/>
 
     <!-- ..........................  uses-permission Badge -->
     <uses-permission android:name="com.sec.android.provider.badge.permission.READ"/>
     <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE"/>
     <uses-permission android:name="com.huawei.android.launcher.permission.CHANGE_BADGE"/>
 
-    <!-- ..........................  uses-permission Location -->
+    <!-- ..........................  uses-permission Location / BSSID -->
     <!--
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"
+                         android:maxSdkVersion="32"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+    <uses-permission android:name="android.permission.NEARBY_WIFI_DEVICES"/>
     -->
 
     <!-- ..........................  Call SMS | Google play sensitive -->
@@ -165,14 +169,14 @@
 
 
         <activity
-                android:name=".MainActivity"
-                android:exported="true"
-                android:launchMode="singleTop"
-                android:theme="@style/LaunchTheme"
-                android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
-                android:showWhenLocked="true"
-                android:showOnLockScreen="true"
-                android:turnScreenOn="true"
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:theme="@style/LaunchTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:showWhenLocked="true"
+            android:showOnLockScreen="true"
+            android:turnScreenOn="true"
                 android:windowSoftInputMode="adjustResize" tools:targetApi="o_mr1">
 
             <meta-data

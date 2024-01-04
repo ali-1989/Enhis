@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:iris_tools/api/managers/orientationManager.dart';
-import 'package:iris_tools/modules/stateManagers/assist.dart';
 
 import 'package:app/tools/app/app_loading.dart';
 import 'package:app/tools/app/app_sizes.dart';
@@ -50,7 +49,7 @@ abstract class StateSuper<W extends StatefulWidget> extends State<W> {
 
 	@override
 	void dispose() {
-		RouteTools.removeWidgetState();
+		RouteTools.removeWidgetState(this);
 
 		if(kIsWeb){
 			AppSizes.instance.removeMetricListener(onResize);

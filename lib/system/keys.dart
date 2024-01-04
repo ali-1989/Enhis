@@ -14,7 +14,9 @@ class Keys {
   static const userId = 'user_id';
   static const forUserId = 'for_user_id';
   static const userName = 'user_name';
+  static const email = 'email';
   static const password = 'password';
+  static const hashPassword = 'hash_password';
   static const userType = 'user_type';
   static const fileName = 'file_name';
   static const partName = 'part_name';
@@ -61,7 +63,6 @@ class Keys {
   static const toast = 'toast';
   //----- common settings key -----------------------------------------------------------------
   static const setting$lastLoginDate = 'last_login_date';
-  static const setting$lastRouteName = 'Last_route_name';
   static const setting$appSettings = 'app_settings';
   static const setting$globalSettings = 'global_settings';
   static const setting$fontThemeData = 'font_theme_data';
